@@ -25,6 +25,7 @@
 \usepackage{placeins}
 \crefname{equation}{}{}
 \usepackage{verbatim}
+\usepackage{bbm}
 
 %\usepackage{graphicx}
 %% expansion of width
@@ -122,6 +123,8 @@
 \DeclareMathOperator{\dis}{dist}
 
 
+\newcommand{\wop}{\square_c}
+
 \newcommand{\tnorm}[1]{\vert\hspace{-0.3mm}\Vert#1\Vert\hspace{-0.3mm}\vert}
 
 \providecommand{\abs}[1]{\left\lvert#1\right\rvert}
@@ -178,7 +181,21 @@
 
 \newcommand{\putextra}[1]{\ifthenelse{\boolean{includeextras}}{#1}{}}
 
+\newcommand{\Uh}{\underline{\mathbf{U}}_h}
+\newcommand{\Yh}{\underline{\mathbf{Y}}_h}
+\newcommand{\Zh}{\underline{\mathbf{Z}}_h}
+\newcommand{\Wh}{\underline{\mathbf{W}}_h}
 
+\newcommand{\ul}{\underline{u}}
+\newcommand{\yl}{\underline{y}}
+\newcommand{\zl}{\underline{z}}
+\newcommand{\wl}{\underline{w}}
+
+\newcommand{\Sud}{S^{\uparrow \downarrow}_{\Delta t}}
+
+
+\newcommand{\dt}{\partial_t}
+\newcommand{\dtt}{\partial_t^2}
 
 %%% TvB: Added for plots, some might be redundant ##
 
@@ -224,12 +241,126 @@ Set1-5\nextlist
 \maketitle
 
 \section{Introduction}
+\noindent Let $\Omega \subset \mathbb{R}^d$ be a bounded domain such that there exists subdomains $\Omega_1, \Omega_2 \subseteq \Omega$ such that $\Omega = \overline{\Omega}_1 \cup \overline{\Omega}_2$ and $\Omega_1 \cap \Omega_2 = \emptyset$. We consider a scalar wave speed $c(x) = \mathbbm{1}_{\Omega_1} c_1(x) + \mathbbm{1}_{\Omega_2} c_2(x)$, $c_i \in C^\infty(\Omega_i)$, $i = 1,2$, which may be discontinuous across the interface $\Gamma = \Omega \setminus (\Omega_1 \cup \Omega_2)$, but constant in time.  
+\noindent In this article, we consider the following problem: find $u \in Q \rightarrow \mathbb{R}$ such that 
+\begin{subequations}
+    \begin{alignat}{2}
+        (\wop u, u) &= (0,0) \quad &&\text{ in } Q \times \Sigma, \\
+        u &= u_{\omega} &&\text{ in } \omega_T,
+    \end{alignat}    
+\end{subequations}
+where $\wop u := \partial_t^2 - \div(c(x)^2 \nabla u)$ is the wave operator and $u_{\omega}$ is the known data. 
+
+\noindent The continuous problem has been studied in \cite{Filippas22}. In particular, the following result has been shown:
+\begin{thm}[Thm. 1.1 of \cite{Filippas22}]\label{thm:filippas}
+    For any nonempty subset $\omega \subset \Omega$ and $T > \text{dist}(\Omega,\omega)$, there exists $C,\kappa,\mu_0$ such that for any initial data $(u_0,u_1) \in H^1_0(\Omega) \times L^2(\Omega)$ and $u$ solving... one has for any $\mu \ge \mu_0$ that 
+    \begin{equation}
+        \Vert (u_0,u_1) \Vert_{L^2 \times H^{-1}} \le C e^{\kappa \mu} \Vert u \Vert_{L^2(\omega_T)} + \frac{C}{\mu} \Vert (u_0,u_1) \Vert_{H^1 \times L^2}. 
+    \end{equation}
+\end{thm}
+
+\section{Discretization (fully discrete \& dG in time)} 
+\noindent We introduce a similar scheme as considered in \cite{BP24}, but we incoporate the wave speed $c$. \textbf{spaces, etc..} \\
+We introduce the bilinear form 
+\begin{equation}
+    A[\Uh,\Yh] := \sum_{n = 0}^{N -1} \left\{ (\dt \ul_2, \yl_1)_{Q^n} + a(\ul_1,\yl_1)_{Q^n} + (\dt \ul_1 - \ul_2,\yl_2)_{Q^n} - (c(x)^2 \nabla \ul_1 \cdot \mathbf{n}, \yl_1)_{\Sigma^n} \right\}
+\end{equation} 
+and the Lagrangian 
+\begin{align*}
+    \cL_h (\Uh, \Zh) := \frac{1}{2} \Vert \ul_1 - u_{\omega} \Vert^2_{\omega_T} + A[\Uh,\Zh] + \frac{1}{2} \gamma S_h(\Uh,\Uh) - \frac{1}{2} \gamma^\ast S_h^\ast(\Zh,\Zh) + \frac{\gamma}{2} \Sud(\Uh,\Uh).
+\end{align*}
+To define the stabilization terms $S_h$ and $S_h^\ast$, we introduce the following terms: 
+\begin{align*}
+    J(\Uh,\Wh) &:= \sum_{n = 0}^{N -1} \int_{I_n} \sum_{F \in \mathcal{F}_i} h (\jump{c(x)^2 \nabla \ul_1}, \jump{c(x)^2 \nabla \wl_1})_F \ \dT, \\
+    I_0(\Uh,\Wh) &:= \sum_{n = 0}^{N -1} (\ul_2 - \dt \ul_1, \wl_2-\dt \wl_1)_{Q_n}, \\
+    G(\Uh,\Wh) &:= \sum_{n = 0}^{N -1} \int_{I_n} \sum_{K \in \mathcal{T}_h} h^2 (\dt \ul_2 - \div (c(x)^2 \nabla \ul_1),\dt \wl_2 -\div( c(x)^2 \nabla \wl_1))_K \ \dT, \\
+    R(\Uh,\Wh) &:= \sum_{n = 0}^{N -1} h^{-1} (\ul_1,\wl_1)_{\Sigma^n}. 
+\end{align*}
+Then, we define the primal stabilizer as 
+\begin{equation}
+    S_h(\Uh,\Wh) := J(\Uh,\Wh) + I_0(\Uh,\Wh) + G(\Uh,\Wh) + R(\Uh,\Wh), 
+\end{equation}
+and the dual stabilizer through 
+\begin{equation}
+    S_h^\ast(\Yh,\Zh) := \sum_{n = 0}^{N-1} \left\{ (\yl_1,\zl_1)_{Q^n} + a(\yl_1,\zl_1)_{Q^n} + (\yl_2,\zl_2)_{Q^n} + h^{-1} (\yl_1,\zl_1)_{\Sigma^n} \right\}.
+\end{equation}
+The stabilization term $\Sud$ imposes regularity on the discontinuities in time and is defined as 
+\begin{equation}
+    \Sud (\Uh,\Wh) := \underline{I}_1^{\uparrow \downarrow}(\Uh,\Wh) + \underline{I}_2^{\uparrow \downarrow}(\Uh,\Wh),
+\end{equation}
+where 
+\begin{align*}
+    \underline{I}_1^{\uparrow \downarrow}(\Uh,\Wh) &:= \sum_{n = 0}^{N-1} \left\{ \frac{1}{\Delta t} (\jump{\ul_1^n},\jump{\wl_1^n})_{\Omega} + \Delta t (c(x)^2 \jump{\nabla \ul_1^n},c(x)^2 \jump{\nabla \wl_1^n})_{\Omega}\right\}, \\
+    \underline{I}_2^{\uparrow \downarrow}(\Uh,\Wh) &:= \sum_{n = 0}^{N-1} \frac{1}{\Delta t} (\jump{\ul_2^n},\jump{\wl_2^n})_{\Omega}.
+\end{align*}
+
+\noindent The first order optimality conditions then take the form: Find $(\Uh,\Zh) \in ...$ such that 
+\begin{alignat*}{2}
+    (\ul_1,\wl_1)_{\omega_T} + A[\Wh,\Zh] + \gamma S_h(\Uh,\Wh) + \Sud(\Uh,\Wh) &= (u_{\omega},\wl_1)_{\omega_T} \quad &&\forall \Wh \in ... \\
+    A[\Uh,\Yh] - \gamma^{\ast} S_h^\ast(\Yh,\Zh) &= 0 \quad &&\forall \Yh \in ... 
+\end{alignat*}
+For convenience, we introduce
+\begin{equation}
+    \begin{aligned}
+        B[(\Uh,\Zh),(\Wh,\Yh)] := &(\ul_1,\wl_1)_{\omega_T} + A[\Wh,\Zh]+ \gamma S_h(\Uh,\Wh) \\
+        &+  \Sud(\Uh,\Wh) + A[\Uh,\Yh] - \gamma^{\ast} S_h^\ast(\Yh,\Zh),
+    \end{aligned}
+\end{equation}
+such that the first order optimality conditions can be written as: Find $(\Uh,\Zh) \in ...$ such that
+\begin{equation}
+    B[(\Uh,\Zh),(\Wh,\Yh)] = (u_{\omega},\wl_1)_{\omega_T} \quad \forall (\Wh,\Yh) \in ...
+\end{equation}
+
+
+\section{Analysis}
+\noindent We define the norms \textbf{has to be shown that they are indeed norms!} 
+\begin{equation}
+    \tnorm{ (\Uh,\Zh) }^2 := \gamma \vert \Uh \vert^2_{S_h} + \vert \Uh \vert^2_{\uparrow \downarrow} + \Vert \ul_1 \Vert^2_{\omega_T} + \gamma^{\ast} \Vert \Zh \Vert^2_{S_h^\ast},
+\end{equation}
+where $\vert \cdot \vert_{S_h}, \vert \cdot \vert_{\uparrow \downarrow}$, and $\Vert \cdot \Vert_{S_h^{\ast}}$ are the semi-norms, respectively norms, induced by the stabilizers $S_h$, $\Sud$, and $S_h^{\ast}$:
+\begin{equation}
+    \vert \Uh \vert^2_{S_h} := S_h(\Uh,\Uh), \quad \vert \Uh \vert^2_{\uparrow \downarrow} := \Sud(\Uh,\Uh), \quad \Vert \Zh \Vert^2_{S_h^{\ast}} := S_h^{\ast}(\Zh,\Zh).
+\end{equation}
+
+We modify the steps from \cite{BP24} to show that $\tnorm{(\cdot,\cdot)}$ is indeed a norm. 
+
+\begin{lem}
+    The expression $\tnorm{(\cdot,\cdot)}$ is a norm on ... 
+\end{lem}
+
+\begin{proof}
+    It suffices to show that $\tnorm{(\Uh,\Zh)} = 0$ implies that $\Uh=\Zh= 0$. We first note that $\vert \Uh \vert_{\uparrow \downarrow} = 0$ immediately implies that $(\ul_1,\ul_2) \in [H^1(Q)]^2$. Furthermore, by definition of $\tnorm{(\cdot,\cdot)}$ and definition the stabilization terms $S_h$ and $S_h^{\ast}$, we have that $\Zh = 0$, $\ul_1 \vert_{\Sigma} = 0$, $\ul_1 \vert_{\omega_T} = 0$ and $\dt \ul_1 = \ul_2$. Similar to \cite[Lem. 2.1]{BP24}, we have with partial integration that 
+    \begin{align*}
+        \Vert \wop \ul_1 \Vert^2_{H^{-1}(Q)} &:= \sup_{\substack{  y \in H^1_0(Q), \\ \norm{y}_{H^1(Q) } = 1  }} \int_{Q} \left\{ -(\dt \ul_1) \dt y + c(x)^2 \nabla \ul_1 \nabla y \right\}  \\
+        &= \sup_{\substack{  y \in H^1_0(Q), \\ \norm{y}_{H^1(Q) } = 1  }} \Big\{ \sum_{n = 0}^{N-1} (\ul_2 - \dt \ul_1, \dt y)_{Q_n} + \sum_{n = 0}^{N-1} \int_{I_n} \sum_{K \in \mathcal{T}_h} (\dt \ul_2 - \div(c(x)^2 \nabla \ul_1),y)_{K} \ \dT \\
+        &\qquad + \sum_{n = 0}^{N-1} \int_{I_n} \sum_{F \in \mathcal{F}_i} (\jump{c(x)^2 \nabla \ul_1}, y)_F \ \dT + \sum_{n = 0}^{N-1} (\jump{\ul_1^n},y)_{\Sigma^n} \Big\}.
+    \end{align*}
+    Thus it follows by definition of the stabilizers and $\tnorm{(\Uh,\Zh)} = 0$ that $\Vert \wop \ul_1 \Vert_{H^{-1}(Q)} = 0$. It directly follows from \ref{thm:filippas} that the initial data are zero. {\color{gray} Thats means that $\ul_1$ solves the wave equation with rhs zero, zero initial data, is zero on the boundary and zero on $\omega$... should enough to say that $\ul_1 = 0$ everywhere!?}
+\end{proof}
+
+\noindent Since $B[(\Uh,\Zh),(\Uh,-\Zh)] = \tnorm{(\Uh,\Zh)}\tnorm{(\Uh,-\Zh)}$, the inf-sup stability of $B$ on ... is a direct consequence of the previous lemma, i.e. there exists a constant $C>0$ such that 
+\begin{equation}
+    \sup_{(\Wh,\Yh) \in ...} \frac{B[(\Uh,\Zh),(\Wh,\Yh)]}{\tnorm{(\Wh,\Yh)}} \ge C \tnorm{(\Uh,\Zh)}.
+\end{equation}
+
 
 \section{Numerical experiments}
+\subsection{Example in one space dimension}
+We consider the example from \cite{BDE22} with domain $\Omega = [0,1]$ that is partitioned into the subdomains $\Omega_1 = (0,0.5)$ and $\Omega_2 = (0.5,1.0)$ such that $\Omega = \overline{\Omega}_1 \cup \overline{\Omega}_2$. Then, we fix the wavespeed $c_2 := c \vert_{\Omega_2} = 1$ and consider different values for $c_1 := c \vert_{\Omega_1}$. With $u_0 (x) := \frac{1}{100} \exp(-(20(x-\frac{1}{5}))^2)$, the exact solution is given by 
+\begin{equation}
+    u(x,t) = \begin{cases}
+      \sum_{k \ge 0} \left( \frac{c_2-c_1}{c_2+c_1}\right)^k \left( u_0 (k + x - c_1 t) 0- u_0(k-x-c_1 t)\right), x \in \Omega_1, \\
+      \left( \frac{2c_1}{c_2+c_1}\right) \sum_{k \ge 0} \left( \frac{c_2 - c_1}{c_2 + c_1}\right)^k u_0 \left( \frac{c_1}{c_2} \left( x - \frac{1}{2}\right) +k + \frac{1}{2} - c_1 t \right), x \in \Omega_2. 
+    \end{cases}
+\end{equation}
 
+
+\subsection{Example in two space dimensions}
+
+\bibliographystyle{alpha}
+\bibliography{references}
 
 \end{document}
-
 
 
 
