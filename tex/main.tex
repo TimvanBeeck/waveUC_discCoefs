@@ -257,31 +257,45 @@ Set1-5\nextlist
 \maketitle
 
 \section{Introduction}
-\noindent In this article, we consider the discretization of a unique continuation problem for the wave equation with discontinuous coefficients. In the following, let $\Omega \subset \mathbb{R}^d$ be a bounded domain with smooth boundary $\partial \Omega$ such that there exists subdomains $\Omega_1, \Omega_2 \subseteq \Omega$ such that $\Omega = \overline{\Omega}_1 \cup \overline{\Omega}_2$ and $\Omega_1 \cap \Omega_2 = \emptyset$. We consider a scalar wave speed $c(x) = \mathbbm{1}_{\Omega_1} c_1(x) + \mathbbm{1}_{\Omega_2} c_2(x)$, $c_i \in C^\infty(\Omega_i)$, $i = 1,2$, which may be discontinuous across the interface $\Gamma = \Omega \setminus (\Omega_1 \cup \Omega_2)$, but constant in time. For a final time $T > 0$, we consider the space-time domain $Q = (0,T) \times \Omega$ with lateral boundary $\Sigma \coloneqq (0,T) \times \partial \Omega$. For a subset $\omega \subset \Omega$, we define the data domain $\omega_T \coloneqq (0,T) \times \omega$. Then, we consider the problem: find $u : Q \rightarrow \mathbb{R}$ such that 
-\begin{subequations}\label{eq:continuousProblem}
-    \begin{alignat}{2}
-        (\wop u, u) &= (0,0) \quad &&\text{ in } Q \times \Sigma, \label{eq:waveEquation} \\ 
-        u &= u_{\omega} &&\text{ in } \omega_T, \label{eq:DataMatch}
-    \end{alignat}    
-\end{subequations}
-where $\wop u := \partial_t^2 - \div(c(x)^2 \nabla u)$ is the wave operator and $u_{\omega} \in L^2(\omega_T)$ is the known data. 
+\noindent In this article, we consider the discretization of a unique continuation problem for the wave equation with discontinuous coefficients. In the following, let $\Omega \subset \mathbb{R}^d$ be a bounded domain with smooth boundary $\partial \Omega$ such that there exists subdomains $\Omega_1, \Omega_2 \subseteq \Omega$ such that $\Omega = \overline{\Omega}_1 \cup \overline{\Omega}_2$ and $\Omega_1 \cap \Omega_2 = \emptyset$. We consider a scalar wave speed $c(x) = \mathbbm{1}_{\Omega_1} c_1(x) + \mathbbm{1}_{\Omega_2} c_2(x)$, $c_i \in C^\infty(\Omega_i)$, $i = 1,2$, which may be discontinuous across the interface $\Gamma = \Omega \setminus (\Omega_1 \cup \Omega_2)$, but constant in time. For a final time $T > 0$, we consider the space-time domain $Q = (0,T) \times \Omega$ with lateral boundary $\Sigma \coloneqq (0,T) \times \partial \Omega$. For a subset $\omega \subset \Omega$, we define the data domain $\omega_T \coloneqq (0,T) \times \omega$. In the following, let $\wop$ be the wave operator defined as 
+\begin{equation*}
+    \wop u := \partial_t^2 - \div(c(x)^2 \nabla u).
+\end{equation*}
+In particular, we write $\square_1$ if $c_i = 1$, $i = 1,2$, i.e. if we are considering the case of homogeneous media. 
+Then, we consider the problem: find $u : Q \rightarrow \mathbb{R}$ such that 
+\begin{equation}\label{eq:waveEquation}
+        (\wop u, u) = (0,0) \quad \text{ in } Q \times \Sigma.  
+\end{equation}
+To ensure that the problem is well-posed, one usually prescribes initial data 
+\begin{equation}\label{eq:initialData}
+    (u,\dt u) \vert_{t = 0} = (u_0,u_1) \text{ in } \Omega. \tag{IVP} 
+\end{equation}
+Here we will consider a data assimilation problem instead, i.e. we assume that the initial data is unknown and that there are given measurements $u_{\omega} \in L^2(\omega_T)$ which are prescribed in $\omega_T$: 
+\begin{equation}\label{eq:dataMatch}
+    u = u_{\omega} \text{ in } \omega_T. \tag{DA}
+\end{equation}
 
 
-\noindent If $\partial \Omega$ is stricly convex and $c_1 = c_2 = 1$, the problem \eqref{eq:continuousProblem} is Lipschitz stable if the set $\omega_T \subset Q$ fulfills the geometric control condition (GCC) \cite{BLR88,BLR92}. More precisely, we have the following theorem, cf. \cite[Rem. A.5]{BFMO21control}. 
+\noindent If $\partial \Omega$ is stricly convex and $c_i = 1$, $i = 1,2$, the problem \eqref{eq:waveEquation}-\eqref{eq:dataMatch} is Lipschitz stable if the set $\omega_T \subset Q$ fulfills the geometric control condition (GCC) \cite{BLR88,BLR92}. More precisely, we have the following theorem, cf. \cite[Thm. A.4 \& Rem. A.5]{BFMO21control}. 
 
-\begin{thm}
-    Assume that $c_1= c_2 = 1$ and that $\partial \Omega$ is stricly convex. If $\omega_T \subset Q$ fulfills the GCC, then there exists a constant $C > 0$ such that for any $\phi \in H^1(Q)$ we have the following estimate 
-    \begin{equation*}
-        \Vert \phi \Vert_{L^\infty(0,T;L^2(\Omega))} + \Vert \dt \phi \Vert_{L^2(0,T;H^{-1}(\Omega))} \le C \left(  \Vert \phi \Vert_{L^2(\omega_T)} + \Vert \phi \Vert_{L^2(\Sigma)} + \Vert \wop \phi \Vert_{H^{-1}(Q)} \right). 
-    \end{equation*}
+\begin{thm}\label{thm:Lipschitz}
+    Assume that $c_i = 1$, $i = 1,2$, and that $\partial \Omega$ is stricly convex. If $\omega_T \subset Q$ fulfills the GCC, then there exists a constant $C > 0$ such that for any $\phi \in H^1(Q)$ we have the following estimates
+    \begin{align*}
+        \Vert \phi \Vert_{L^\infty(0,T;L^2(\Omega))} + \Vert \dt \phi \Vert_{L^2(0,T;H^{-1}(\Omega))} &\le C \left(  \Vert \phi \Vert_{L^2(\omega_T)} + \Vert \phi \Vert_{L^2(\Sigma)} + \Vert \wop \phi \Vert_{H^{-1}(Q)} \right), \\
+        \Vert \phi \vert_{t = 0} \Vert_{L^2(\Omega)} + \Vert \dt \phi \vert_{t = 0} \Vert_{H^{-1}(\Omega)} &\le C \left(\Vert \phi \Vert_{L^2(\omega_T)} + \Vert \phi \Vert_{L^2(\Sigma)} + \Vert \wop \phi \Vert_{H^{-1}(Q)} \right). 
+    \end{align*}
 \end{thm}
 
-In that case, this estimate can be applied to $\phi = u-u_h$ to recover convergence rates in terms of the norm on the left-hand side. However, in the general case where $c_1 \not = c_2 \not = 1$, the above result is not applicable. Let $\operatorname{dist}_c(x,\omega_T) := \inf_{y \in \omega_T} d_c(x,y)$, where $d_c$ is the metric induced by the wave speed $c$. Then, we have the following result \cite[Thm. 1.1]{Filippas22}: 
-\begin{thm}[Thm. 1.1 of \cite{Filippas22}]\label{thm:filippas}
-    For any nonempty subset $\omega_T \subset \Omega$ and $T > 2 \sup_{x \in \Omega} \operatorname{dist}_{c}(x,\omega_T)$, there exists $C,\kappa$ such that for any initial data $(u_0,u_1) \in H^1_0(\Omega) \times L^2(\Omega)$ and $u$ solving... one has for any $\mu > 0$ that 
-    \begin{equation}
-        \Vert (u_0,u_1) \Vert_{L^2 \times H^{-1}} \le C e^{\kappa \mu} \Vert u \Vert_{L^2(\omega_T)} + \frac{C}{\mu} \Vert (u_0,u_1) \Vert_{H^1 \times L^2}. 
+\noindent In that case, this estimate can be applied to $\phi = u-u_h$ to recover convergence rates in terms of the norm on the left-hand side. However, in the general case where $c_1 \not = c_2 \not = 1$, the above result is not applicable. Let $\operatorname{dist}_c(x,\omega_T) := \inf_{y \in \omega_T} d_c(x,y)$, where $d_c$ is the metric induced by the wave speed $c$. Then, we have the following result \cite[Thm. 5.17]{Filippas22}: 
+\begin{thm}[Thm. 5.17 of \cite{Filippas22}]\label{thm:filippas}
+    Let $\omega_T \subset \Omega$ be nonempty and $T > 2 \sup_{x \in \Omega} \operatorname{dist}_{c}(x,\omega_T)$. Then, there exists $C,\kappa$ such that for any initial data $(u_0,u_1) \in H^1_0(\Omega) \times L^2(\Omega)$ and $u$ solving \eqref{eq:waveEquation}-\eqref{eq:initialData} one has for any $\mu > 0$ that 
+    \begin{equation}\label{eq:FilippasEstimate}
+        \Vert (u_0,u_1) \Vert_{L^2 \times H^{-1}} \le C e^{\kappa \mu} \left( \Vert u \Vert_{L^2(\omega_T)} + \Vert \wop u \Vert_{L^2(Q)} \right) + \frac{C}{\mu} \Vert (u_0,u_1) \Vert_{H^1 \times L^2}. 
     \end{equation}
+    In particular, if $(u_0,u_1) \not = (0,0)$ we have that 
+    \begin{equation}\label{eq:FilippasEstimateLog}
+        \Vert (u_0,u_1) \Vert_{L^2 \times H^{-1}} \le C \frac{\Vert (u_0,u_1) \Vert_{H^1 \times L^2}}{\log \left( 1 + \frac{\Vert (u_0,u_1) \Vert_{H^1 \times L^2}}{ \Vert u \Vert_{L^2(\omega_T)} + \Vert \wop u \Vert_{L^2(Q)}} \right)}. 
+    \end{equation} 
 \end{thm} 
 
 We note that the assumption that $T > 2 \sup_{x \in \Omega} \text{dist}(x,\omega)$ is in general weaker than the GCC. 
@@ -397,7 +411,7 @@ where
     \tnorm{ (\Uh,\Zh) }^2 := \gamma \vert \Uh \vert^2_{S_h} + \vert \Uh \vert^2_{\uparrow \downarrow} + \Vert \ul_1 \Vert^2_{\omega_T} + \gamma^{\ast} \Vert \Zh \Vert^2_{S_h^\ast},
 \end{equation}
 and its strenghend version
-\begin{equation}
+\begin{equation}\label{eq:tnormwop}
     \begin{aligned}
         \tnorm{(\Uh, \Zh)}^2_{\wop} := \tnorm{(\Uh, \Zh)}^2 &+ \sum_{n = 0}^{N -1} \Big\{ \Vert \dt u_2 \Vert^2_{Q^n} + \Vert c^2 \nabla u_1 \Vert^2_{Q^n} + \Vert \dt u_1 \Vert^2_{Q^n} \\
         &+ \Vert u_2 \Vert^2_{Q^n} + \int_{I_n} \sum_{K \in \mathcal{T}_h} h^2 \Vert c^2 u_1 \Vert^2_{H^2(K)} \dT \Big\}. 
@@ -417,7 +431,7 @@ Note it suffices to show that $\tnorm{(\cdot,\cdot)}$ is a norm. We modify the s
         &\qquad+ \sum_{n = 0}^{N-1} \int_{I_n} \sum_{K \in \mathcal{T}_h} (\dt \ul_2 - \div(c(x)^2 \nabla \ul_1),y)_{K} \ \dT \\
         &\qquad + \sum_{n = 0}^{N-1} \int_{I_n} \sum_{F \in \mathcal{F}_i} (\jump{c(x)^2 \nabla \ul_1}, y)_F \ \dT + \sum_{n = 0}^{N-1} (\jump{\ul_1^n},y)_{\Sigma^n} \Big\}.
     \end{align*}
-    Thus it follows by definition of the stabilizers and $\tnorm{(\Uh,\Zh)} = 0$ that $\Vert \wop \ul_1 \Vert_{H^{-1}(Q)} = 0$. It directly follows from Thm. \ref{thm:filippas} that the initial data is zero. {\color{gray} That means that $\ul_1$ solves the wave equation with rhs zero, zero initial data, is zero on the boundary and zero on $\omega$... should enough to say that $\ul_1 = 0$ everywhere!?}
+    Thus it follows by definition of the stabilizers and $\tnorm{(\Uh,\Zh)} = 0$ that $\Vert \wop \ul_1 \Vert_{H^{-1}(Q)} = 0$. Thus, $\ul_1$ solves \eqref{eq:waveEquation} and by taking $\mu \rightarrow \infty$ in Thm. \ref{thm:filippas}, it follows that the initial data is zero. As solutions to \eqref{eq:waveEquation} depend continuously on the data \cite{StolkPhD}, it follows that $\Uh = 0$. 
 \end{proof}
 
 \noindent A direct consequence of this result is that the bilinear form $B$ enjoys inf-sup stability on $\ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ with respect to the $\tnorm{(\cdot,\cdot)}$-norm. 
@@ -502,21 +516,45 @@ Note it suffices to show that $\tnorm{(\cdot,\cdot)}$ is a norm. We modify the s
 \end{proof}
 
 
-\begin{rmk}[The case $c_1 = c_2 = 1$]
-    Theorem \ref{thm:bestapprox} allows us to recover the results obtained in \cite{BP24}. To this end, let $\Pi_h$ be the interpolation operator into $\ProdFullyDiscrSpace{k}{q}$ as defined in \cite[Lem. 2.4]{BP24}. Then, for $u \in H^{k+2}(Q)$ it holds that
-    \begin{equation}
-        \tnorm{(\mathbf{U} - \Pi_h \mathbf{U}, 0)}_{\wop} \le C h^k \Vert u \Vert_{H^{k+2}(Q)},
-    \end{equation} 
-    and consequently Thm. \ref{thm:bestapprox} gives 
-    \begin{equation}
-        \begin{aligned}
-            \tnorm{(\mathbf{U} - \Uh,\Zh)} &\le \left(1 + \frac{C}{C_B} \right) \inf_{\Vh \in \ProdFullyDiscrSpace{k}{q}} \tnorm{(\mathbf{U} - \Vh, 0)}_{\wop} \\
-            &\le \left(1 + \frac{C}{C_B}\right) C h^k \Vert u \Vert_{H^{k+2}(Q)}. 
-        \end{aligned}
+\begin{cor}\label{cor:tnormConvRates}
+    Under the assumption of Thm. \ref{thm:bestapprox}, we have that
+    \begin{equation*}
+        \tnorm{(\mathbf{U} - \Uh,\Zh)} \le C h^s \Vert u \Vert_{H^m(Q)},
+    \end{equation*}
+    where $(s,m) := (\min\{ k,q \}, \max\{k,q\}+3)$. 
+\end{cor}
+
+\begin{proof}
+    Due to the assumption that $c_i \in C^\infty(\Omega_i)$, $i = 1,2$, we have that 
+    \begin{equation*}
+        \tnorm{(\Uh - \Vh, 0)}_{\wop} \le C \tnorm{(\Uh - \Vh, 0)}_{\square_1},
+    \end{equation*}
+    where $\tnorm{(\cdot, \cdot)}_{\square_1}$ is defined by \eqref{eq:tnormwop} with $c_i = 1$, $i = 1,2$. Thus, we can apply the interpolation results derived in \cite[Lem. 2.4]{BP24} to obtain the claim. 
+\end{proof}
+
+
+\begin{rmk}[Homogenous media]\label{rem:homMedia}
+    Assume that the set $\omega_T \subset \Omega$ fulfills the GCC. In the case where $c_i = 1$, $i = 1,2$, we can apply the Lipschitz stability result from Thm. \ref{thm:Lipschitz} to proof convergence in a physically relevant norm, see \cite[Thm. 4.4]{BP24}. As discussed in \cite[Sec. 4]{BP24}, there exists a suitable lifting operator $L_{\Delta t} : \FullyDiscrSpace{k}{q} \rightarrow C^0(0,T;V_h^k)$ such that $L_{\Delta t} \ul_1 \in H^1(Q)$. Thus, applying Thm. \ref{thm:Lipschitz} and Cor. \ref{cor:tnormConvRates} to the residual $u - L_{\Delta t} \ul_1$ yields that 
+    \begin{equation}\label{eq:homMedia:estimate}
+        \Vert u - L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}  + \Vert \dt (u - L_{\Delta t} \ul_1) \Vert_{L^2(0,T;H^{-1}(\Omega))} \le C h^s \Vert u \Vert_{H^m(Q)}. 
     \end{equation}
 \end{rmk}
 
+\textbf{discuss what we expect in the heterogenous case...}
 
+\noindent \textbf{Assume for now} that we can rewrite the estimates from Thm. \ref{thm:filippas} with $\Vert \wop u \Vert_{H^{-1}(Q)}$ instead of $\Vert \wop u \Vert_{L^2(Q)}$. As discussed in Rem. \ref{rem:homMedia}, we can then apply this continuum estimate to the residual $\tilde{e}_h := u - L_{\Delta t} \ul_1$, where the lifting operator $L_{\Delta t}$ ensures that $\tilde{e}_h \in H^1$. Following the argumentation from \cite[Thm. 4.4]{BP24}, it follows that 
+\begin{equation}
+    \Vert \ul_1 - L_{\Delta t} \ul_1 \Vert_{L^2(\omega_T)} \le C h^s \Vert u \Vert_{H^m(Q)}, 
+\end{equation}
+and $\Vert u - \ul_1 \Vert_{L^2(\omega_T)} \le \tnorm{(\mathbf{U}-\Uh,\Zh)}$ by definition of the triple-norm, it follows from Cor. \ref{cor:tnormConvRates} that $\Vert \tilde{e}_h \Vert_{L^2(\omega_T)} \le C h^s \Vert u \Vert_{H^m(Q)}$. Furthermore, \textbf{with similar arguments as in} \cite[Thm. 4.4]{BP24}, we obtain that 
+\begin{equation}
+    \Vert \wop \tilde{e}_h \Vert_{H^{-1}(Q)} \le C h^s \Vert u \Vert_{H^m(Q)}. 
+\end{equation}
+Thus, \eqref{eq:FilippasEstimateLog} yields 
+\begin{equation}
+    \Vert (u - \ul_1) \vert_{t = 0} \Vert_{L^2(\Omega)}  + \Vert \dt (u - \ul_1) \vert_{t = 0} \Vert_{H^{-1}(\Omega)} \le C C_{0,1} \log(1 + C_{0,1} h^{-s} \Vert u \Vert_{H^m(Q)}^{-1}),
+\end{equation} 
+where $C_{0,1} := \Vert (u_0,u_1) \Vert_{H^1 \times L^2}$. While this estimates holds under the general condition $T > 2 \sup_{x \in \Omega} d_c(x,\omega_T)$, we suspect that under the assumption of the geometric control condition, the estimate can be improved considerably. In particular, the numerical experiments considered in the following section suggest that a similar estimate to \eqref{eq:homMedia:estimate} holds in the heterogenous case.
 
 \section{Numerical experiments}
 \noindent In this section, we present numerical experiments carried out with the proposed method. The examples are implemented using the \texttt{FEniCSx} library \cite{BarattaEtal2023,BasixJoss,ScroggsEtal2022,AlnaesEtal2014}. Reproduction material is available at \textbf{insert reproduction files...}
@@ -1271,19 +1309,12 @@ We consider the example from \cite{BDE22}. With $u_0 (x) := \frac{1}{100} \exp(-
                 group size=1 by 1,
                 horizontal sep=1.5cm,
                 vertical sep=2cm,
-                },
-            ymajorgrids=true,
-            grid style=dashed,
-            %ymin = 1e-3, ymax = 0.5e1,
-            ]    
-                \nextgroupplot[width=9cm,height=7cm,domain=1:4,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$\Vert u_0 - u_h \vert_{t = 0} \Vert_{H^1(\Omega)} + \Vert \partial_t (u - u_h) \vert_{t = 0} \Vert_{L^2(\Omega)}$}, %cycle list name=paulcolors, 
+                },0m,domain=1:4,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$\Vert u_0 - u_h \vert_{t = 0} \Vert_{H^1(\Omega)} + \Vert \partial_t (u - u_h) \vert_{t = 0} \Vert_{L^2(\Omega)}$}, %cycle list name=paulcolors, 
                 legend pos=south east, %ymax = 1e2, %yticklabels={,,},
                 ]
                 %\addplot+[discard if not={contrast}{1.0},line width=2.5pt,mark=None,color=black] table [x=x, y=y, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/exact_plot_data.csv};
                 \addplot+[discard if not={order}{2},discard if not={L}{3},line width=1.1pt] table [x=contrast, y=H1-dt-at-t-0, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_noGCC2_Restricted.csv};
-                \addplot+[discard if not={order}{2},discard if not={L}{3},line width=1.1pt,dashed] table [x=contrast, y=bestapprox-H1-dt-at-t-0, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_noGCC2_Restricted.csv};
-               
-                \addplot+[line width=1.1pt,dashed] table [x=contrast, y expr=\thisrow{exp_Lambda}*1, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/1DsimpleSol_Filippas.csv};
+                \addplot+[discard if not={order}{2},discard if not={L}{3},line width=1.1pt,dashed] table [x=contrast, y=bestapprox-H1-dt-at-t-0, col sep=comma] {../../wave_data_assimilation/data/0
 
                 \addplot[gray, dashed, domain=1:4] {1*(1/2^(-2))^(x-0.9)};
                 \addplot[gray, dashed, domain=1:4] {1*(1/2^(-1))^(x-0.9)};
@@ -1300,6 +1331,48 @@ We consider the example from \cite{BDE22}. With $u_0 (x) := \frac{1}{100} \exp(-
 \end{comment}
 
 \subsubsection{Snell's law... }
+\noindent Finally, we consider a more elaborate example. We divide the unit-square $\Omega = [0,1]^2$ into $\Omega_1 = (0,0.5)^2$ and $\Omega_2 = (0.5,1)^2$ and fix the wave-speed $c_1 = 1$ in $\Omega_1$. Then, we consider the initial conditions 
+\begin{align*}
+    u_0 (x,y) &= \frac{1}{100} \exp(-(80(x+y-t-1/5))^2) \vert_{t=0}, \\
+    u_1(x,y) &= 128(x+y-t-1/5) \exp(-(80(x+y-t-1/5))^2) \vert_{t = 0}
+\end{align*}
+and compute a reference solution $u_{\text{ref}}$ numerically. We consider the data domain $\omega_T$ as described in Fig. \ref{fig:2d:SnellsLaw} and presribe $u = \Pi_h u_{\text{ref}}$ on $\omega_T$. 
+
+
+\newcommand{\hpoint}{0.85}
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[scale=4]
+        \draw (0,0) -- (1,0) -- (1,1) -- (0,1) -- cycle;
+        \draw[fill=gray!40,draw=none,opacity=0.5] (0,1) -- (0,\hpoint) -- (0.65,\hpoint) -- (0.65,1-\hpoint) -- (0,1-\hpoint) -- (0,0) -- (1,0) -- (1,1) -- cycle;
+        \node[draw=none] at (0.85,0.25) {\color{gray} $\omega$};
+        \draw[stealth-stealth] (0.7,1-\hpoint) -- (0.7,\hpoint); 
+        \node[draw=none] at (0.8,0.5) {\color{black} $h_\omega$};
+        \draw[dashed] (0.5,0.5) -- (0,0.5); 
+        \draw[-stealth,red,very thick] (0,0.2) -- (0.49,0.5) -- (0,0.8);
+        \draw[black,very thick] (0.5,0) -- (0.5,1); 
+        \node[draw=none] at (0.55,0.5) {\color{black} $\Gamma$};
+        \draw (0.25,0.5) to [bend right=45] (0.25,0.35);
+        \node[draw=none] at (0.28,0.44) {\color{black} $\theta_c$};
+        \node[draw=none] at (0.5,1.1) {GCC not fulfilled};
+        \begin{scope}[xshift=1.25cm]
+            \draw (0,0) -- (1,0) -- (1,1) -- (0,1) -- cycle;
+            \draw[fill=gray!40,draw=none,opacity=0.5] (0,1) -- (0,0.85*\hpoint) -- (0.65,0.85*\hpoint) -- (0.65,1-0.85*\hpoint) -- (0,1-0.85*\hpoint) -- (0,0) -- (1,0) -- (1,1) -- cycle;
+            \draw[stealth-stealth] (0.7,1-0.85*\hpoint) -- (0.7,0.85*\hpoint); 
+            \node[draw=none] at (0.8,0.5) {\color{black} $h_\omega$};
+            \node[draw=none] at (0.85,0.25) {\color{gray} $\omega$};
+            \draw[dashed] (0.5,0.5) -- (0,0.5); 
+            \draw[-stealth,red,very thick] (0,0.2) -- (0.49,0.5) -- (0,0.8);
+            \draw[black,very thick] (0.5,0) -- (0.5,1); 
+            \node[draw=none] at (0.55,0.5) {\color{black} $\Gamma$};
+            \draw (0.25,0.5) to [bend right=45] (0.25,0.35);
+            \node[draw=none] at (0.28,0.44) {\color{black} $\theta_c$};
+            \node[draw=none] at (0.5,1.1) {GCC fulfilled};
+        \end{scope}
+    \end{tikzpicture}
+    \caption{According to Snell's law, rays hitting the interface with an angle greater than the critical angle $\theta_c := \arcsin(\frac{c_1}{c_2})$ are reflected back into the domain $\Omega_1$. To ensure that the GCC is fulfilled, the height $h_{\omega}$ has to chosen smaller than $\tan(\theta_c)$.}
+    \label{fig:2d:SnellsLaw}
+\end{figure}
 
 
 \begin{comment}
