@@ -596,9 +596,10 @@ and its strengthened version
 \noindent In this section, we present numerical experiments carried out with the proposed method. The examples are implemented using the \texttt{FEniCSx} library \cite{BarattaEtal2023,BasixJoss,ScroggsEtal2022,AlnaesEtal2014}. Reproduction material is available at \textbf{insert reproduction files...}
 
 \subsection{Examples in one space dimension}
+\noindent We consider the unit interval $\Omega \coloneqq [0,1] \subset \mathbb{R}$. For a refinement level $L \in \mathbb{N}$, we partition the domain into $2^{L+1}$ uniform elements such that $h = 1/2^{L+1}$. The time step is chosen as $\Delta t = h$. 
 
 \subsubsection{Simple Example}\label{sec:numex:1D:simple}
-\noindent We set $\Omega \coloneqq [0,1]$ and define the subdomains $\Omega_1 = (0,0.5)$ and $\Omega_2 = (0.5,1.0)$ such that $\Omega = \overline{\Omega}_1 \cup \overline{\Omega}_2$. Then, we fix the wavespeed $c_2 := c \vert_{\Omega_2} = 1$ and consider different values for $c_1 := c \vert_{\Omega_1}$. As a first example, we consider the following exact solution considered in \cite{MHI08}
+\noindent We define the subdomains $\Omega_1 = (0,0.5)$ and $\Omega_2 = (0.5,1.0)$ such that $\Omega = \overline{\Omega}_1 \cup \overline{\Omega}_2$. Then, we fix the wavespeed $c_2 := c \vert_{\Omega_2} = 1$ and consider different values for $c_1 := c \vert_{\Omega_1}$. As a first example, we consider the following exact solution \cite{MHI08}
 \begin{equation}\label{eq:1D:exact:simple}
     u(x,t) := \begin{cases}
         \cos(w_1 c_1 t) \cos(w_1(x-0.5)), & x \in \Omega_1, \\
@@ -609,14 +610,49 @@ where we set $w_1 = 3 \pi$ and $w_2 = w_1 c_1 / c_2$. Furthermore, we define
 \begin{equation}
     \omega \coloneqq [0.0,0.25] \cup [0.75,1.0], \quad \text{and} \quad \Omega_R \coloneqq \Omega \setminus \omega = [0.25,0.75].
 \end{equation}
-In one space dimension, the domain $\omega_T$ fulfills the GCC if and only if $T > 2 \sup_{x \in \Omega} \operatorname{dist}_c(x,\omega_T)$, where $\operatorname{dist}_c(x,\omega_T)$ denotes the distance of $x$ to $\omega_T$ with respect to the rescaled metric $d_c$. Let $d(x,y) \coloneqq \vert x - y \vert$, $x, y \in \Omega$, be the Euclidean metric. Then, we have that
+Note that in one space dimension, the requirement \eqref{eq:Tcondition} on $T$ already implies the GCC. Let $d(x,y) \coloneqq \vert x - y \vert$, $x, y \in \Omega$, be the Euclidean metric. Then, we set
 \begin{equation}
-    d_c(x,y) \coloneqq \mathbbm{1}_{\Omega_1} c_1(x)^{-1} d(x,y) + \mathbbm{1}_{\Omega_2} c_2(x)^{-1} d(x,y), \quad x,y \in \Omega.
+    d_c(x,y) \coloneqq \mathbbm{1}_{\Omega_1} c_1(x)^{-1} d(x,y) + \mathbbm{1}_{\Omega_2} d(x,y), \quad x,y \in \Omega.
 \end{equation} 
-Thus, for $\omega$ as above, $c_2 = 1$ fixed and $c_1 > 1.0$, we require that $T > 0.25(1+c_1^{-1})$. 
+Thus, for $\omega$ as above, $c_2 = 1$ fixed and $c_1 > 1.0$, the condition \eqref{eq:Tcondition} translates to $T > 0.25(1+c_1^{-1})$. 
 
 
-and \textbf{compute until $T = 1.0$, correct...} to ensure that the GCC is fulfilled. Furthermore, we set $h = 1/2^{1+L}$ and $\Delta t = h/2$ for different refinement levels $L \in \{1,2,3,4\}$. The results of the experiments can be found in Fig. \ref{fig:jumpCoefs:contrast:2.5} and Fig. \ref{fig:jumpCoefs:quality}. ... \\
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[scale=3]
+        \draw[-stealth] (-0.15,0) -- (1.15,0); 
+        \draw[-stealth] (0,-0.15) -- (0,1.15);
+        \draw (0,0) -- (1,0) -- (1,1) -- (0,1) -- cycle;
+        \draw[fill=gray!40,draw=none,opacity=0.5] (0,0) -- (0.5,0) -- (0.5,1) -- (0,1) -- cycle;
+        \draw[-stealth] (0.5,0) -- (1,0.5) -- (0.5,1);
+        \node at (-0.15,1) {\footnotesize $T$}; 
+        \node at (0.75,-0.15) {\footnotesize $\sup_{x \in \Omega} \operatorname{dist}_c(x,\omega_T)$}; 
+        \node at (1.15,0.5) {\footnotesize $t_0$};
+        \draw (0.7,0) to[bend right=45] (0.65,0.15); 
+        \node at (0.6,0.05) {\footnotesize $\alpha$};
+        \node at (0.25,0.5) {\footnotesize $\omega_T$};
+        \begin{scope}[xshift=2cm]
+            \draw[-stealth] (-0.15,0) -- (1.15,0); 
+            \draw[-stealth] (0,-0.15) -- (0,1.15);
+            \draw (0,0) -- (1,0) -- (1,1) -- (0,1) -- cycle;
+            \draw[fill=gray!40,draw=none,opacity=0.5] (0,0) -- (0.25,0) -- (0.25,1) -- (0,1) -- cycle;
+            \draw[fill=gray!40,draw=none,opacity=0.5] (0.75,0) -- (1,0) -- (1,1) -- (0.75,1) -- cycle;
+            \draw[-stealth] (0.25,0) -- (0.75,0.5);
+            \node at (-0.15,1) {\footnotesize $T$}; 
+            \node at (0.5,-0.15) {\footnotesize $2 \sup_{x \in \Omega} \operatorname{dist}_c(x,\omega_T)$}; 
+            \node at (0.67,0.5) {\footnotesize $t_0$};
+            \draw (0.45,0) to[bend right=45] (0.4,0.15); 
+            \node at (0.35,0.05) {\footnotesize $\alpha$};
+            \node at (0.125,0.5) {\footnotesize $\omega_T$};
+            \node at (0.875,0.5) {\footnotesize $\omega_T$};
+        \end{scope}
+    \end{tikzpicture}
+    \caption{(\textbf{Can be deleted lateron, only for our own understanding:}) Illustration of the GCC and condition \eqref{eq:Tcondition} in one space dimension. The geometrical setup where the data is given only in one half of the domain is the worst case, because the ray can be reflected at the boundary. We still calculate that $1 = \tan(\alpha) = t_0 / \sup_{x \in \Omega} \operatorname{dist}_c(x,\omega_T)$, i.e. $T > 2 t_0 = 2\sup_{x \in \Omega} \operatorname{dist}_c(x,\omega_T)$ is required for the GCC. Note we can also assume that $c_1 = c_2 = 1$, because the metric is rescaled wrt to the wavespeed. Could probably show that the GCC and the condition on $T$ are in fact equivalent in one dimension.}
+\end{figure}
+
+
+\noindent Figure \ref{fig:jumpCoefs:contrast:2.5} shows that for $T$ large enough, the errors $\Vert u - u_h \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ and $\Vert \partial_t (u - u_h) \Vert_{L^2(0,T;L^2(\Omega_R))}$ converge with order $\mathcal{O}(h^k)$. In contrast, if $T$ is chosen too small such that the GCC is not satisfied, the errors do not converge optimally. 
+Figures \ref{fig:jumpCoefs:quality} and \ref{fig:jumpCoefs:increasingcontrast} show that ... 
 
 
 
@@ -634,7 +670,7 @@ and \textbf{compute until $T = 1.0$, correct...} to ensure that the GCC is fulfi
             grid style=dashed,
             %ymin = 1e-3, ymax = 0.5e1,
             ]    
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$c_1 = 2.5$, $T=0.5$, $\Vert (u - u_h) \Vert_{L^\infty(0,T;L^2(\Omega_R))}$}, %cycle list name=, 
+            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$T=0.5$, $\Vert (u - u_h) \Vert_{L^\infty(0,T;L^2(\Omega_R))}$}, %cycle list name=, 
             legend pos=south west, %yticklabels={,,},
             ]
            
@@ -644,7 +680,7 @@ and \textbf{compute until $T = 1.0$, correct...} to ensure that the GCC is fulfi
             
             \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,color=orange,mark=square*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/simpleExact_T0.5_1D_jumpingCoefs_k3.csv};
             \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange,mark=square*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/simpleExact_T0.5_1D_jumpingCoefs_k3.csv};
-
+ 
            
             %L-infty-L2-u (k = 3)
             %\addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,color=cyan!60!black,mark=diamond*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/newexact_1D_jumpingCoefs_k3_WPFalse.csv};
@@ -661,13 +697,14 @@ and \textbf{compute until $T = 1.0$, correct...} to ensure that the GCC is fulfi
             \node [draw=none] at (axis description cs:0.45,0.35) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
             \legend{$k=2 $,, $k = 3$,}
 
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$c_1 = 2.5$, $T = 0.5$, $\Vert \partial_t (u - u_h) \Vert_{L^2(0,T;L^2(\Omega_R))}$}, %cycle list name=, 
+            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$T = 0.5$, $\Vert \partial_t (u - u_h) \Vert_{L^2(0,T;L^2(\Omega_R))}$}, %cycle list name=, 
             legend pos=south west, %yticklabels={,,},
             ]
+
             %L2-L2-u_t (k = 2)
             \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,color=orange,mark=square*] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../data/simpleExact_T0.5_1D_jumpingCoefs_k3.csv};
             \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange,mark=square*] table [x=L, y=bestapprox-L2-L2-error-u_t, col sep=comma] {../data/simpleExact_T0.5_1D_jumpingCoefs_k3.csv};
-            
+
 
             %L2-L2-u_t (k = 3)
             \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,color=cyan!60!black,mark=diamond*] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../data/simpleExact_T0.5_1D_jumpingCoefs_k3.csv};
@@ -680,7 +717,7 @@ and \textbf{compute until $T = 1.0$, correct...} to ensure that the GCC is fulfi
             \node [draw=none] at (axis description cs:0.30,0.87) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
             \node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
             \legend{$k=2 $,, $k = 3$,}
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$c_1 = 2.5$, $T = 0.1$, $\Vert (u - u_h) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=, 
+            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$T = 0.1$, $\Vert (u - u_h) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=, 
             legend pos=south west, %yticklabels={,,},
             ]
            
@@ -709,7 +746,7 @@ and \textbf{compute until $T = 1.0$, correct...} to ensure that the GCC is fulfi
             \node [draw=none] at (axis description cs:0.7,0.75) {\color{gray}\footnotesize $\!\!\mathcal{O}(\vert \log(h) \vert^{-1})$};
             \legend{$k=2 $,, $k = 3$,}
 
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$c_1 = 2.5$, $T = 0.1$, $\Vert \partial_t (u - u_h) \Vert_{L^2(0,T;L^2(\Omega))}$}, %cycle list name=, 
+            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$T = 0.1$, $\Vert \partial_t (u - u_h) \Vert_{L^2(0,T;L^2(\Omega))}$}, %cycle list name=, 
             legend pos=south west, %yticklabels={,,},
             ]
             %L2-L2-u_t (k = 2)
@@ -739,7 +776,7 @@ and \textbf{compute until $T = 1.0$, correct...} to ensure that the GCC is fulfi
             \end{groupplot}
         \end{tikzpicture}
     \end{center}
-    \caption{We consider the approximation of \eqref{eq:1D:exact:simple} with polynomial degree $k \in \{2,3\}$ for contrast $c_1 = 2.5$ (left \& middle). Both, the $L^\infty(0,T;L^2(\Omega_R))$-error of $u-u_h$ (left) and the $L^2(0,T;L^2(\Omega_R))$-error of $\dt (u-u_h)$ (middle) converge with order $\mathcal{O}(h^k)$ and are close to the respective error of the $L^2$-bestapproximation (dashed lines). For increasing contrast $c_1$, both errors increase with the same order of magnitude as the respective best approximation error (right). \textbf{left is with $T = 0.5$, the increasing contrast is still with $T = 1.0$ and not on $\Omega_R$..., also adjust the time step...}, rewrite..., plot $\mathcal{O}(\log(h))$ ... }
+    \caption{For the approximation of \eqref{eq:1D:exact:simple} with polynomial degree $k \in \{2,3\}$ and contrast $c_1 = 2.5$ we measure the errors $\Vert u - u_h \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ (left) and $\Vert \partial_t (u - u_h) \Vert_{L^2(0,T;L^2(\Omega_R))}$ (right) and compare to the respective error of the $L^2$-bestapproximation (dashed). We consider the final time $T = 0.5$ (top) and $T = 0.1$ (bottom). The gray dashed lines indicate the observed convergence rates.}
     \label{fig:jumpCoefs:contrast:2.5}
   \end{figure}
 
@@ -796,7 +833,7 @@ and \textbf{compute until $T = 1.0$, correct...} to ensure that the GCC is fulfi
         \end{tikzpicture}
         \pgfplotslegendfromname{named}
     \end{center}
-    \caption{For $k = 3$ and $L = 3$, we consider the errors $\Vert \dt (u-u_h) \Vert_{L^2(0,T;L^2(\Omega_R))}$ (left) and $\Vert u - u_h \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ (right) for increasing contrast $c_1 \in \{1.0,1.5,...,4.5\}$. We compare the case where $T = 0.5$ is fixed for all choices of $c_1$ and the case where $T$ decreases with the constrast $c_1$ while keeping the GCC fulfilled.}
+    \caption{For $k = 3$ and $L = 3$, we consider the errors $\Vert \dt (u-u_h) \Vert_{L^2(0,T;L^2(\Omega_R))}$ (left) and $\Vert u - u_h \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ (right) for increasing contrast $c_1 \in \{1.0,1.5,...,4.5\}$. We compare the case where $T = 0.5$ is fixed for all choices of $c_1$ and the case where $T$ barely fulfills $T > 0.25(1+c_1^{-1})$.}
     \label{fig:jumpCoefs:increasingcontrast}
   \end{figure}
 
@@ -893,7 +930,7 @@ and \textbf{compute until $T = 1.0$, correct...} to ensure that the GCC is fulfi
         \end{tikzpicture}
         \pgfplotslegendfromname{named}
     \end{center}
-    \caption{Exact solution and approximations with $k = 3$ on different refinement levels for $c_1 = 2.5$ (left) and $c_1= 5.5$ (right).}
+    \caption{Exact solution \eqref{eq:1D:exact:simple} and approximations with $k = 3$ on refinement levels $L \{1,2,3,4 \}$ for contrasts $c_1 = 2.5$ (left) and $c_1= 5.5$ (right). The scale in the right plot indicates the mesh size $h = 1/2^{L+1}$ for the different refinement levels.}
     \label{fig:jumpCoefs:quality}
   \end{figure}
 
@@ -964,7 +1001,7 @@ and \textbf{compute until $T = 1.0$, correct...} to ensure that the GCC is fulfi
 
 
 \subsubsection{Multiple jumps}
-\noindent The exact solution \eqref{eq:1D:exact:simple} can be extended to the case where we have multiple jumps in the wave speed $c$. For points $p_1,p_2 \in (0,1)$, we decompose the interval $\Omega = [0,1]$ into three subdomains $\Omega_1 = (0,p_1)$, $\Omega_2 = (p_1,p_2)$, and $\Omega_3 = (p_2,1)$ s.t. $\Omega = \cup_{i = 1,2,3} \overline{\Omega}_i$. Then, we consider the following Ansatz for the exact solution: 
+\noindent The exact solution \eqref{eq:1D:exact:simple} can be extended to the case where we have multiple jumps in the wave speed $c$. For points $p_1,p_2 \in (0,1)$, we decompose $\Omega$ into three subdomains $\Omega_1 = (0,p_1)$, $\Omega_2 = (p_1,p_2)$, and $\Omega_3 = (p_2,1)$ s.t. $\Omega = \cup_{i = 1,2,3} \overline{\Omega}_i$. Then, we consider the following Ansatz for the exact solution: 
 \begin{equation}\label{eq:1D:exact:simpleMult}
     u(x,t) := \begin{cases}
         \cos(w_1 c_1 t) \cos(w_1(x-p_1)), & x \in \Omega_1, \\
