@@ -1,4 +1,5 @@
 
+
 %3 May 2012
 %\documentclass[10pt,reqno]{amsart}
 \documentclass[sn-mathphys-num]{sn-jnl}
@@ -280,7 +281,7 @@ Here we will consider a data assimilation problem instead, i.e. we assume that t
 \end{equation}
 
 
-\noindent In a homogeneous medium, where $c_i = 1$, $i = 1,2$, the problem \eqref{eq:waveEquation}-\eqref{eq:dataMatch} is well-studied \cite{BFO20,BFMO21,DMS23}. In particular, it is known that if the boundary $\partial \Omega$ is strictly convex and the set $\omega_T \subset Q$ fulfills the geometric control condition (GCC) \cite{BLR88,BLR92} then the problem is Lipschitz stable. To be more precise, we have the following result.
+\noindent In a homogeneous medium, where $c_i = 1$, $i = 1,2$, the problem \eqref{eq:waveEquation}-\eqref{eq:dataMatch} is well-studied \cite{BFO20,BFMO21,DMS23}. In particular, it is known that if the boundary $\partial \Omega$ is strictly convex and the set $\omega_T \subset Q$ fulfills the geometric control condition (GCC) \cite{BLR88,BLR92} then the problem is Lipschitz stable. Roughly speaking, a set $\omega \subset \Omega$ and a final time $T$ fulfill the GCC if all geometric optic rays traveling with unit speed\textsuperscript{1}\footnotemark \footnotetext{\textsuperscript{1}with adapting the metric to the wave speed $c$.} in $\Omega$, taking into account possible reflections on the boundary $\partial \Omega$, intersect the set $(0,T) \times \omega$. For a precise definition, we refer to \cite{BLR88,BLR92}. Assuming that the GCC is satisfied, we have the following result.
 
 \begin{thm}\label{thm:Lipschitz}
     Assume that $c_i = 1$, $i = 1,2$, and that $\partial \Omega$ is stricly convex. If $\omega_T \subset Q$ fulfills the GCC, then there exists a constant $C > 0$ such that for any $\phi \in H^1(Q)$ we have the following estimates
@@ -293,7 +294,6 @@ Here we will consider a data assimilation problem instead, i.e. we assume that t
 \begin{proof}
     See \cite[Thm. A.4]{BFMO21control} and \cite[Rem. A.5]{BFMO21control}.
 \end{proof}
-In that case, this estimate can be applied to $\phi = u-u_h$ to recover convergence rates in terms of the norm on the left-hand side. 
 
 \noindent For the heterogeneous case where $c_1 \not =  c_2$, the problem is less studied. In the absence of the GCC, we have to assume that the final time $T$ is large enough to ensure that problem \eqref{eq:waveEquation}-\eqref{eq:dataMatch} is well-posed. To be precise, Holmgren's unique continuation theorem guarantees that \eqref{eq:waveEquation}-\eqref{eq:dataMatch} is uniquely solvable if
 \begin{equation}\label{eq:Tcondition}
@@ -392,7 +392,7 @@ where $S_h$, $S_h^\ast$, and $\Sud$ are stabilization terms yet to be defined. N
 \end{align*}
 $J(\cdot,\cdot)$ is a continuous interior penalty term in space, $G(\cdot,\cdot)$ is a Galerkin least squares term enforcing the PDE locally on each element, $I_0(\cdot,\cdot)$ enforces that $\ul_2 = \dt \ul_1$, and $R(\cdot,\cdot)$ ensures boundary stability. 
 Then we define the primal stabilizer $S_h$ as 
-\begin{equation}
+\begin{equation}\label{eq:primalStab}
     S_h(\Uh,\Wh) := J(\Uh,\Wh) + I_0(\Uh,\Wh) + G(\Uh,\Wh) + R(\Uh,\Wh), 
 \end{equation}
 and the dual stabilizer $S_h^\ast$ through 
@@ -555,11 +555,9 @@ and its strengthened version
 \end{proof}
 
 
-\noindent In the following, we want to show how the assumption of Lipschitz stability, cf. Assumption \ref{assum:LipschitzStability} or Thm. \ref{thm:Lipschitz} in the homogeneous case, can be used to show convergence in a physically relevant norm. To apply these results, we deal with the fact that the discrete solution is discontinuous in time by introducing a suitable lifting operator $L_{\Delta t} : \FullyDiscrSpace{k}{q} \rightarrow C^0(0,T;V_h^k)$ such that $L_{\Delta t} \ul_1 \in H^1(Q)$ as discussed in \cite[Sec. 4]{BP24}. 
+\noindent In the following, we want to show how the assumption of Lipschitz stability, cf. Assumption \ref{assum:LipschitzStability} or Thm. \ref{thm:Lipschitz} in the homogeneous case, can be used to show convergence in a physically relevant norm. To utilize these results, we need to deal with the fact that the discrete solution is discontinuous in time. To this end, let $L_{\Delta t} : \FullyDiscrSpace{k}{q} \rightarrow C^0(0,T;V_h^k)$ be a suitable lifting operator such that $L_{\Delta t} \ul_1 \in H^1(Q)$ as discussed in \cite[Sec. 4]{BP24}. Then, we formulate the following result.
 
-
-
-\begin{thm}
+\begin{thm}\label{thm:convergence}
     Let Assumption \ref{assum:LipschitzStability} be satisfied. For $u$ being a sufficiently regular solution of \eqref{eq:waveEquation} and $(\Uh,\Zh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ being the solution to \eqref{eq:discreteProblem}, there exists a constant $C>0$ such that
     \begin{equation}
         \Vert u - L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))} + \Vert \dt (u - L_{\Delta t} \ul_1) \Vert_{L^2(0,T;H^{-1}(\Omega))} \le C h^s \Vert u \Vert_{H^m(Q)}. 
@@ -576,20 +574,19 @@ and its strengthened version
 
 
 \begin{rmk}[Homogenous media]\label{rem:homMedia}
-    In the homogenous case where $c_i = 1$, $i = 1,2$, we know that assumption \ref{assum:LipschitzStability} is satisfied, cf. Thm. \ref{thm:Lipschitz}. Thus, we recover the result from \cite[Thm. 4.4]{BP24}.
+    In the homogenous case where $c_i = 1$, $i = 1,2$, we know that Assumption \ref{assum:LipschitzStability} is satisfied, cf. Thm. \ref{thm:Lipschitz}. Thus, we recover the result from \cite[Thm. 4.4]{BP24}.
 \end{rmk}
 
 \begin{rmk}
-    If assumption \ref{assum:LipschitzStability} is not satisfied, e.g. if the GCC is not fulfilled, we can still apply the results from Thm. \ref{thm:filippas} if $T > 2 \sup_{x \in \Omega} \text{dist}_c(x,\omega)$. \textbf{For this we require:} 
-    \begin{itemize}
-        \item control of $\Vert (u_0,u_1) \Vert_{H^1 \times L^2}$ (discrete), e.g. through Tikhonov regularization,
-        \item being able to rewrite the estimates from Thm. \ref{thm:filippas} with $\Vert \wop u \Vert_{H^{-1}(Q)}$ instead of $\Vert \wop u \Vert_{L^2(Q)}$,
-    \end{itemize}
-    Then, we obtain 
+    Suppose that Assumption \ref{assum:LipschitzStability} is not satisfied, e.g. if the GCC is not fulfilled. If $T$ is large enough such that \eqref{eq:Tcondition} holds, we can still apply the results from Thm. \ref{thm:filippas}. To utilize this result similarly to Assumption \ref{assum:LipschitzStability}, we would have to deal with the following technicalities:  
+    \begin{enumerate}
+        \item The results from Thm. \ref{thm:filippas} are formulated in terms of $\Vert \wop u \Vert_{L^2(Q)}$. However, we can only control $\Vert \wop \tilde{e}_h \Vert_{H^{-1}(Q)}$ for the residual $\tilde{e}_h = u - L_{\Delta t} \ul_1$. Thus, we would have to rewrite the estimates from Thm. \ref{thm:filippas} with $\Vert \wop u \Vert_{H^{-1}(Q)}$ instead of $\Vert \wop u \Vert_{L^2(Q)}$. To this end, one might be able to shift the regularity suitably, cf. \cite[Sec. 2.6]{StolkPhD}, or use similar arguments as in \cite[Thm. A.1]{BFMO21}.
+        \item We have to ensure that the constants in the estimates from Thm. \ref{thm:filippas} remain bounded when we consider the residual $\tilde{e}_h$. In particular, we have to control $C_{0,1} := \Vert (\tilde{e}_h \vert_{t = 0}, \dt \tilde{e}_h \vert_{t = 0}) \Vert_{H^1 \times L^2}$. We note that we can always ensure that $C_{0,1}$ is bounded by adding a suitable Tikhonov regularization term to \eqref{eq:primalStab}. 
+    \end{enumerate}
+    Then, we can use the arguments of \cite[Thm. 4.4]{BP24} to show that 
     \begin{equation}
-        \Vert (u - \ul_1) \vert_{t = 0} \Vert_{L^2(\Omega)}  + \Vert \dt (u - \ul_1) \vert_{t = 0} \Vert_{H^{-1}(\Omega)} \le C C_{0,1} \log(1 + C_{0,1} h^{-s} \Vert u \Vert_{H^m(Q)}^{-1})^{-1},
-    \end{equation} 
-    where $C_{0,1} := \Vert (u_0,u_1) \Vert_{H^1 \times L^2}$.
+        \Vert (u - \ul_1) \vert_{t = 0} \Vert_{L^2(\Omega)}  + \Vert \dt (u - \ul_1) \vert_{t = 0} \Vert_{H^{-1}(\Omega)} \le C C_{0,1} \log(1 + C_{0,1} h^{-s} \Vert u \Vert_{H^m(Q)}^{-1})^{-1}. 
+    \end{equation}
 \end{rmk}
 
 
@@ -652,7 +649,7 @@ Thus, for $\omega$ as above, $c_2 = 1$ fixed and $c_1 > 1.0$, the condition \eqr
 \end{figure}
 
 
-\noindent Figure \ref{fig:jumpCoefs:contrast:2.5} shows that for $T$ large enough, the errors $\Vert u - u_h \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ and $\Vert \partial_t (u - u_h) \Vert_{L^2(0,T;L^2(\Omega_R))}$ converge with order $\mathcal{O}(h^k)$. In contrast, if $T$ is chosen too small such that the GCC is not satisfied, the errors do not converge optimally. 
+\noindent Figure \ref{fig:jumpCoefs:contrast:2.5} shows that for $T$ large enough, the errors $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ and $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$ converge with order $\mathcal{O}(h^k)$. In contrast, if $T$ is chosen too small such that the GCC is not satisfied, the errors do not converge optimally. 
 Figures \ref{fig:jumpCoefs:quality} and \ref{fig:jumpCoefs:increasingcontrast} show that ... 
 
 
@@ -671,7 +668,7 @@ Figures \ref{fig:jumpCoefs:quality} and \ref{fig:jumpCoefs:increasingcontrast} s
             grid style=dashed,
             %ymin = 1e-3, ymax = 0.5e1,
             ]    
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$T=0.5$, $\Vert (u - u_h) \Vert_{L^\infty(0,T;L^2(\Omega_R))}$}, %cycle list name=, 
+            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$T=0.5$, $\Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega_R))}$}, %cycle list name=, 
             legend pos=south west, %yticklabels={,,},
             ]
            
@@ -698,7 +695,7 @@ Figures \ref{fig:jumpCoefs:quality} and \ref{fig:jumpCoefs:increasingcontrast} s
             \node [draw=none] at (axis description cs:0.45,0.35) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
             \legend{$k=2 $,, $k = 3$,}
 
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$T = 0.5$, $\Vert \partial_t (u - u_h) \Vert_{L^2(0,T;L^2(\Omega_R))}$}, %cycle list name=, 
+            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$T = 0.5$, $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$}, %cycle list name=, 
             legend pos=south west, %yticklabels={,,},
             ]
 
@@ -718,7 +715,7 @@ Figures \ref{fig:jumpCoefs:quality} and \ref{fig:jumpCoefs:increasingcontrast} s
             \node [draw=none] at (axis description cs:0.30,0.87) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
             \node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
             \legend{$k=2 $,, $k = 3$,}
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$T = 0.1$, $\Vert (u - u_h) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=, 
+            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$T = 0.1$, $\Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=, 
             legend pos=south west, %yticklabels={,,},
             ]
            
@@ -747,7 +744,7 @@ Figures \ref{fig:jumpCoefs:quality} and \ref{fig:jumpCoefs:increasingcontrast} s
             \node [draw=none] at (axis description cs:0.7,0.75) {\color{gray}\footnotesize $\!\!\mathcal{O}(\vert \log(h) \vert^{-1})$};
             \legend{$k=2 $,, $k = 3$,}
 
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$T = 0.1$, $\Vert \partial_t (u - u_h) \Vert_{L^2(0,T;L^2(\Omega))}$}, %cycle list name=, 
+            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$T = 0.1$, $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega))}$}, %cycle list name=, 
             legend pos=south west, %yticklabels={,,},
             ]
             %L2-L2-u_t (k = 2)
@@ -777,7 +774,7 @@ Figures \ref{fig:jumpCoefs:quality} and \ref{fig:jumpCoefs:increasingcontrast} s
             \end{groupplot}
         \end{tikzpicture}
     \end{center}
-    \caption{For the approximation of \eqref{eq:1D:exact:simple} with polynomial degree $k \in \{2,3\}$ and contrast $c_1 = 2.5$ we measure the errors $\Vert u - u_h \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ (left) and $\Vert \partial_t (u - u_h) \Vert_{L^2(0,T;L^2(\Omega_R))}$ (right) and compare to the respective error of the $L^2$-bestapproximation (dashed). We consider the final time $T = 0.5$ (top) and $T = 0.1$ (bottom). The gray dashed lines indicate the observed convergence rates.}
+    \caption{For the approximation of \eqref{eq:1D:exact:simple} with polynomial degree $k \in \{2,3\}$ and contrast $c_1 = 2.5$ we measure the errors $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ (left) and $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$ (right) and compare to the respective error of the $L^2$-bestapproximation (dashed). We consider the final time $T = 0.5$ (top) and $T = 0.1$ (bottom). The gray dashed lines indicate the observed convergence rates.}
     \label{fig:jumpCoefs:contrast:2.5}
   \end{figure}
 
@@ -795,7 +792,7 @@ Figures \ref{fig:jumpCoefs:quality} and \ref{fig:jumpCoefs:increasingcontrast} s
             grid style=dashed,
             %ymin = 1e-3, ymax = 0.5e1,
             ]    
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:5,xmode=linear,ymode=log, ylabel={}, xlabel={$c_1$}, title={$\Vert \partial_t (u - u_h) \Vert_{L^2(0,T;L^2(\Omega_R))}$}, %cycle list name=, 
+            \nextgroupplot[width=8cm,height=6.2cm,domain=1:5,xmode=linear,ymode=log, ylabel={}, xlabel={$c_1$}, title={$\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$}, %cycle list name=, 
             legend style={legend columns=4, draw=none,nodes={scale=.8}},legend to name=named, %yticklabels={,,},
             %ymin=1e-7,ymax=1e1,
             ]
@@ -813,7 +810,7 @@ Figures \ref{fig:jumpCoefs:quality} and \ref{fig:jumpCoefs:increasingcontrast} s
             \node [draw=none] at (axis description cs:0.50,0.75) {\color{gray}\footnotesize $\!\!\mathcal{O}(c_1^{3})$};
 
             \legend{$T = 0.5$, $L^2$-best approx. ($T = 0.5$), $T$ variable, $L^2$-best approx. ($T$ variable)}
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:5,xmode=linear,ymode=log, ylabel={}, xlabel={$c_1$}, title={$\Vert u - u_h \Vert_{L^\infty(0,T;L^2(\Omega_R))}$}, %cycle list name=, 
+            \nextgroupplot[width=8cm,height=6.2cm,domain=1:5,xmode=linear,ymode=log, ylabel={}, xlabel={$c_1$}, title={$\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega_R))}$}, %cycle list name=, 
             legend pos=south east, %yticklabels={,,},
             %ymin=1e-7,ymax=1e1,
             ]
@@ -834,7 +831,7 @@ Figures \ref{fig:jumpCoefs:quality} and \ref{fig:jumpCoefs:increasingcontrast} s
         \end{tikzpicture}
         \pgfplotslegendfromname{named}
     \end{center}
-    \caption{For $k = 3$ and $L = 3$, we consider the errors $\Vert \dt (u-u_h) \Vert_{L^2(0,T;L^2(\Omega_R))}$ (left) and $\Vert u - u_h \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ (right) for increasing contrast $c_1 \in \{1.0,1.5,...,4.5\}$. We compare the case where $T = 0.5$ is fixed for all choices of $c_1$ and the case where $T$ barely fulfills $T > 0.25(1+c_1^{-1})$.}
+    \caption{For $k = 3$ and $L = 3$, we consider the errors $\Vert \dt (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$ (left) and $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ (right) for increasing contrast $c_1 \in \{1.0,1.5,...,4.5\}$. We compare the case where $T = 0.5$ is fixed for all choices of $c_1$ and the case where $T$ barely fulfills $T > 0.25(1+c_1^{-1})$.}
     \label{fig:jumpCoefs:increasingcontrast}
   \end{figure}
 
@@ -1016,7 +1013,7 @@ To ensure that the solution is continuous, we choose $p_2$ in dependence of $p_1
 \end{equation*}
 Thus, if we choose $p_2 = \frac{2 \pi n + w_2 p_1}{w_2}$ for some $n \in \mathbb{Z}$, the function \eqref{eq:1D:exact:simpleMult} is indeed continuous.  
 In the following, we fix $c_2 = 1.0$ and choose $w_1 = 3 \pi$, $w_2 = w_1 c_1/c_2$ as above. Furthermore, we set $c_3 = c_1$, $w_3 = w_1$. 
-As a first example, we choose $p_1 = 0.4$ and $n = 3$ such that $p_2 \approx 0.667$ and consider the data domain $\omega = [0.0,0.3] \times [0.7,1.0]$. Figure \ref{fig:jumpCoefs:multipleJumps} shows the exact solution and the approximation with $k = 3$ and $c_1 = 7.5$.
+As a first example, we choose $p_1 = 0.4$ and $n = 3$ such that $p_2 \approx 0.667$ and consider the data domain $\omega = [0.0,0.3] \times [0.7,1.0]$. For contrast $c_1 \in \{ 7.5,11.5 \}$, Fig. \ref{fig:jumpCoefs:multipleJumps} shows the exact solution and the approximation with $k = 3$ for fixed time step $\Delta t = 1/32$. 
 
 \begin{figure}[!htbp]
     \begin{center}
@@ -1093,7 +1090,7 @@ As a first example, we choose $p_1 = 0.4$ and $n = 3$ such that $p_2 \approx 0.6
         \end{tikzpicture}
         \pgfplotslegendfromname{named}
     \end{center}
-    \caption{Exact solution (left) and approximated solution with $k = 3$ (right) of \eqref{eq:1D:exact:simpleMult} at $t = 0.5$ with $c_1 = c_3 = 7.5$ and $c_2 = 1.0$.}
+    \caption{Exact solution \eqref{eq:1D:exact:simpleMult} and approximated solution with $k = 3$ of \eqref{eq:1D:exact:simpleMult} at $t = 0.5$ with contrast $c_1 = 7.5$ (left) and $c_1 = 11.5$ (right). We compare the approximations on the refinement levels $L = 3$ and $L = 4$, where we set $\Delta t = 1/32$ for both cases.}
     \label{fig:jumpCoefs:multipleJumps}
   \end{figure}
 
@@ -1158,7 +1155,7 @@ Figure \ref{fig:jumpCoefs:multipleJumps:noGCC} shows once more that the approxim
         \end{tikzpicture}
          \pgfplotslegendfromname{named}
     \end{center}
-    \caption{Exact solution (left) and approximated solution with $k = 3$ (right) of \eqref{eq:1D:exact:simpleMult} at $t = T/2 = 0.5$ with $c_1 = c_3 = 2.5$, $n = 1$ (upper) and $c_1 = c_3 = 7.5$, $n = 3$ (lower) and $c_2 = 1.0$. We only prescribe data on $\omega = [0.0,0.3]$ and choose $\Delta t = 1/32$ (upper) and $\Delta t = 1/64$ (lower), $h = 1/64$.}
+    \caption{Exact solution \eqref{eq:1D:exact:simpleMult} and approximated solution with $k = 3$ at $t = 0.5$ with $c_1 = c_3 = 2.5$, $n = 1$ (left) and $c_1 = c_3 = 7.5$, $n = 3$ (right) and $c_2 = 1.0$. We compare the approximations on refinement level $L = 4$ with $T = 1.0$ and $T = 0.5$ while keeping the time step fixed at $\Delta t = 1/32$.}
     \label{fig:jumpCoefs:multipleJumps:noGCC}
   \end{figure}
 
@@ -1287,7 +1284,7 @@ This solution describes a wave traveling towards the interface $\Gamma$. Due to 
             grid style=dashed,
             %ymin = 1e-3, ymax = 0.5e1,
             ]    
-                \nextgroupplot[width=9cm,height=7cm,domain=0:4,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 1.0, \Vert (u - u_h) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=paulcolors, 
+                \nextgroupplot[width=9cm,height=7cm,domain=0:4,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 1.0, \Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=paulcolors, 
                 legend pos=south west, %yticklabels={,,},
                 ]
                 \addplot+[discard if not={order}{2},discard if not={contrast}{1.0},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast1.0.csv};
@@ -1303,7 +1300,7 @@ This solution describes a wave traveling towards the interface $\Gamma$. Due to 
                 %\node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
     
                 \legend{$k=2$,best,$k = 3$,best}
-                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 1.5, \Vert (u - u_h) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=paulcolors, 
+                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 1.5, \Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=paulcolors, 
                 legend pos=south west, %yticklabels={,,},
                 ]
                 \addplot+[discard if not={order}{2},discard if not={contrast}{1.5},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast1.5.csv};
@@ -1317,7 +1314,7 @@ This solution describes a wave traveling towards the interface $\Gamma$. Due to 
                 %\node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
                 \legend{$k=2$,best,$k = 3$,best}
 
-                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 2.0, \Vert (u - u_h) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=paulcolors, 
+                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 2.0, \Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=paulcolors, 
                 legend pos=south west, %yticklabels={,,},
                 ]
                 \addplot+[discard if not={order}{2},discard if not={contrast}{2.0},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast2.0.csv};
@@ -1331,7 +1328,7 @@ This solution describes a wave traveling towards the interface $\Gamma$. Due to 
                 %\node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
                 \legend{$k=2$,best,$k = 3$,best}
 
-                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 2.5, \Vert (u - u_h) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=paulcolors, 
+                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 2.5, \Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=paulcolors, 
                 legend pos=south west, %yticklabels={,,},
                 ]
                 \addplot+[discard if not={order}{2},discard if not={contrast}{2.5},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast2.5.csv};
@@ -1368,7 +1365,7 @@ This solution describes a wave traveling towards the interface $\Gamma$. Due to 
                 \nextgroupplot[width=9cm,height=7cm,domain=0:4,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$L^2$-best approximation ($k = 2$)}, %cycle list name=paulcolors, 
                 legend pos=south west, 
                 %yticklabels={,,}, 
-                xlabel={$L$}, ylabel={$\Vert (u - u_h) \Vert_{L^\infty(0,T;L^2(\Omega))}$},
+                xlabel={$L$}, ylabel={$\Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$},
                 ]
                 \addplot+[discard if not={order}{2},discard if not={contrast}{1.0},line width=1.1pt] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/weakDisc_noRestrict_1D_jumpingCoefs_k2.csv};
                 \addplot+[discard if not={order}{2},discard if not={contrast}{1.5},line width=1.1pt] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/weakDisc_noRestrict_1D_jumpingCoefs_k2.csv};
@@ -1423,7 +1420,7 @@ This solution describes a wave traveling towards the interface $\Gamma$. Due to 
             \end{groupplot}
         \end{tikzpicture}
     \end{center}
-    \caption{We consider the approximation of \eqref{eq:1D:complicatedSol} with $h = 1/2^{(L+1)}$ and $\Delta t = 1/2^L$, \textbf{now $\Delta t = 1/2^{L+1}$ on the right}.}
+    \caption{The $L^2$-bestapproximation error of \eqref{eq:1D:complicatedSol} with $k = 2$ for $c_2 = 1$ and $c_1 \in \{1.0,1.5,2.0\}$ (left) and the approximation of the time derivative of \eqref{eq:1D:complicatedSol} with $k = 3$ for $c_1 = 2.5$ for $L = 4,5$, $h = 1/2^{L+1} = \Delta t$ (right).}
     %\label{fig:2DjumpCoefs}
   \end{figure}
 
@@ -1544,7 +1541,7 @@ As a simple test case, we can extend the one-dimensional exact solution defined 
             \end{groupplot}
         \end{tikzpicture}
     \end{center}
-    \caption{Convergence of $\Vert \dt(u-u_h) \Vert_{L^2(0,T;L^2(\Omega))}$ and $\Vert u - u_h \Vert_{L^\infty(0,T;L^2(\Omega))}$ (dashed) for polynomial degrees $k \in \{2,3\}$ and increasing values of $c_1 \in \{1.0,1.5,2.0,2.5\}$.}
+    \caption{Convergence of $\Vert \dt(u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega))}$ and $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$ (dashed) for polynomial degrees $k \in \{2,3\}$ and increasing values of $c_1 \in \{1.0,1.5,2.0,2.5\}$.}
     \label{fig:2DjumpCoefs}
   \end{figure}
 \end{comment}
@@ -1620,7 +1617,7 @@ As a simple test case, we can extend the one-dimensional exact solution defined 
             \end{groupplot}
         \end{tikzpicture}
     \end{center}
-    \caption{For $c_1 = 2.5$, $\Vert \dt(u-u_h) \Vert_{L^2(0,T;L^2(\Omega))}$ (solid) and $\Vert u - u_h \Vert_{L^\infty(0,T;L^2(\Omega))}$ (dashed) converge quasi-optimally with order $\mathcal{O}(h^k)$ for polynomial degrees $k \in \{2,3\}$ (left).}
+    \caption{For $c_1 = 2.5$, $\Vert \dt(u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega))}$ (solid) and $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$ (dashed) converge quasi-optimally with order $\mathcal{O}(h^k)$ for polynomial degrees $k \in \{2,3\}$ (left) and the ratio between the approximation error and the $L^2$-bestapproximation error (right).}
     \label{fig:2DjumpCoefs}
   \end{figure}
 
@@ -1634,7 +1631,7 @@ As a simple test case, we can extend the one-dimensional exact solution defined 
                 group size=1 by 1,
                 horizontal sep=1.5cm,
                 vertical sep=2cm,
-                },0m,domain=1:4,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$\Vert u_0 - u_h \vert_{t = 0} \Vert_{H^1(\Omega)} + \Vert \partial_t (u - u_h) \vert_{t = 0} \Vert_{L^2(\Omega)}$}, %cycle list name=paulcolors, 
+                },0m,domain=1:4,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$\Vert u_0 - u_h \vert_{t = 0} \Vert_{H^1(\Omega)} + \Vert \partial_t (u-L_{\Delta t} \ul_1) \vert_{t = 0} \Vert_{L^2(\Omega)}$}, %cycle list name=paulcolors, 
                 legend pos=south east, %ymax = 1e2, %yticklabels={,,},
                 ]
                 %\addplot+[discard if not={contrast}{1.0},line width=2.5pt,mark=None,color=black] table [x=x, y=y, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/exact_plot_data.csv};
@@ -1776,9 +1773,3 @@ We recall the following interpolation result from \cite{BP24}:
 
 
 \end{document}
-
-
-
-
- 
-
