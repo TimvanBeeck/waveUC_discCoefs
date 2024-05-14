@@ -252,7 +252,7 @@ Set1-5\nextlist
 
 \affil[1]{\orgdiv{Department of Mathematics}, \orgname{University College London}, \orgaddress{\street{Gower Street}, \city{London}, \postcode{WC1E 6BT}, \country{United Kingdom}}}
 
-\affil[2]{\orgdiv{Institute for Numerical and Applied Mathematics}, \orgname{University of G\"{o}ttingen}, \orgaddress{\street{Lotzenstr.}, \city{G\"{o}ttingen}, \postcode{37083}, \country{Germany}}}
+\affil[2]{\orgdiv{Institute for Numerical and Applied Mathematics}, \orgname{University of G\"{o}ttingen}, \orgaddress{\street{Lotzestr. 16-18}, \city{G\"{o}ttingen}, \postcode{37083}, \country{Germany}}}
 
 \abstract{Todo...}
 
@@ -261,7 +261,7 @@ Set1-5\nextlist
 \maketitle
 
 \section{Introduction}
-\noindent In this article, we consider the discretization of a data assimilation problem for the wave equation in heterogeneous media. In the following, let $\Omega \subset \mathbb{R}^d$ be a bounded domain with smooth boundary $\partial \Omega$ such that there exists subdomains $\Omega_1, \Omega_2 \subseteq \Omega$ such that $\Omega = \overline{\Omega}_1 \cup \overline{\Omega}_2$ and $\Omega_1 \cap \Omega_2 = \emptyset$. We consider a scalar wave speed $c(x) = \mathbbm{1}_{\Omega_1} c_1(x) + \mathbbm{1}_{\Omega_2} c_2(x)$, $c_i \in C^\infty(\Omega_i)$, $i = 1,2$, which may be discontinuous across the interface $\Gamma = \Omega \setminus (\Omega_1 \cup \Omega_2)$, but constant in time. For a final time $T > 0$, we consider the space-time domain $Q = (0,T) \times \Omega$ with lateral boundary $\Sigma \coloneqq (0,T) \times \partial \Omega$. For any nonempty subset $\omega \subset \Omega$, we set $\omega_T \coloneqq (0,T) \times \omega$. In the following, let $\wop$ be the wave operator defined as 
+\noindent In this article, we consider the discretization of a data assimilation problem for the wave equation in heterogeneous media. In the following, let $\Omega \subset \mathbb{R}^d$ be a bounded domain with smooth boundary $\partial \Omega$ such that there exists subdomains $\Omega_1, \Omega_2 \subseteq \Omega$ such that $\Omega = \overline{\Omega}_1 \cup \overline{\Omega}_2$ and $\Omega_1 \cap \Omega_2 = \emptyset$. We consider a scalar wave speed $c(x) = \mathbbm{1}_{\Omega_1} c_1(x) + \mathbbm{1}_{\Omega_2} c_2(x)$, $c_i \in C^\infty(\Omega_i)$, $i = 1,2$, which may be discontinuous across the interface $\Gamma = \Omega \setminus (\Omega_1 \cup \Omega_2)$, but constant in time. For a final time $T > 0$, we consider the space-time domain $Q = (0,T) \times \Omega$ with lateral boundary $\Sigma \coloneqq (0,T) \times \partial \Omega$. For any nonempty subset $\omega \subset \Omega$, we set $\omega_T \coloneqq (0,T) \times \omega$. In the following, let $\wop$ be the wave operator with discontinuous wave-speed defined as 
 \begin{equation*}
     \wop u := \partial_t^2 - \div(c^2 \nabla u).
 \end{equation*}
@@ -275,7 +275,7 @@ To ensure that the problem is well posed, one usually prescribes initial data
     (u,\dt u) \vert_{t = 0} = (u_0,u_1) \text{ in } \Omega, \tag{IVP} 
 \end{equation}
 where $u_0 \in H^1(Q)$ and $u_1 \in L^2(Q)$ are given. For a detailed analysis of the well-posedness of the problem \eqref{eq:waveEquation}-\eqref{eq:initialData} in heterogeneous media we refer to \cite{StolkPhD}. 
-Here we will consider a data assimilation problem instead, i.e. we assume that the initial data is unknown and that there are given measurements $u_{\omega} \in L^2(\omega_T)$ which are prescribed in the data domain $\omega_T$: 
+Here we consider a data assimilation problem instead, i.e. we assume that the initial data is unknown and that there are given measurements $u_{\omega} \in L^2(\omega_T)$ which are prescribed in a data domain $\omega_T$, $\omega \subset \Omega$, $\omega \not = \emptyset$:
 \begin{equation}\label{eq:dataMatch}
     u = u_{\omega} \text{ in } \omega_T. \tag{DA}
 \end{equation}
@@ -299,7 +299,7 @@ Here we will consider a data assimilation problem instead, i.e. we assume that t
 \begin{equation}\label{eq:Tcondition}
     T > 2 \sup_{x \in \Omega} \operatorname{dist}_{c}(x,\omega_T),
 \end{equation}
-where $\operatorname{dist}_c(x,\omega_T) := \inf_{y \in \omega_T} d_c(x,y)$ with $d_c$ being the distance function defined as the length of the shortest continuous path in $\Omega$ connecting $x$ and $y$ with respect to the metric adapted to the discontinuous wave speed $c$. While the condition \eqref{eq:Tcondition} guarantees unique solvability, the stability of problem \eqref{eq:waveEquation}-\eqref{eq:dataMatch} can be poor. In fact, it has been shown \cite[Thm. 5.17]{Filippas22} that the assumption \eqref{eq:Tcondition} only guarantees the following result:  
+where $\operatorname{dist}_c(x,\omega_T) := \inf_{y \in \omega_T} d_c(x,y)$ with $d_c$ being the distance function defined as the length of the shortest continuous path in $\Omega$ connecting $x$ and $y$ with respect to the metric adapted to the discontinuous wave speed $c$. While the condition \eqref{eq:Tcondition} guarantees unique solvability, the stability of problem \eqref{eq:waveEquation}-\eqref{eq:dataMatch} can be poor. It has been shown \cite[Thm. 5.17]{Filippas22} under the assumption \eqref{eq:Tcondition} the following stability result holds:  
 \begin{thm}[Thm. 5.17 of \cite{Filippas22}]\label{thm:filippas}
     Let $\omega_T \subset \Omega$ be nonempty and let $T$ be s.t. \eqref{eq:Tcondition} holds. Then, there exists $C,\kappa$ such that for any initial data $(u_0,u_1) \in H^1_0(\Omega) \times L^2(\Omega)$ and $u$ solving \eqref{eq:waveEquation}-\eqref{eq:initialData} one has for any $\mu > 0$ that 
     \begin{equation}\label{eq:FilippasEstimate}
@@ -325,10 +325,10 @@ where $\operatorname{dist}_c(x,\omega_T) := \inf_{y \in \omega_T} d_c(x,y)$ with
 
 
 \section{Discretization (fully discrete \& dG in time)} 
-\noindent In this section, we introduce a fully discrete discontinuous in time finite element method to discretize the data assimilation problem \eqref{eq:waveEquation}-\eqref{eq:dataMatch} for the wave equation in heterogeneous media. The discretization is based on the scheme introduced in \cite{BP24} for the homogeneous case. Before introducing the method in Section \ref{sec:method}, we introduce a geometric partition of the space-time domain $Q$ into time slabs in Section \ref{sec:spaceTimeDiscretization}. 
+\noindent In this section, we introduce a fully discrete discontinuous in time finite element method to discretize the data assimilation problem \eqref{eq:waveEquation}-\eqref{eq:dataMatch} for the wave equation in heterogeneous media. The discretization is based on the scheme introduced in \cite{BP24} for the homogeneous case. Before introducing the method in Section \ref{sec:method}, we describe the geometric partition of the space-time domain $Q$ into time slabs in Section \ref{sec:spaceTimeDiscretization}. 
 
 \subsection{Discretization of the space-time domain}\label{sec:spaceTimeDiscretization}
-Let $\mathcal{T}_h$ be a quasi-uniform triangulation of $\Omega$ such that both, the data domain $\omega$ and the interface $\Gamma$ are fitted. 
+Let $\mathcal{T}_h$ be a quasi-uniform triangulation of $\Omega$ with mesh size $h$ such that both, the data domain $\omega$ and the interface $\Gamma$ are fitted. 
 Note that the triangulation can be constructed such that for $h$ small enough the following continuous trace inequality holds \cite[Sec. 4.2]{BFMO21control}: For all $v \in [H^1(K)]^d$ and $K \in \mathcal{T}_h$, we have
 \begin{equation}\label{eq:traceInequality}
     \Vert v \Vert_{[L^2(\partial K)]^d} \le C \left(h^{-1/2} \Vert v \Vert_{[L^2(K)]^d} + h^{1/2} \Vert \nabla v \Vert_{[L^2(K)]^d} \right).  
@@ -439,8 +439,8 @@ Let $\vert \cdot \vert_{S_h}, \vert \cdot \vert_{\uparrow \downarrow}$, and $\Ve
 and its strengthened version
 \begin{equation}\label{eq:tnormwop}
     \begin{aligned}
-        \tnorm{(\Uh, \Zh)}^2_{\wop} := \tnorm{(\Uh, \Zh)}^2 &+ \sum_{n = 0}^{N -1} \Big\{ \Vert \dt u_2 \Vert^2_{Q^n} + \Vert c^2 \nabla u_1 \Vert^2_{Q^n} + \Vert \dt u_1 \Vert^2_{Q^n} \\
-        &+ \Vert u_2 \Vert^2_{Q^n} + \int_{I_n} \sum_{K \in \mathcal{T}_h} h^2 \Vert c^2 u_1 \Vert^2_{H^2(K)} \dT \Big\}. 
+        \tnorm{(\Uh, \Zh)}^2_{\wop} := \tnorm{(\Uh, \Zh)}^2 &+ \sum_{n = 0}^{N -1} \Big\{ \Vert \dt \ul_2 \Vert^2_{Q^n} + \Vert c^2 \nabla \ul_1 \Vert^2_{Q^n} + \Vert \dt \ul_1 \Vert^2_{Q^n} \\
+        &+ \Vert \ul_2 \Vert^2_{Q^n} + \int_{I_n} \sum_{K \in \mathcal{T}_h} h^2 \Vert c^2 \ul_1 \Vert^2_{H^2(K)} \dT \Big\}. 
     \end{aligned}
 \end{equation}
 %Note it suffices to show that $\tnorm{(\cdot,\cdot)}$ is a norm. We modify the steps from \cite{BP24} to show the following result. 
@@ -470,7 +470,7 @@ and its strengthened version
 \end{cor}
 
 \begin{proof}
-    Since $B[(\Uh,\Zh),(\Uh,-\Zh)] = \tnorm{(\Uh,\Zh)}^2 = \tnorm{(\Uh,\Zh)}\tnorm{(\Uh,-\Zh)}$, it directly follows that  
+    Since $B[(\Uh,\Zh),(\Uh,-\Zh)] = \tnorm{(\Uh,\Zh)}^2 = \tnorm{(\Uh,\Zh)}\tnorm{(\Uh,-\Zh)}$, we conclude that  
     \begin{align*}
         \sup_{(\Wh,\Yh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}} &\frac{B[(\Uh,\Zh),(\Wh,\Yh)]}{\tnorm{(\Wh,\Yh)}} \\
         &\quad \ge \frac{B[(\Uh,\Zh),(\Uh,-\Zh)]}{\tnorm{(\Uh,-\Zh)}} = \tnorm{(\Uh,\Zh)}.
@@ -547,7 +547,7 @@ and its strengthened version
 \end{cor}
 
 \begin{proof}
-    Due to the assumption that $c_i \in C^\infty(\Omega_i)$, $i = 1,2$, we have that 
+    Due to the assumption that $c_i \in C^\infty(\Omega_i)$, $i = 1,2$, there exists $C > 0$ s.t.  
     \begin{equation*}
         \tnorm{(\Uh - \Vh, 0)}_{\wop} \le C \tnorm{(\Uh - \Vh, 0)}_{\square_1},
     \end{equation*}
@@ -555,7 +555,7 @@ and its strengthened version
 \end{proof}
 
 
-\noindent In the following, we want to show how the assumption of Lipschitz stability, cf. Assumption \ref{assum:LipschitzStability} or Thm. \ref{thm:Lipschitz} in the homogeneous case, can be used to show convergence in a physically relevant norm. To utilize these results, we need to deal with the fact that the discrete solution is discontinuous in time. To this end, let $L_{\Delta t} : \FullyDiscrSpace{k}{q} \rightarrow C^0(0,T;V_h^k)$ be a suitable lifting operator such that $L_{\Delta t} \ul_1 \in H^1(Q)$ as discussed in \cite[Sec. 4]{BP24}. Then, we formulate the following result.
+\noindent In the following, we want to note that the assumption of Lipschitz stability, cf. Assumption \ref{assum:LipschitzStability} or Thm. \ref{thm:Lipschitz} in the homogeneous case, can be used to show convergence in a physically relevant norm. To utilize these results, we need to deal with the fact that the discrete solution is discontinuous in time. To this end, let $L_{\Delta t} : \FullyDiscrSpace{k}{q} \rightarrow C^0(0,T;V_h^k)$ be a suitable lifting operator such that $L_{\Delta t} \ul_1 \in H^1(Q)$ as introduced in \cite[Sec. 4]{BP24}. Then, we formulate the following result.
 
 \begin{thm}\label{thm:convergence}
     Let Assumption \ref{assum:LipschitzStability} be satisfied. For $u$ being a sufficiently regular solution of \eqref{eq:waveEquation} and $(\Uh,\Zh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ being the solution to \eqref{eq:discreteProblem}, there exists a constant $C>0$ such that
