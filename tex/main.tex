@@ -381,8 +381,8 @@ and introduce a bilinear form $A$ that represents the wave-equation \eqref{eq:wa
 where $\Uh \in \ProdFullyDiscrSpace{k}{q}$ and $\Yh \in \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ with $k, k^\ast, q \in \mathbb{N}$ and $q^\ast \in \mathbb{N}_0$. 
 To approximate solutions of \eqref{eq:waveEquation}-\eqref{eq:dataMatch}, we search for stationary points of the Lagrangian 
 \begin{align*}
-    \cL_h (\Uh, \Zh) := &\frac{1}{2} \Vert \ul_1 - u_{\omega} \Vert^2_{\omega_T} + A[\Uh,\Zh] + \frac{1}{2} \gamma S_h(\Uh,\Uh) \\
-    &- \frac{1}{2} \gamma^\ast S_h^\ast(\Zh,\Zh) + \frac{\gamma}{2} \Sud(\Uh,\Uh),
+    \cL_h (\Uh, \Zh) := &\frac{1}{2} \Vert \ul_1 - u_{\omega} \Vert^2_{\omega_T} + A[\Uh,\Zh] + \frac{1}{2}  S_h(\Uh,\Uh) \\
+    &- \frac{1}{2}  S_h^\ast(\Zh,\Zh) + \frac{1}{2} \Sud(\Uh,\Uh),
 \end{align*}
 where $S_h$, $S_h^\ast$, and $\Sud$ are stabilization terms yet to be defined. Note that the first and the second terms of $\cL_h$ incorporate the data and the PDE constraints, respectively. To define the stabilization terms $S_h$ and $S_h^\ast$, we introduce the following terms: 
 \begin{align*}
@@ -412,8 +412,8 @@ where
 
 \noindent With the definition of $\cL_h$, the first order optimality conditions take the form: Find $(\Uh,\Zh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ such that 
 \begin{alignat*}{2}
-    (\ul_1,\wl_1)_{\omega_T} \! + \! A[\Wh,\Zh] + \gamma S_h(\Uh,\Wh) + \Sud(\Uh,\Wh) &= (u_{\omega},\wl_1)_{\omega_T} \ &&\forall \Wh \in \ProdFullyDiscrSpace{k}{q} \\
-    A[\Uh,\Yh] - \gamma^{\ast} S_h^\ast(\Yh,\Zh) &= 0 \ &&\forall \Yh \in \ProdFullyDiscrSpace{k^\ast}{q^\ast} 
+    (\ul_1,\wl_1)_{\omega_T} \! + \! A[\Wh,\Zh] + S_h(\Uh,\Wh) + \Sud(\Uh,\Wh) &= (u_{\omega},\wl_1)_{\omega_T} \ &&\forall \Wh \in \ProdFullyDiscrSpace{k}{q} \\
+    A[\Uh,\Yh] -  S_h^\ast(\Yh,\Zh) &= 0 \ &&\forall \Yh \in \ProdFullyDiscrSpace{k^\ast}{q^\ast} 
 \end{alignat*}
 In a more compact form, we can write these conditions as: Find $(\Uh,\Zh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ such that
 \begin{equation}\label{eq:discreteProblem}
@@ -422,8 +422,8 @@ In a more compact form, we can write these conditions as: Find $(\Uh,\Zh) \in \P
 where 
 \begin{equation}
     \begin{aligned}
-        B[(\Uh,\Zh),(\Wh,\Yh)] \coloneqq \ &(\ul_1,\wl_1)_{\omega_T} + A[\Wh,\Zh]+ \gamma S_h(\Uh,\Wh) \\
-        &+  \Sud(\Uh,\Wh) + A[\Uh,\Yh] - \gamma^{\ast} S_h^\ast(\Yh,\Zh).
+        B[(\Uh,\Zh),(\Wh,\Yh)] \coloneqq \ &(\ul_1,\wl_1)_{\omega_T} + A[\Wh,\Zh]+ S_h(\Uh,\Wh) \\
+        &+  \Sud(\Uh,\Wh) + A[\Uh,\Yh] - S_h^\ast(\Yh,\Zh).
     \end{aligned}
 \end{equation}
 
@@ -435,7 +435,7 @@ Let $\vert \cdot \vert_{S_h}, \vert \cdot \vert_{\uparrow \downarrow}$, and $\Ve
 \end{equation}
 \noindent Then, we define the discrete norm 
 \begin{equation}
-    \tnorm{ (\Uh,\Zh) }^2 := \gamma \vert \Uh \vert^2_{S_h} + \vert \Uh \vert^2_{\uparrow \downarrow} + \Vert \ul_1 \Vert^2_{\omega_T} + \gamma^{\ast} \Vert \Zh \Vert^2_{S_h^\ast},
+    \tnorm{ (\Uh,\Zh) }^2 :=  \vert \Uh \vert^2_{S_h} + \vert \Uh \vert^2_{\uparrow \downarrow} + \Vert \ul_1 \Vert^2_{\omega_T} + \Vert \Zh \Vert^2_{S_h^\ast},
 \end{equation}
 and its strengthened version
 \begin{equation}\label{eq:tnormwop}
@@ -526,13 +526,13 @@ If $\mathbf{U}|_{Q^n} \in [H^1(Q^n) \cap L^2(0,T;H^2(\mathcal{T}_h))] \times H^1
     For the second term, we consider
     \begin{align*}
         B[&(\Uh - \Vh, \Zh),( \Wh, \Yh)] \\
-        &= B[(\Uh,\Zh),( \Wh, \Yh)] - (\underline{v}_1, \underline{w}_1)_{\omega_T} - \gamma S_h(\Vh,\Wh) - \Sud(\Vh,\Wh) - A[\Vh,\Yh] \\
-        &= (u_{\omega}, \underline{w}_1)_{\omega_T} - (\underline{v}_1, \underline{w}_1)_{\omega_T} - \gamma S_h(\Vh,\Wh) - \Sud(\Vh,\Wh) - A[\Vh,\Yh] \\
-        &= (u - \underline{v}_1, \underline{w}_1)_{\omega_T}  + \gamma S_h(\mathbf{U} - \Vh,\Wh) + \Sud(\mathbf{U} - \Vh,\Wh) + A[\mathbf{U} - \Vh,\Yh],
+        &= B[(\Uh,\Zh),( \Wh, \Yh)] - (\underline{v}_1, \underline{w}_1)_{\omega_T} - S_h(\Vh,\Wh) - \Sud(\Vh,\Wh) - A[\Vh,\Yh] \\
+        &= (u_{\omega}, \underline{w}_1)_{\omega_T} - (\underline{v}_1, \underline{w}_1)_{\omega_T} - S_h(\Vh,\Wh) - \Sud(\Vh,\Wh) - A[\Vh,\Yh] \\
+        &= (u - \underline{v}_1, \underline{w}_1)_{\omega_T}  +  S_h(\mathbf{U} - \Vh,\Wh) + \Sud(\mathbf{U} - \Vh,\Wh) + A[\mathbf{U} - \Vh,\Yh],
     \end{align*} 
     where we use the fact that $\mathbf{U}$ is sufficiently smooth and $u = u_{\omega}$ on $\omega_T$. Then, we can apply Lem. \ref{lem:continuityA} to obtain 
     \begin{align*}
-        (u - &\underline{v}_1, \underline{w}_1)_{\omega_T}  + \gamma S_h(\mathbf{U} - \Vh,\Wh) + \Sud(\mathbf{U} - \Vh,\Wh) + A[\mathbf{U} - \Vh,\Yh] \\
+        (u - &\underline{v}_1, \underline{w}_1)_{\omega_T}  +  S_h(\mathbf{U} - \Vh,\Wh) + \Sud(\mathbf{U} - \Vh,\Wh) + A[\mathbf{U} - \Vh,\Yh] \\
         &\le C(\tnorm{(\mathbf{U} - \Vh,0)}_{\wop} \tnorm{(0,\Yh)}  + \tnorm{(\mathbf{U} - \Vh,0)} \tnorm{(\Wh,0)} ) \\
         &\le C \tnorm{(\mathbf{U} - \Vh,0)}_{\wop} \tnorm{(\Wh,\Yh)}.
     \end{align*}
@@ -1779,7 +1779,7 @@ We recall the following interpolation result from \cite{BP24}:
 \begin{lem}\label{eq:lemma:stability}
     Let $u$ be a solution of \eqref{eq:waveEquation} and $\mathbf{U} = (u,\partial_t u)$. For any $(\Wh,\Yh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ it holds that
     \begin{equation*}
-        (u - \Pi_h u, \wl_1)_{\omega_T} - \gamma S_h(\mathbf{\Pi}_h \mathbf{U},\Wh) - A[\mathbf{\Pi}_h \mathbf{U},\Yh] - \Sud(\mathbf{\Pi}_h \mathbf{U}, \Wh) \le C h^s \Vert u \Vert_{H^m(Q)} \tnorm{(\Wh,\Yh)}.
+        (u - \Pi_h u, \wl_1)_{\omega_T} -  S_h(\mathbf{\Pi}_h \mathbf{U},\Wh) - A[\mathbf{\Pi}_h \mathbf{U},\Yh] - \Sud(\mathbf{\Pi}_h \mathbf{U}, \Wh) \le C h^s \Vert u \Vert_{H^m(Q)} \tnorm{(\Wh,\Yh)}.
     \end{equation*}
 \end{lem}
 
