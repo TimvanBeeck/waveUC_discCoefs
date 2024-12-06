@@ -1,6 +1,3 @@
-
-
-%3 May 2012
 %\documentclass[10pt,reqno]{amsart}
 \documentclass[sn-mathphys-num]{sn-jnl}
 
@@ -240,6 +237,7 @@ Set1-5\nextlist
 
 %%%
 
+\providecommand{\jp}[1]{\newline {\color{cyan} \hspace*{-0.5cm} $\rightsquigarrow$ \underline{\textbf{JP:}} \textit{#1} \newline}}
 
 \date{\today}
 \begin{document}
@@ -328,7 +326,6 @@ where $\operatorname{dist}_c(x,\omega_T) := \inf_{y \in \omega_T} d_c(x,y)$ with
 \noindent In this section, we introduce a fully discrete discontinuous in time finite element method to discretize the data assimilation problem \eqref{eq:waveEquation}-\eqref{eq:dataMatch} for the wave equation in heterogeneous media. The discretization is based on the scheme introduced in \cite{BP24} for the homogeneous case. Before introducing the method in Section \ref{sec:method}, we describe the geometric partition of the space-time domain $Q$ into time slabs in Section \ref{sec:spaceTimeDiscretization}. 
 
 \subsection{Discretization of the space-time domain}\label{sec:spaceTimeDiscretization}
-\todo[inline]{ $\mathcal{T}_h$ is not quasi-uniform. Introduce $ \hat{\mathcal{T}}_h$   }
 Let $\hat{\mathcal{T}}_h$ be a quasi-uniform triangulation with mesh size $h$ such that $\hat{\Omega}:= \cup_{K \in \hat{\mathcal{T}}_h} K $ contains $\Omega$, i.e.\ $\Omega \subset \hat{\Omega}$. Setting $\mathcal{T}_h := \{ K \cap \Omega \mid K \in  \hat{\mathcal{T}}_h \}$ then ensures that $\Omega = \cup_{K \in \mathcal{T}_h} K$ holds true.  
 We recall from  \cite[Sec. 4.2]{BFMO21control} that the triangulation $\{ \hat{\mathcal{T}}_h \mid h > 0 \}$ can be constructed such that for $h$ small enough the following continuous trace inequality holds:  For all $v \in [H^1(K)]^d$ and $K \in \mathcal{T}_h$, we have
 \begin{equation}\label{eq:traceInequality}
@@ -1259,170 +1256,6 @@ Figure \ref{fig:jumpCoefs:multipleJumps:noGCC} shows once more that the approxim
   \end{figure}
 \end{comment}
 
-\subsubsection{2nd one dimensional example}
-We consider the same geometrical setup as in Sec. \ref{sec:numex:1D:simple} with a more intricate reference solution considered in \cite{BDE22,MEMM19}. With $u_0 (x) := \frac{1}{100} \exp(-(20(x-\frac{1}{5}))^2)$, we consider the exact solution 
-\begin{equation}\label{eq:1D:complicatedSol}
-    u(x,t) = \begin{cases}
-      \sum_{k \ge 0} \left( \frac{c_2-c_1}{c_2+c_1}\right)^k \left( u_0 (k + x - c_1 t) - u_0(k-x-c_1 t)\right), &x \in \Omega_1, \\
-      \left( \frac{2c_1}{c_2+c_1}\right) \sum_{k \ge 0} \left( \frac{c_2 - c_1}{c_2 + c_1}\right)^k u_0 \left( \frac{c_1}{c_2} \left( x - \frac{1}{2}\right) +k + \frac{1}{2} - c_1 t \right), & x \in \Omega_2. 
-    \end{cases}
-\end{equation}
-This solution describes a wave traveling towards the interface $\Gamma$. Due to the jump in the wave speed, a part of the wave is reflected from the interface into the domain $\Omega_1$, while the other part passes through the interface into $\Omega_2$ and oscillates stronger. 
-
-
-\begin{comment}
-\begin{figure}[!htbp]
-    \begin{center}with 
-        \begin{tikzpicture}[scale=0.72]
-            \begin{groupplot}[%
-                group style={%
-                group size=2 by 2,
-                horizontal sep=1.5cm,
-                vertical sep=2cm,
-                },
-            ymajorgrids=true,
-            grid style=dashed,
-            %ymin = 1e-3, ymax = 0.5e1,
-            ]    
-                \nextgroupplot[width=9cm,height=7cm,domain=0:4,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 1.0, \Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=paulcolors, 
-                legend pos=south west, %yticklabels={,,},
-                ]
-                \addplot+[discard if not={order}{2},discard if not={contrast}{1.0},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast1.0.csv};
-                \addplot+[discard if not={order}{2},discard if not={contrast}{1.0},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast1.0.csv};
-                %\addplot+[discard if not={order}{3},discard if not={contrast}{1.0},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast1.0.csv};
-                \addplot+[discard if not={order}{3},discard if not={contrast}{1.0},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast1.0.csv};
-                
-
-
-                %\addplot[gray, dashed, domain=1:4] {0.005*(1/2^(2))^(x-0.9)};
-                %\addplot[gray, dashed, domain=1:4] {0.0005*(1/2^(3))^(x-0.9)};
-                %\node [draw=none] at (axis description cs:0.80,0.45) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-                %\node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
-    
-                \legend{$k=2$,best,$k = 3$,best}
-                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 1.5, \Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=paulcolors, 
-                legend pos=south west, %yticklabels={,,},
-                ]
-                \addplot+[discard if not={order}{2},discard if not={contrast}{1.5},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast1.5.csv};
-                \addplot+[discard if not={order}{2},discard if not={contrast}{1.5},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast1.5.csv};
-                \addplot+[discard if not={order}{3},discard if not={contrast}{1.5},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast1.5.csv};
-                \addplot+[discard if not={order}{3},discard if not={contrast}{1.5},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast1.5.csv};
-
-                %\addplot[gray, dashed, domain=1:4] {6.5*(1/2^(2))^(x-0.9)};
-                %\addplot[gray, dashed, domain=1:4] {1.5*(1/2^(3))^(x-0.9)};
-                %\node [draw=none] at (axis description cs:0.80,0.40) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-                %\node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
-                \legend{$k=2$,best,$k = 3$,best}
-
-                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 2.0, \Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=paulcolors, 
-                legend pos=south west, %yticklabels={,,},
-                ]
-                \addplot+[discard if not={order}{2},discard if not={contrast}{2.0},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast2.0.csv};
-                \addplot+[discard if not={order}{2},discard if not={contrast}{2.0},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast2.0.csv};
-                \addplot+[discard if not={order}{3},discard if not={contrast}{2.0},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast2.0.csv};
-                \addplot+[discard if not={order}{3},discard if not={contrast}{2.0},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast2.0.csv};
-
-                %\addplot[gray, dashed, domain=1:4] {12.5*(1/2^(2))^(x-0.9)};
-                %\addplot[gray, dashed, domain=1:4] {5.5*(1/2^(3))^(x-0.9)};
-                %\node [draw=none] at (axis description cs:0.80,0.40) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-                %\node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
-                \legend{$k=2$,best,$k = 3$,best}
-
-                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 2.5, \Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=paulcolors, 
-                legend pos=south west, %yticklabels={,,},
-                ]
-                \addplot+[discard if not={order}{2},discard if not={contrast}{2.5},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast2.5.csv};
-                \addplot+[discard if not={order}{2},discard if not={contrast}{2.5},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast2.5.csv};
-                \addplot+[discard if not={order}{3},discard if not={contrast}{2.5},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast2.5.csv};
-                \addplot+[discard if not={order}{3},discard if not={contrast}{2.5},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast2.5.csv};
-
-                %\addplot[gray, dashed, domain=1:4] {22.5*(1/2^(2))^(x-0.9)};
-                %\addplot[gray, dashed, domain=1:4] {12.5*(1/2^(3))^(x-0.9)};
-                %\node [draw=none] at (axis description cs:0.80,0.40) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-                %\node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
-                \legend{$k=2$,best,$k = 3$,best}
-            \end{groupplot}
-        \end{tikzpicture}
-    \end{center}
-    \caption{...}
-    %\label{fig:2DjumpCoefs}
-  \end{figure}
-\end{comment}
-
-  \begin{figure}[!htbp]
-    \begin{center}
-        \begin{tikzpicture}[scale=0.72]
-            \begin{groupplot}[%
-                group style={%
-                group size=2 by 1,
-                horizontal sep=1.5cm,
-                vertical sep=2cm,
-                },
-            ymajorgrids=true,
-            grid style=dashed,
-            %ymin = 1e-3, ymax = 0.5e1,
-            ]    
-                \nextgroupplot[width=9cm,height=7cm,domain=0:4,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$L^2$-best approximation ($k = 2$)}, %cycle list name=paulcolors, 
-                legend pos=south west, 
-                %yticklabels={,,}, 
-                xlabel={$L$}, ylabel={$\Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$},
-                ]
-                \addplot+[discard if not={order}{2},discard if not={contrast}{1.0},line width=1.1pt] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/weakDisc_noRestrict_1D_jumpingCoefs_k2.csv};
-                \addplot+[discard if not={order}{2},discard if not={contrast}{1.5},line width=1.1pt] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/weakDisc_noRestrict_1D_jumpingCoefs_k2.csv};
-                \addplot+[discard if not={order}{2},discard if not={contrast}{2.0},line width=1.1pt] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/weakDisc_noRestrict_1D_jumpingCoefs_k2.csv};
-                %\addplot+[discard if not={order}{2},discard if not={contrast}{2.0},line width=1.1pt,dashed] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/weakDisc_noRestrict_1D_jumpingCoefs_k2.csv};
-             
-             
-                \addplot[gray, dashed, domain=1:4] {0.0025*(1/2^(2))^(x-0.9)};
-                \addplot[gray, dashed, domain=1:4] {0.005*(1/2^(3/2))^(x-0.9)};
-
-                \node [draw=none] at (axis description cs:0.50,0.40) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-                \node [draw=none] at (axis description cs:0.90,0.60) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3/2})$};
-
-
-                \legend{$c_1 = 1.0$,$c_1 = 1.5$,$c_1 = 2.0$}
-                \nextgroupplot[width=9cm,height=7cm,domain=0:4,xmode=linear,ymode=linear, xlabel={}, ylabel={}, title={$\dt u$ vs. $\dt u_h$ ($k = 3$)}, %cycle list name=paulcolors, 
-                legend pos=north west, %yticklabels={,,},
-                ]
-                \draw[fill=gray!40,draw=none,opacity=0.5] (0.25,-2) -- (0.25,2) -- (0,2) -- (0,-2) -- cycle;
-                \draw[fill=gray!40,draw=none,opacity=0.5] (0.75,-2) -- (0.75,2) -- (1.0,2) -- (1.0,-2) -- cycle;
-
-
-                \addplot+[discard if not={contrast}{2.0},line width=2.5pt,mark=None,color=black] table [x=x, y=y_dt, col sep=comma] {../data/exact_plot_data_1D_complexSol.csv};
-                \addplot+[discard if not={L}{3},line width=1.1pt,mark=none] table [x=x, y=y_dt, col sep=comma] {../data/weakDisc_higherDt_noRestrict_approx_plot_data_WPFalse_contrast2.0_k3.csv};
-                %\addplot+[discard if not={L}{3},line width=1.1pt,mark=none,dotted] table [x=x, y=y_dt, col sep=comma] {../data/weakDisc_noRestrict_approx_plot_data_WPFalse_contrast2.0_k3.csv};
-                \addplot+[discard if not={L}{4},line width=1.1pt,mark=none] table [x=x, y=y_dt, col sep=comma] {../data/weakDisc_higherDt_noRestrict_approx_plot_data_WPFalse_contrast2.0_k3.csv};
-                
-                \draw[dashed,gray,very thick] (0.5,-2) -- (0.5,2);
-                \node [draw=none] at (axis description cs:0.53,0.125) {\color{gray} $\Gamma$};
-                \node [draw=none] at (axis description cs:0.175,0.125) {\color{gray} $\omega$};
-                \node [draw=none] at (axis description cs:0.83,0.125) {\color{gray} $\omega$};
-             
-                %\addplot[gray, dashed, domain=1:4] {0.01*(1/2^(2))^(x-0.9)};
-                %\addplot[gray, dashed, domain=1:4] {0.025*(1/2^(3/2))^(x-0.9)};
-
-                %L = 2
-                %\draw[color=black,thick] (0.75,-0.7) -- (1,-0.7);
-                %\draw[color=black,thick] (0.75,-0.68) -- (0.75,-0.72);
-                %\draw[color=black,thick] (0.875,-0.68) -- (0.875,-0.72);
-                %\draw[color=black,thick] (1.0,-0.68) -- (1.0,-0.72);
-                
-                %L = 3
-                %\draw[color=black,thick] (0.75,-0.6) -- (1,-0.6);
-                %\draw[color=black,thick] (0.75,-0.58) -- (0.75,-0.62);
-                %\draw[color=black,thick] (0.8125,-0.58) -- (0.8125,-0.62);
-                %\draw[color=black,thick] (0.875,-0.58) -- (0.875,-0.62);
-                %\draw[color=black,thick] (0.9375,-0.58) -- (0.9375,-0.62);
-                %\draw[color=black,thick] (1.0,-0.58) -- (1.0,-0.62);
-                %\node[draw=none] at (0.67,-0.6) {\color{black} \footnotesize $L = 3$};
-
-                \legend{exact,$L=4$, $L=5$}
-            \end{groupplot}
-        \end{tikzpicture}
-    \end{center}
-    \caption{The $L^2$-bestapproximation error of \eqref{eq:1D:complicatedSol} with $k = 2$ for $c_2 = 1$ and $c_1 \in \{1.0,1.5,2.0\}$ (left) and the approximation of the time derivative of \eqref{eq:1D:complicatedSol} with $k = 3$ for $c_1 = 2.5$ for $L = 4,5$, $h = 1/2^{L+1} = \Delta t$ (right).}
-    %\label{fig:2DjumpCoefs}
-  \end{figure}
 
 
 
@@ -1652,6 +1485,184 @@ As a simple test case, we can extend the one-dimensional exact solution defined 
   \end{figure}
 \end{comment}
 
+
+
+
+\subsubsection{2nd one dimensional example}
+
+~\jp{I am not sure whether this section really fits into the narrative ... Shall we just remove it?}
+We consider the same geometrical setup as in Sec. \ref{sec:numex:1D:simple} with a more intricate reference solution considered in \cite{BDE22,MEMM19}. With $u_0 (x) := \frac{1}{100} \exp(-(20(x-\frac{1}{5}))^2)$, we consider the exact solution 
+\begin{equation}\label{eq:1D:complicatedSol}
+    u(x,t) = \begin{cases}
+      \sum_{k \ge 0} \left( \frac{c_2-c_1}{c_2+c_1}\right)^k \left( u_0 (k + x - c_1 t) - u_0(k-x-c_1 t)\right), &x \in \Omega_1, \\
+      \left( \frac{2c_1}{c_2+c_1}\right) \sum_{k \ge 0} \left( \frac{c_2 - c_1}{c_2 + c_1}\right)^k u_0 \left( \frac{c_1}{c_2} \left( x - \frac{1}{2}\right) +k + \frac{1}{2} - c_1 t \right), & x \in \Omega_2. 
+    \end{cases}
+\end{equation}
+This solution describes a wave traveling towards the interface $\Gamma$. Due to the jump in the wave speed, a part of the wave is reflected from the interface into the domain $\Omega_1$, while the other part passes through the interface into $\Omega_2$ and oscillates stronger. 
+
+
+\begin{comment}
+\begin{figure}[!htbp]
+    \begin{center}with 
+        \begin{tikzpicture}[scale=0.72]
+            \begin{groupplot}[%
+                group style={%
+                group size=2 by 2,
+                horizontal sep=1.5cm,
+                vertical sep=2cm,
+                },
+            ymajorgrids=true,
+            grid style=dashed,
+            %ymin = 1e-3, ymax = 0.5e1,
+            ]    
+                \nextgroupplot[width=9cm,height=7cm,domain=0:4,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 1.0, \Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=paulcolors, 
+                legend pos=south west, %yticklabels={,,},
+                ]
+                \addplot+[discard if not={order}{2},discard if not={contrast}{1.0},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast1.0.csv};
+                \addplot+[discard if not={order}{2},discard if not={contrast}{1.0},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast1.0.csv};
+                %\addplot+[discard if not={order}{3},discard if not={contrast}{1.0},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast1.0.csv};
+                \addplot+[discard if not={order}{3},discard if not={contrast}{1.0},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast1.0.csv};
+                
+
+
+                %\addplot[gray, dashed, domain=1:4] {0.005*(1/2^(2))^(x-0.9)};
+                %\addplot[gray, dashed, domain=1:4] {0.0005*(1/2^(3))^(x-0.9)};
+                %\node [draw=none] at (axis description cs:0.80,0.45) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
+                %\node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
+    
+                \legend{$k=2$,best,$k = 3$,best}
+                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 1.5, \Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=paulcolors, 
+                legend pos=south west, %yticklabels={,,},
+                ]
+                \addplot+[discard if not={order}{2},discard if not={contrast}{1.5},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast1.5.csv};
+                \addplot+[discard if not={order}{2},discard if not={contrast}{1.5},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast1.5.csv};
+                \addplot+[discard if not={order}{3},discard if not={contrast}{1.5},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast1.5.csv};
+                \addplot+[discard if not={order}{3},discard if not={contrast}{1.5},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast1.5.csv};
+
+                %\addplot[gray, dashed, domain=1:4] {6.5*(1/2^(2))^(x-0.9)};
+                %\addplot[gray, dashed, domain=1:4] {1.5*(1/2^(3))^(x-0.9)};
+                %\node [draw=none] at (axis description cs:0.80,0.40) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
+                %\node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
+                \legend{$k=2$,best,$k = 3$,best}
+
+                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 2.0, \Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=paulcolors, 
+                legend pos=south west, %yticklabels={,,},
+                ]
+                \addplot+[discard if not={order}{2},discard if not={contrast}{2.0},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast2.0.csv};
+                \addplot+[discard if not={order}{2},discard if not={contrast}{2.0},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast2.0.csv};
+                \addplot+[discard if not={order}{3},discard if not={contrast}{2.0},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast2.0.csv};
+                \addplot+[discard if not={order}{3},discard if not={contrast}{2.0},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast2.0.csv};
+
+                %\addplot[gray, dashed, domain=1:4] {12.5*(1/2^(2))^(x-0.9)};
+                %\addplot[gray, dashed, domain=1:4] {5.5*(1/2^(3))^(x-0.9)};
+                %\node [draw=none] at (axis description cs:0.80,0.40) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
+                %\node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
+                \legend{$k=2$,best,$k = 3$,best}
+
+                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 2.5, \Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=paulcolors, 
+                legend pos=south west, %yticklabels={,,},
+                ]
+                \addplot+[discard if not={order}{2},discard if not={contrast}{2.5},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast2.5.csv};
+                \addplot+[discard if not={order}{2},discard if not={contrast}{2.5},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast2.5.csv};
+                \addplot+[discard if not={order}{3},discard if not={contrast}{2.5},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast2.5.csv};
+                \addplot+[discard if not={order}{3},discard if not={contrast}{2.5},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast2.5.csv};
+
+                %\addplot[gray, dashed, domain=1:4] {22.5*(1/2^(2))^(x-0.9)};
+                %\addplot[gray, dashed, domain=1:4] {12.5*(1/2^(3))^(x-0.9)};
+                %\node [draw=none] at (axis description cs:0.80,0.40) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
+                %\node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
+                \legend{$k=2$,best,$k = 3$,best}
+            \end{groupplot}
+        \end{tikzpicture}
+    \end{center}
+    \caption{...}
+    %\label{fig:2DjumpCoefs}
+  \end{figure}
+\end{comment}
+
+  \begin{figure}[!htbp]
+    \begin{center}
+        \begin{tikzpicture}[scale=0.72]
+            \begin{groupplot}[%
+                group style={%
+                group size=2 by 1,
+                horizontal sep=1.5cm,
+                vertical sep=2cm,
+                },
+            ymajorgrids=true,
+            grid style=dashed,
+            %ymin = 1e-3, ymax = 0.5e1,
+            ]    
+                \nextgroupplot[width=9cm,height=7cm,domain=0:4,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$L^2$-best approximation ($k = 2$)}, %cycle list name=paulcolors, 
+                legend pos=south west, 
+                %yticklabels={,,}, 
+                xlabel={$L$}, ylabel={$\Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$},
+                ]
+                \addplot+[discard if not={order}{2},discard if not={contrast}{1.0},line width=1.1pt] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/weakDisc_noRestrict_1D_jumpingCoefs_k2.csv};
+                \addplot+[discard if not={order}{2},discard if not={contrast}{1.5},line width=1.1pt] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/weakDisc_noRestrict_1D_jumpingCoefs_k2.csv};
+                \addplot+[discard if not={order}{2},discard if not={contrast}{2.0},line width=1.1pt] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/weakDisc_noRestrict_1D_jumpingCoefs_k2.csv};
+                %\addplot+[discard if not={order}{2},discard if not={contrast}{2.0},line width=1.1pt,dashed] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/weakDisc_noRestrict_1D_jumpingCoefs_k2.csv};
+             
+             
+                \addplot[gray, dashed, domain=1:4] {0.0025*(1/2^(2))^(x-0.9)};
+                \addplot[gray, dashed, domain=1:4] {0.005*(1/2^(3/2))^(x-0.9)};
+
+                \node [draw=none] at (axis description cs:0.50,0.40) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
+                \node [draw=none] at (axis description cs:0.90,0.60) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3/2})$};
+
+
+                \legend{$c_1 = 1.0$,$c_1 = 1.5$,$c_1 = 2.0$}
+                \nextgroupplot[width=9cm,height=7cm,domain=0:4,xmode=linear,ymode=linear, xlabel={}, ylabel={}, title={$\dt u$ vs. $\dt u_h$ ($k = 3$)}, %cycle list name=paulcolors, 
+                legend pos=north west, %yticklabels={,,},
+                ]
+                \draw[fill=gray!40,draw=none,opacity=0.5] (0.25,-2) -- (0.25,2) -- (0,2) -- (0,-2) -- cycle;
+                \draw[fill=gray!40,draw=none,opacity=0.5] (0.75,-2) -- (0.75,2) -- (1.0,2) -- (1.0,-2) -- cycle;
+
+
+                \addplot+[discard if not={contrast}{2.0},line width=2.5pt,mark=None,color=black] table [x=x, y=y_dt, col sep=comma] {../data/exact_plot_data_1D_complexSol.csv};
+                \addplot+[discard if not={L}{3},line width=1.1pt,mark=none] table [x=x, y=y_dt, col sep=comma] {../data/weakDisc_higherDt_noRestrict_approx_plot_data_WPFalse_contrast2.0_k3.csv};
+                %\addplot+[discard if not={L}{3},line width=1.1pt,mark=none,dotted] table [x=x, y=y_dt, col sep=comma] {../data/weakDisc_noRestrict_approx_plot_data_WPFalse_contrast2.0_k3.csv};
+                \addplot+[discard if not={L}{4},line width=1.1pt,mark=none] table [x=x, y=y_dt, col sep=comma] {../data/weakDisc_higherDt_noRestrict_approx_plot_data_WPFalse_contrast2.0_k3.csv};
+                
+                \draw[dashed,gray,very thick] (0.5,-2) -- (0.5,2);
+                \node [draw=none] at (axis description cs:0.53,0.125) {\color{gray} $\Gamma$};
+                \node [draw=none] at (axis description cs:0.175,0.125) {\color{gray} $\omega$};
+                \node [draw=none] at (axis description cs:0.83,0.125) {\color{gray} $\omega$};
+             
+                %\addplot[gray, dashed, domain=1:4] {0.01*(1/2^(2))^(x-0.9)};
+                %\addplot[gray, dashed, domain=1:4] {0.025*(1/2^(3/2))^(x-0.9)};
+
+                %L = 2
+                %\draw[color=black,thick] (0.75,-0.7) -- (1,-0.7);
+                %\draw[color=black,thick] (0.75,-0.68) -- (0.75,-0.72);
+                %\draw[color=black,thick] (0.875,-0.68) -- (0.875,-0.72);
+                %\draw[color=black,thick] (1.0,-0.68) -- (1.0,-0.72);
+                
+                %L = 3
+                %\draw[color=black,thick] (0.75,-0.6) -- (1,-0.6);
+                %\draw[color=black,thick] (0.75,-0.58) -- (0.75,-0.62);
+                %\draw[color=black,thick] (0.8125,-0.58) -- (0.8125,-0.62);
+                %\draw[color=black,thick] (0.875,-0.58) -- (0.875,-0.62);
+                %\draw[color=black,thick] (0.9375,-0.58) -- (0.9375,-0.62);
+                %\draw[color=black,thick] (1.0,-0.58) -- (1.0,-0.62);
+                %\node[draw=none] at (0.67,-0.6) {\color{black} \footnotesize $L = 3$};
+
+                \legend{exact,$L=4$, $L=5$}
+            \end{groupplot}
+        \end{tikzpicture}
+    \end{center}
+    \caption{The $L^2$-bestapproximation error of \eqref{eq:1D:complicatedSol} with $k = 2$ for $c_2 = 1$ and $c_1 \in \{1.0,1.5,2.0\}$ (left) and the approximation of the time derivative of \eqref{eq:1D:complicatedSol} with $k = 3$ for $c_1 = 2.5$ for $L = 4,5$, $h = 1/2^{L+1} = \Delta t$ (right).}
+    %\label{fig:2DjumpCoefs}
+  \end{figure}
+
+
+ \section{Conclusion}
+Lalala 
+
+
+\appendix
+
+\begin{comment}
 \subsubsection{Snell's law... }
 \noindent Finally, we consider a more elaborate example. We consider the initial conditions 
 \begin{align*}
@@ -1695,10 +1706,10 @@ and compute a reference solution $u_{\text{ref}}$ numerically. We consider the d
     \caption{According to Snell's law, rays hitting the interface with an angle greater than the critical angle $\theta_c := \arcsin(\frac{c_1}{c_2})$ are reflected back into the domain $\Omega_1$. To ensure that the GCC is fulfilled, the height $h_{\omega}$ has to chosen smaller than $\tan(\theta_c)$.}
     \label{fig:2d:SnellsLaw}
 \end{figure}
+\end{comment}
 
 
 \begin{comment}
-\appendix
 \section*{Outtakes}
 {\color{gray}
 \begin{lem}[Continuity of $A$]
