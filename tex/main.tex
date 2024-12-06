@@ -328,13 +328,13 @@ where $\operatorname{dist}_c(x,\omega_T) := \inf_{y \in \omega_T} d_c(x,y)$ with
 \noindent In this section, we introduce a fully discrete discontinuous in time finite element method to discretize the data assimilation problem \eqref{eq:waveEquation}-\eqref{eq:dataMatch} for the wave equation in heterogeneous media. The discretization is based on the scheme introduced in \cite{BP24} for the homogeneous case. Before introducing the method in Section \ref{sec:method}, we describe the geometric partition of the space-time domain $Q$ into time slabs in Section \ref{sec:spaceTimeDiscretization}. 
 
 \subsection{Discretization of the space-time domain}\label{sec:spaceTimeDiscretization}
-Let $\mathcal{T}_h$ be a quasi-uniform triangulation of $\Omega$ with mesh size $h$ such that both, the data domain $\omega$ and the interface $\Gamma$ are fitted. 
-Note that the triangulation can be constructed such that for $h$ small enough the following continuous trace inequality holds \cite[Sec. 4.2]{BFMO21control}: For all $v \in [H^1(K)]^d$ and $K \in \mathcal{T}_h$, we have
+\todo[inline]{ $\mathcal{T}_h$ is not quasi-uniform. Introduce $ \hat{\mathcal{T}}_h$   }
+Let $\hat{\mathcal{T}}_h$ be a quasi-uniform triangulation with mesh size $h$ such that $\hat{\Omega}:= \cup_{K \in \hat{\mathcal{T}}_h} K $ contains $\Omega$, i.e.\ $\Omega \subset \hat{\Omega}$. Setting $\mathcal{T}_h := \{ K \cap \Omega \mid K \in  \hat{\mathcal{T}}_h \}$ then ensures that $\Omega = \cup_{K \in \mathcal{T}_h} K$ holds true.  
+We recall from  \cite[Sec. 4.2]{BFMO21control} that the triangulation $\{ \hat{\mathcal{T}}_h \mid h > 0 \}$ can be constructed such that for $h$ small enough the following continuous trace inequality holds:  For all $v \in [H^1(K)]^d$ and $K \in \mathcal{T}_h$, we have
 \begin{equation}\label{eq:traceInequality}
     \Vert v \Vert_{[L^2(\partial K)]^d} \le C \left(h^{-1/2} \Vert v \Vert_{[L^2(K)]^d} + h^{1/2} \Vert \nabla v \Vert_{[L^2(K)]^d} \right).  
 \end{equation}
-
-
+We assume in what follows additionally that the triangulation $\mathcal{T}_h$ fits the interface $\Gamma$ and the data domain $\omega$. An extension to allow for unfitted interfaces could be possible utilizing techniques we introduced for a stationary problem in \cite{BP23arxiv} but is certainly beyond the scope of this article. 
 
 \noindent For $k \ge 1$, we define the $H^1$-conforming finite element space 
 \begin{equation}
