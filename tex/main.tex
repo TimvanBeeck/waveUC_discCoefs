@@ -259,7 +259,10 @@ Set1-5\nextlist
 \maketitle
 
 \section{Introduction}
-\noindent In this article, we consider the discretization of a data assimilation problem for the wave equation in heterogeneous media. In the following, let $\Omega \subset \mathbb{R}^d$ be a bounded domain with smooth boundary $\partial \Omega$ such that there exists subdomains $\Omega_1, \Omega_2 \subseteq \Omega$ such that $\Omega = \overline{\Omega}_1 \cup \overline{\Omega}_2$ and $\Omega_1 \cap \Omega_2 = \emptyset$. We consider a scalar wave speed $c(x) = \mathbbm{1}_{\Omega_1} c_1(x) + \mathbbm{1}_{\Omega_2} c_2(x)$, $c_i \in C^\infty(\Omega_i)$, $i = 1,2$, which may be discontinuous across the interface $\Gamma = \Omega \setminus (\Omega_1 \cup \Omega_2)$, but constant in time. For a final time $T > 0$, we consider the space-time domain $Q = (0,T) \times \Omega$ with lateral boundary $\Sigma \coloneqq (0,T) \times \partial \Omega$. For any nonempty subset $\omega \subset \Omega$, we set $\omega_T \coloneqq (0,T) \times \omega$. In the following, let $\wop$ be the wave operator with discontinuous wave-speed defined as 
+\noindent In this article, we consider the discretization of a data assimilation problem for the wave equation in heterogeneous media. In the following, let $\Omega \subset \mathbb{R}^d$ be a bounded domain with smooth boundary $\partial \Omega$. We assume that $\Omega$ is split by a smooth $(d-1)$-dimensional 
+interface $\Gamma$ into two disjoint components, i.e.\ $\Omega \setminus \Gamma = \Omega_1 \cup 
+\Omega_2$ and $\Omega_1 \cap \Omega_2 = \emptyset$.
+ We consider a scalar wave speed $c(x) = \mathbbm{1}_{\Omega_1} c_1(x) + \mathbbm{1}_{\Omega_2} c_2(x)$, $c_i \in C^\infty(\Omega_i)$, $i = 1,2$, which may be discontinuous across the interface $\Gamma$, but constant in time. For a final time $T > 0$, we consider the space-time domain $Q = (0,T) \times \Omega$ with lateral boundary $\Sigma \coloneqq (0,T) \times \partial \Omega$. For any nonempty subset $\omega \subset \Omega$, we set $\omega_T \coloneqq (0,T) \times \omega$. In the following, let $\wop$ be the wave operator with discontinuous wave-speed defined as 
 \begin{equation*}
     \wop u := \partial_t^2 - \div(c^2 \nabla u).
 \end{equation*}
@@ -450,15 +453,19 @@ and its strengthened version
 \begin{proof}
     It suffices to show that $\tnorm{(\cdot,\cdot)}$ is a norm. Since $\tnorm{(\cdot,\cdot)}$ is a semi-norm by definition, we only require that $\tnorm{(\Uh,\Zh)} = 0$ implies $\Uh=\Zh= 0$. Assume that $\tnorm{(\Uh,\Zh)} = 0$. Then, in particular, $\vert \Uh \vert_{\uparrow \downarrow} = 0$ and therefore $(\ul_1,\ul_2) \in [H^1(Q)]^2$. Furthermore, by definition of the stabilization terms $S_h$ and $S_h^{\ast}$, we have that $\Zh = 0$, $\ul_1 \vert_{\Sigma} = 0$, $\ul_1 \vert_{\omega_T} = 0$ and $\dt \ul_1 = \ul_2$. Similar to \cite[Lem. 2.1]{BP24}, partial integration yields 
     \begin{align*}
-        \Vert \wop \ul_1 \Vert^2_{H^{-1}(Q)} &:= \sup_{\substack{  y \in H^1_0(Q), \\ \norm{y}_{H^1(Q) } = 1  }} \int_{Q} \left\{ -(\dt \ul_1) \dt y + c^2 \nabla \ul_1 \nabla y \right\}  \\
-        &= \sup_{\substack{  y \in H^1_0(Q), \\ \norm{y}_{H^1(Q) } = 1  }} \Big\{ \sum_{n = 0}^{N-1} (\ul_2 - \dt \ul_1, \dt y)_{Q_n} \\
-        &\qquad+ \sum_{n = 0}^{N-1} \int_{I_n} \sum_{K \in \mathcal{T}_h} (\dt \ul_2 - \div(c^2 \nabla \ul_1),y)_{K} \ \dT \\
-        &\qquad + \sum_{n = 0}^{N-1} \int_{I_n} \sum_{F \in \mathcal{F}_i} (\jump{c^2 \nabla \ul_1}, y)_F \ \dT + \sum_{n = 0}^{N-1} (\jump{\ul_1^n},y)_{\Sigma^n} \Big\}.
+	   & \Vert \wop \ul_1 \Vert^2_{H^{-1}(Q)} := \sup_{\substack{  y \in H^1_0(Q), \\ \norm{y}_{H^1(Q) } = 1  }} \int_{Q} \left\{ -(\dt \ul_1) \dt y + c^2 \nabla \ul_1 \nabla y \right\}  \\
+        &= \sup_{\substack{  y \in H^1_0(Q), \\ \norm{y}_{H^1(Q) } = 1  }} \Big\{ \sum_{n = 0}^{N-1} (\ul_2 - \dt \ul_1, \dt y)_{Q_n} 
+        + \sum_{n = 0}^{N-1} \int_{I_n} \sum_{K \in \mathcal{T}_h} (\dt \ul_2 - \div(c^2 \nabla \ul_1),y)_{K} \ \dT \\
+	    & \hspace{6em} + \sum_{n = 0}^{N-1} \int_{I_n} \sum_{F \in \mathcal{F}_i} (\jump{c^2 \nabla \ul_1 \cdot \mathbf{n}}, y)_F \ \dT + \sum_{n = 0}^{N-1} (\jump{\ul_1^n},y)_{\Sigma^n} \Big\},
     \end{align*}
-    It follows by definition of the stabilizers and $\tnorm{(\Uh,\Zh)} = 0$ that $\Vert \wop \ul_1 \Vert_{H^{-1}(Q)} = 0$. Thus, $\ul_1$ solves \eqref{eq:waveEquation} and by taking $\mu \rightarrow \infty$ in Thm. \ref{thm:filippas}, we conclude that $u_0 = u_1 = 0$. As solutions to \eqref{eq:waveEquation}-\eqref{eq:initialData} depend continuously on the data \cite{StolkPhD}, it follows that $\Uh = 0$. 
+where $ \jump{c^2 \nabla \ul_1 \cdot \mathbf{n}}$  denotes the jump of the normal derivative over interior facets. It follows by definition of the stabilizers and $\tnorm{(\Uh,\Zh)} = 0$ that $\Vert \wop \ul_1 \Vert_{H^{-1}(Q)} = 0$. Thus, $\ul_1$ solves \eqref{eq:waveEquation} and by taking $\mu \rightarrow \infty$ in Thm. \ref{thm:filippas}, we conclude that $u_0 = u_1 = 0$. As solutions to \eqref{eq:waveEquation}-\eqref{eq:initialData} depend continuously on the data \cite{StolkPhD}, it follows that $\Uh = 0$. 
 \end{proof}
 
-\noindent From this result it directly follows that the bilinear form $B$ enjoys inf-sup stability on $\ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ with respect to the $\tnorm{(\cdot,\cdot)}$-norm. 
+\noindent From this result and the identity
+\[
+B[(\Uh,\Zh),(\Uh,-\Zh)] = \tnorm{(\Uh,\Zh)}^2 = \tnorm{(\Uh,\Zh)}\tnorm{(\Uh,-\Zh)}
+\]
+it directly follows that the bilinear form $B$ enjoys inf-sup stability on $\ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ with respect to the $\tnorm{(\cdot,\cdot)}$-norm. 
 
 \begin{cor}
     There exists a constant $C_B>0$ such that 
@@ -467,22 +474,22 @@ and its strengthened version
     \end{equation}
 \end{cor}
 
-\begin{proof}
-    Since $B[(\Uh,\Zh),(\Uh,-\Zh)] = \tnorm{(\Uh,\Zh)}^2 = \tnorm{(\Uh,\Zh)}\tnorm{(\Uh,-\Zh)}$, we conclude that  
-    \begin{align*}
-        \sup_{(\Wh,\Yh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}} &\frac{B[(\Uh,\Zh),(\Wh,\Yh)]}{\tnorm{(\Wh,\Yh)}} \\
-        &\quad \ge \frac{B[(\Uh,\Zh),(\Uh,-\Zh)]}{\tnorm{(\Uh,-\Zh)}} = \tnorm{(\Uh,\Zh)}.
-    \end{align*}
-\end{proof}
+%\begin{proof}
+%    Since $B[(\Uh,\Zh),(\Uh,-\Zh)] = \tnorm{(\Uh,\Zh)}^2 = \tnorm{(\Uh,\Zh)}\tnorm{(\Uh,-\Zh)}$, we conclude that  
+%    \begin{align*}
+%        \sup_{(\Wh,\Yh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}} &\frac{B[(\Uh,\Zh),(\Wh,\Yh)]}{\tnorm{(\Wh,\Yh)}} \\
+%        &\quad \ge \frac{B[(\Uh,\Zh),(\Uh,-\Zh)]}{\tnorm{(\Uh,-\Zh)}} = \tnorm{(\Uh,\Zh)}.
+%    \end{align*}
+%\end{proof}
 
- 
+We report a continuity result for the bilinear form $A$ which follows from the Cauchy-Schwarz and the trace inequality \eqref{eq:traceInequality}. 
 \begin{lem}[Continuity of $A$]\label{lem:continuityA}
-    For all $\mathbf{U} \in [H^1(Q_n) \cap L^2(0,T;H^2(\mathcal{T}_h))] \times H^1(Q_n)$ and all $\Yh \in \ProdFullyDiscrSpace{k^\ast}{q^\ast}$, we have that 
+If $\mathbf{U}|_{Q^n} \in [H^1(Q^n) \cap L^2(0,T;H^2(\mathcal{T}_h))] \times H^1(Q^n)$ for $n=0,\ldots,N-1$ and for all $\Yh \in \ProdFullyDiscrSpace{k^\ast}{q^\ast}$, we have that 
     \begin{equation*}
         A[\mathbf{U},\Yh] \le C \tnorm{(\mathbf{U}, 0)}_{\wop} \tnorm{(0,\Yh)}. 
     \end{equation*} 
 \end{lem}
-
+\begin{comment}
 \begin{proof}
     First, note that $\tnorm{(0,\Yh)} = \Vert \Yh \Vert_{S_h^\ast}$. Using the Cauchy-Schwarz inequality, we obtain
     \begin{equation*}
@@ -500,13 +507,14 @@ and its strengthened version
     \end{align*}
     Putting all estimates together, the claim follows. 
 \end{proof}
+\end{comment}
 
 \noindent Using the inf-sup stability of $B$ and the continuity of $A$, we can show that the approximation error in the $\tnorm{(\cdot,\cdot)}$-norm is bounded by the best approximation error in the $\tnorm{(\cdot,\cdot)}_{\wop}$-norm.
 
 \begin{thm}\label{thm:bestapprox}
     Let $u$ be a sufficient regular solution of \eqref{eq:waveEquation} and $(\Uh,\Zh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ be the solution to \eqref{eq:discreteProblem}. Set $\mathbf{U} := (u,\partial_t u)$. Then, there exists a constant $C>0$ such that
     \begin{equation}
-        \tnorm{(\mathbf{U} - \Uh,\Zh)} \le \left( 1 + \frac{C}{C_B} \right) \inf_{\Vh \in \ProdFullyDiscrSpace{k}{q}} \tnorm{(\Uh - \Vh, 0)}_{\wop}.  
+   \tnorm{(\mathbf{U} - \Uh,\Zh)} \le \left( 1 + \frac{C}{C_B} \right) \inf_{\Vh \in \ProdFullyDiscrSpace{k}{q}} \tnorm{(\mathbf{U} - \Vh, 0)}_{\wop}.  
     \end{equation}
 \end{thm}
 
@@ -530,7 +538,7 @@ and its strengthened version
     \end{align*}
     Thus, the inf-sup condition on $B$ yields that 
     \begin{equation*}
-        \tnorm{(\Vh - \Uh,\Zh)} \le \frac{C}{C_B} \tnorm{(\Uh - \Vh, 0)}_{\wop},
+    \tnorm{(\mathbf{U} - \Uh,\Zh)} \le \frac{C}{C_B} \tnorm{(\mathbf{U} - \Vh, 0)}_{\wop},
     \end{equation*}
     which gives the claim. 
 \end{proof}
@@ -589,7 +597,8 @@ and its strengthened version
 
 
 \section{Numerical experiments}
-\noindent In this section, we present numerical experiments carried out with the proposed method. The examples are implemented using the \texttt{FEniCSx} library \cite{BarattaEtal2023,BasixJoss,ScroggsEtal2022,AlnaesEtal2014}. Reproduction material is available at \textbf{insert reproduction files...}
+\noindent In this section, we present numerical experiments carried out with the proposed method. The examples are implemented using the \texttt{FEniCSx} library \cite{BarattaEtal2023,BasixJoss,ScroggsEtal2022,AlnaesEtal2014}. 
+%Reproduction material is available at \textbf{insert reproduction files...}
 
 \subsection{Examples in one space dimension}
 \noindent We consider the unit interval $\Omega \coloneqq [0,1] \subset \mathbb{R}$. For a refinement level $L \in \mathbb{N}$, we partition the domain into $2^{L+1}$ uniform elements such that $h = 1/2^{L+1}$. The time step is chosen as $\Delta t = h$. 
