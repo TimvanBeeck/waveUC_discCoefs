@@ -571,7 +571,7 @@ If $\mathbf{U}|_{Q^n} \in [H^1(Q^n) \cap L^2(0,T;H^2(\mathcal{T}_h))] \times H^1
     \begin{equation*}
         \tnorm{(\Uh - \Vh, 0)}_{\wop} \le C \tnorm{(\Uh - \Vh, 0)}_{\square_1},
     \end{equation*}
-    where $\tnorm{(\cdot, \cdot)}_{\square_1}$ is defined by \eqref{eq:tnormwop} with $c_i = 1$, $i = 1,2$. Thus, we can apply the interpolation results derived in \cite[Lem. 2.4]{BP24} to obtain the claim. 
+    where $\tnorm{(\cdot, \cdot)}_{\square_1}$ is defined by \eqref{eq:tnormwop} with $c_i = 1$, $i = 1,2$. Thus, we can apply the interpolation results derived in \cite[Lemma 5]{BP24} to obtain the claim. 
 \end{proof}
 
 
@@ -589,7 +589,7 @@ If $\mathbf{U}|_{Q^n} \in [H^1(Q^n) \cap L^2(0,T;H^2(\mathcal{T}_h))] \times H^1
 \end{thm}
 
 \begin{proof}
-    The proof follows from the same argumentation as the proof of \cite[Thm. 4.4]{BP24}.
+    The proof follows from the same argumentation as the proof of \cite[Theorem 10]{BP24}.
 \end{proof}
 
 
@@ -603,7 +603,7 @@ If $\mathbf{U}|_{Q^n} \in [H^1(Q^n) \cap L^2(0,T;H^2(\mathcal{T}_h))] \times H^1
         \item The results from Thm. \ref{thm:filippas} are formulated in terms of $\Vert \wop u \Vert_{L^2(Q)}$. However, we can only control $\Vert \wop \tilde{e}_h \Vert_{H^{-1}(Q)}$ for the residual $\tilde{e}_h = u - L_{\Delta t} \ul_1$. Thus, we would have to rewrite the estimates from Thm. \ref{thm:filippas} with $\Vert \wop u \Vert_{H^{-1}(Q)}$ instead of $\Vert \wop u \Vert_{L^2(Q)}$. To this end, one might be able to shift the regularity suitably, cf. \cite[Sec. 2.6]{StolkPhD}, or use similar arguments as in \cite[Thm. A.1]{BFMO21}.
         \item We have to ensure that the constants in the estimates from Thm. \ref{thm:filippas} remain bounded when we consider the residual $\tilde{e}_h$. In particular, we have to control $C_{0,1} := \Vert (\tilde{e}_h \vert_{t = 0}, \dt \tilde{e}_h \vert_{t = 0}) \Vert_{H^1 \times L^2}$. We note that we can always ensure that $C_{0,1}$ is bounded by adding a suitable Tikhonov regularization term to \eqref{eq:primalStab}. 
     \end{enumerate}
-    Then, we can use the arguments of \cite[Thm. 4.4]{BP24} to show that 
+    Then, we can use the arguments of \cite[Theorem 10]{BP24} to show that 
     \begin{equation}
         \Vert (u - \ul_1) \vert_{t = 0} \Vert_{L^2(\Omega)}  + \Vert \dt (u - \ul_1) \vert_{t = 0} \Vert_{H^{-1}(\Omega)} \le C C_{0,1} \log(1 + C_{0,1} h^{-s} \Vert u \Vert_{H^m(Q)}^{-1})^{-1}. 
     \end{equation}
@@ -612,8 +612,7 @@ If $\mathbf{U}|_{Q^n} \in [H^1(Q^n) \cap L^2(0,T;H^2(\mathcal{T}_h))] \times H^1
 
 \section{Numerical experiments}
 \noindent In this section, we present numerical experiments carried out with the proposed method. The examples are implemented using the \texttt{FEniCSx} library \cite{BarattaEtal2023,BasixJoss,ScroggsEtal2022,AlnaesEtal2014}. 
-~\jp{We need to setup some reproduction material.}
-
+~\jp{We need to prepare some reproduction material.}
 \subsection{Examples in one space dimension}
 \noindent We consider the unit interval $\Omega \coloneqq [0,1] \subset \mathbb{R}$. For a refinement level $L \in \mathbb{N}$, we partition the domain into $2^{L+1}$ uniform elements such that $h = 1/2^{L+1}$. The time step is chosen as $\Delta t = h$. 
 
@@ -636,38 +635,6 @@ Note that in one space dimension, the requirement \eqref{eq:Tcondition} on $T$ a
 Thus, for $\omega$ as above, $c_2 = 1$ fixed and $c_1 > 1.0$, the condition \eqref{eq:Tcondition} translates to $T > 0.25(1+c_1^{-1})$. 
 
 
-\begin{figure}
-    \centering
-    \begin{tikzpicture}[scale=3]
-        \draw[-stealth] (-0.15,0) -- (1.15,0); 
-        \draw[-stealth] (0,-0.15) -- (0,1.15);
-        \draw (0,0) -- (1,0) -- (1,1) -- (0,1) -- cycle;
-        \draw[fill=gray!40,draw=none,opacity=0.5] (0,0) -- (0.5,0) -- (0.5,1) -- (0,1) -- cycle;
-        \draw[-stealth] (0.5,0) -- (1,0.5) -- (0.5,1);
-        \node at (-0.15,1) {\footnotesize $T$}; 
-        \node at (0.75,-0.15) {\footnotesize $\sup_{x \in \Omega} \operatorname{dist}_c(x,\omega_T)$}; 
-        \node at (1.15,0.5) {\footnotesize $t_0$};
-        \draw (0.7,0) to[bend right=45] (0.65,0.15); 
-        \node at (0.6,0.05) {\footnotesize $\alpha$};
-        \node at (0.25,0.5) {\footnotesize $\omega_T$};
-        \begin{scope}[xshift=2cm]
-            \draw[-stealth] (-0.15,0) -- (1.15,0); 
-            \draw[-stealth] (0,-0.15) -- (0,1.15);
-            \draw (0,0) -- (1,0) -- (1,1) -- (0,1) -- cycle;
-            \draw[fill=gray!40,draw=none,opacity=0.5] (0,0) -- (0.25,0) -- (0.25,1) -- (0,1) -- cycle;
-            \draw[fill=gray!40,draw=none,opacity=0.5] (0.75,0) -- (1,0) -- (1,1) -- (0.75,1) -- cycle;
-            \draw[-stealth] (0.25,0) -- (0.75,0.5);
-            \node at (-0.15,1) {\footnotesize $T$}; 
-            \node at (0.5,-0.15) {\footnotesize $2 \sup_{x \in \Omega} \operatorname{dist}_c(x,\omega_T)$}; 
-            \node at (0.67,0.5) {\footnotesize $t_0$};
-            \draw (0.45,0) to[bend right=45] (0.4,0.15); 
-            \node at (0.35,0.05) {\footnotesize $\alpha$};
-            \node at (0.125,0.5) {\footnotesize $\omega_T$};
-            \node at (0.875,0.5) {\footnotesize $\omega_T$};
-        \end{scope}
-    \end{tikzpicture}
-    \caption{(\textbf{Can be deleted lateron, only for our own understanding:}) Illustration of the GCC and condition \eqref{eq:Tcondition} in one space dimension. The geometrical setup where the data is given only in one half of the domain is the worst case, because the ray can be reflected at the boundary. We still calculate that $1 = \tan(\alpha) = t_0 / \sup_{x \in \Omega} \operatorname{dist}_c(x,\omega_T)$, i.e. $T > 2 t_0 = 2\sup_{x \in \Omega} \operatorname{dist}_c(x,\omega_T)$ is required for the GCC. Note we can also assume that $c_1 = c_2 = 1$, because the metric is rescaled wrt to the wavespeed. Could probably show that the GCC and the condition on $T$ are in fact equivalent in one dimension.}
-\end{figure}
 
 
 \noindent Figure \ref{fig:jumpCoefs:contrast:2.5} shows that for $T$ large enough, the errors $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ and $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$ converge with order $\mathcal{O}(h^k)$. In contrast, if $T$ is chosen too small such that the GCC is not satisfied, the errors do not converge optimally. 
@@ -1685,6 +1652,42 @@ Lalala
 
 
 \appendix
+
+\section{More material}
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[scale=3]
+        \draw[-stealth] (-0.15,0) -- (1.15,0); 
+        \draw[-stealth] (0,-0.15) -- (0,1.15);
+        \draw (0,0) -- (1,0) -- (1,1) -- (0,1) -- cycle;
+        \draw[fill=gray!40,draw=none,opacity=0.5] (0,0) -- (0.5,0) -- (0.5,1) -- (0,1) -- cycle;
+        \draw[-stealth] (0.5,0) -- (1,0.5) -- (0.5,1);
+        \node at (-0.15,1) {\footnotesize $T$}; 
+        \node at (0.75,-0.15) {\footnotesize $\sup_{x \in \Omega} \operatorname{dist}_c(x,\omega_T)$}; 
+        \node at (1.15,0.5) {\footnotesize $t_0$};
+        \draw (0.7,0) to[bend right=45] (0.65,0.15); 
+        \node at (0.6,0.05) {\footnotesize $\alpha$};
+        \node at (0.25,0.5) {\footnotesize $\omega_T$};
+        \begin{scope}[xshift=2cm]
+            \draw[-stealth] (-0.15,0) -- (1.15,0); 
+            \draw[-stealth] (0,-0.15) -- (0,1.15);
+            \draw (0,0) -- (1,0) -- (1,1) -- (0,1) -- cycle;
+            \draw[fill=gray!40,draw=none,opacity=0.5] (0,0) -- (0.25,0) -- (0.25,1) -- (0,1) -- cycle;
+            \draw[fill=gray!40,draw=none,opacity=0.5] (0.75,0) -- (1,0) -- (1,1) -- (0.75,1) -- cycle;
+            \draw[-stealth] (0.25,0) -- (0.75,0.5);
+            \node at (-0.15,1) {\footnotesize $T$}; 
+            \node at (0.5,-0.15) {\footnotesize $2 \sup_{x \in \Omega} \operatorname{dist}_c(x,\omega_T)$}; 
+            \node at (0.67,0.5) {\footnotesize $t_0$};
+            \draw (0.45,0) to[bend right=45] (0.4,0.15); 
+            \node at (0.35,0.05) {\footnotesize $\alpha$};
+            \node at (0.125,0.5) {\footnotesize $\omega_T$};
+            \node at (0.875,0.5) {\footnotesize $\omega_T$};
+        \end{scope}
+    \end{tikzpicture}
+    \caption{(\textbf{Can be deleted lateron, only for our own understanding:}) Illustration of the GCC and condition \eqref{eq:Tcondition} in one space dimension. The geometrical setup where the data is given only in one half of the domain is the worst case, because the ray can be reflected at the boundary. We still calculate that $1 = \tan(\alpha) = t_0 / \sup_{x \in \Omega} \operatorname{dist}_c(x,\omega_T)$, i.e. $T > 2 t_0 = 2\sup_{x \in \Omega} \operatorname{dist}_c(x,\omega_T)$ is required for the GCC. Note we can also assume that $c_1 = c_2 = 1$, because the metric is rescaled wrt to the wavespeed. Could probably show that the GCC and the condition on $T$ are in fact equivalent in one dimension.}
+\end{figure}
+
 
 \begin{comment}
 \subsubsection{Snell's law... }
