@@ -269,13 +269,21 @@ interface $\Gamma$ into two disjoint components, i.e.\ $\Omega \setminus \Gamma 
 In particular, we write $\square_1$ if $c_i = 1$, $i = 1,2$, i.e. if we are considering the case of homogeneous media. 
 Then, we consider the problem: find $u : Q \rightarrow \mathbb{R}$ such that 
 \begin{equation}\label{eq:waveEquation}
-        (\wop u, u) = (0,0) \quad \text{ in } Q \times \Sigma.  
+        (\wop u, u) = (0,0) \quad \text{ in } Q \times \Sigma,
 \end{equation}
-To ensure that the problem is well posed, one usually prescribes initial data
+along with the natural interface conditions 
+\begin{equation}\label{eq:IF-conditions}
+	\jump{u}_{\Gamma} = 0 \text{ on } \Sigma, \qquad 
+	\quad \jump{c^2 \nabla u}_{\Gamma} \cdot \mathbf{n}_{\Gamma} = 0 \text{ on } \Sigma, 
+\end{equation}
+where $\mathbf{n}_{\Gamma}$ is the normal vector on $\Gamma$ pointing into $\Omega_+$ 
+and the jump is defined\textsuperscript{1}\footnotemark \footnotetext{\textsuperscript{1}And anologously for vector-valued functions.} as $\jump{u}_{\Gamma} = u_{+}-u_{-}$ with $u_{\pm}$ being the traces 
+of $u|_{\Omega_{\pm}}$ on $\Gamma$. \par 
+\noindent To ensure that the problem is well posed, one usually prescribes initial data
 \begin{equation}\label{eq:initialData}
     (u,\dt u) \vert_{t = 0} = (u_0,u_1) \text{ in } \Omega, \tag{IVP} 
 \end{equation}
-where $u_0 \in H^1(Q)$ and $u_1 \in L^2(Q)$ are given. For a detailed analysis of the well-posedness of the problem \eqref{eq:waveEquation}-\eqref{eq:initialData} in heterogeneous media we refer to \cite{StolkPhD}. 
+where $u_0 \in H^1(Q)$ and $u_1 \in L^2(Q)$ are given. For a detailed analysis of the well-posedness of the problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:initialData} in heterogeneous media we refer to \cite{StolkPhD}. 
 Here we consider a data assimilation problem instead, i.e. we assume that the initial data is unknown and that there are given measurements $u_{\omega} \in L^2(\omega_T)$ which are prescribed in a data domain $\omega_T$, $\omega \subset \Omega$, $\omega \not = \emptyset$:
 \begin{equation}\label{eq:dataMatch}
     u = u_{\omega} \text{ in } \omega_T. \tag{DA}
@@ -283,7 +291,7 @@ Here we consider a data assimilation problem instead, i.e. we assume that the in
 
 
 %\noindent In a homogeneous medium, where $c_i = 1$, $i = 1,2$,
-\noindent In a medium without an interface the problem \eqref{eq:waveEquation}-\eqref{eq:dataMatch} is well-studied, see e.g.~References \cite{CM15,BFO20,BFMO21,MM21,DMS23,BDE24}. In particular, it is known that if $c_i = 1$, $i = 1,2$, the boundary $\partial \Omega$ is strictly convex and the set $\omega_T \subset Q$ fulfills the geometric control condition (GCC) \cite{BLR92}, then the problem is Lipschitz stable. Roughly speaking, a set $\omega \subset \Omega$ and a final time $T$ fulfill the GCC if all geometric optic rays traveling with unit speed\textsuperscript{1}\footnotemark \footnotetext{\textsuperscript{1}with adapting the metric to the wave speed $c$.} in $\Omega$, taking into account possible reflections on the boundary $\partial \Omega$, intersect the set $(0,T) \times \omega$. For a precise definition, we refer to \cite{BLR92}. Assuming that the GCC is satisfied, we have the following result.
+\noindent In a medium without an interface the problem \eqref{eq:waveEquation}+\eqref{eq:dataMatch} is well-studied, see e.g.~References \cite{CM15,BFO20,BFMO21,MM21,DMS23,BDE24}. In particular, it is known that if $c_i = 1$, $i = 1,2$, the boundary $\partial \Omega$ is strictly convex and the set $\omega_T \subset Q$ fulfills the geometric control condition (GCC) \cite{BLR92}, then the problem is Lipschitz stable. Roughly speaking, a set $\omega \subset \Omega$ and a final time $T$ fulfill the GCC if all geometric optic rays traveling with unit speed\textsuperscript{2}\footnotemark \footnotetext{\textsuperscript{2}with adapting the metric to the wave speed $c$.} in $\Omega$, taking into account possible reflections on the boundary $\partial \Omega$, intersect the set $(0,T) \times \omega$. For a precise definition, we refer to \cite{BLR92}. Assuming that the GCC is satisfied, we have the following result.
 
 \begin{thm}\label{thm:Lipschitz}
     Assume that $c_i = 1$, $i = 1,2$, and that $\partial \Omega$ is stricly convex. If $\omega_T \subset Q$ fulfills the GCC, then there exists a constant $C > 0$ such that for any $\phi \in H^1(Q)$ we have the following estimates
@@ -297,13 +305,17 @@ Here we consider a data assimilation problem instead, i.e. we assume that the in
     See \cite[Thm. A.4]{BFMO21control} and \cite[Rem. A.5]{BFMO21control}.
 \end{proof}
 
-\noindent For the heterogeneous case where $c_1 \not =  c_2$, the problem is less studied. In the absence of the GCC, we have to assume that the final time $T$ is large enough to ensure that problem \eqref{eq:waveEquation}-\eqref{eq:dataMatch} is well-posed. To be precise, Holmgren's unique continuation theorem guarantees that \eqref{eq:waveEquation}-\eqref{eq:dataMatch} is uniquely solvable if
+\noindent For the heterogeneous case where $c_1 \not =  c_2$, the problem is less studied. In the absence of the GCC, we have to assume that the final time $T$ is large enough to ensure that problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} is well-posed. To be precise, Holmgren's unique continuation theorem guarantees that \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} is uniquely solvable if
 \begin{equation}\label{eq:Tcondition}
     T > 2 \sup_{x \in \Omega} \operatorname{dist}_{c}(x,\omega_T),
 \end{equation}
-where $\operatorname{dist}_c(x,\omega_T) := \inf_{y \in \omega_T} d_c(x,y)$ with $d_c$ being the distance function defined as the length of the shortest continuous path in $\Omega$ connecting $x$ and $y$ with respect to the metric adapted to the discontinuous wave speed $c$. While the condition \eqref{eq:Tcondition} guarantees unique solvability, the stability of problem \eqref{eq:waveEquation}-\eqref{eq:dataMatch} can be poor. It has been shown \cite[Thm. 5.17]{Filippas22} under the assumption \eqref{eq:Tcondition} the following stability result holds:  
+where $\operatorname{dist}_c(x,\omega_T) := \inf_{y \in \omega_T} d_c(x,y)$ with $d_c$ being the distance function defined as the length of the shortest continuous path in $\Omega$ connecting $x$ and $y$ with respect to the metric adapted to the discontinuous wave speed $c$. While the condition \eqref{eq:Tcondition} guarantees unique solvability, the stability of problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} can be poor. It has been shown \cite[Thm. 5.19]{Filippas22} under the assumption \eqref{eq:Tcondition} the following stability result holds:  
 \begin{thm}[Thm. 5.19 of \cite{Filippas22}]\label{thm:filippas}
-    Let $\omega_T \subset \Omega$ be nonempty and let $T$ be s.t. \eqref{eq:Tcondition} holds. Then, there exists $C,\kappa$ such that for any initial data $(u_0,u_1) \in H^1_0(\Omega) \times L^2(\Omega)$ and $u$ solving \eqref{eq:waveEquation}-\eqref{eq:initialData} one has for any $\mu > 0$ that 
+    Let $\omega_T \subset \Omega$ be nonempty and let $T$ be s.t. \eqref{eq:Tcondition} holds. Then, there exists $C,\kappa$ such that for any initial data $(u_0,u_1) \in H^1_0(\Omega) \times L^2(\Omega)$ and $u$ solving \eqref{eq:IF-conditions}+\eqref{eq:initialData} and  
+\[
+\wop u \in L^2(Q), \quad u = 0 \text{ on } \Sigma,
+\]
+one has for any $\mu > 0$ that 
     \begin{equation}\label{eq:FilippasEstimate}
         \Vert (u_0,u_1) \Vert_{L^2 \times H^{-1}} \le C e^{\kappa \mu} \left( \Vert u \Vert_{L^2(\omega_T)} + \Vert \wop u \Vert_{L^2(Q)} \right) + \frac{C}{\mu} \Vert (u_0,u_1) \Vert_{H^1 \times L^2}. 
     \end{equation}
@@ -315,7 +327,7 @@ where $\operatorname{dist}_c(x,\omega_T) := \inf_{y \in \omega_T} d_c(x,y)$ with
 
 
 
-\noindent In this article, we introduce a discontinuous in time finite element method to solve the data assimilation problem \eqref{eq:waveEquation}-\eqref{eq:dataMatch} in the heterogeneous case. In particular, we want to investigate numerically if the following assumption is justified. 
+\noindent In this article, we introduce a discontinuous in time finite element method to solve the data assimilation problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} in the heterogeneous case. In particular, we want to investigate numerically if the following assumption is justified. 
 
 \begin{assum}\label{assum:LipschitzStability}
     If $\omega_T \subset Q$ fulfills the GCC, then there exists a constant $C > 0$ such that for any $\phi \in H^1(Q)$ we have the following estimates
@@ -391,6 +403,8 @@ where $S_h$, $S_h^\ast$, and $\Sud$ are stabilization terms yet to be defined. N
     I_0(\Uh,\Wh) &:= \sum_{n = 0}^{N -1} (\ul_2 - \dt \ul_1, \wl_2-\dt \wl_1)_{Q_n}, \qquad 
     R(\Uh,\Wh) := \sum_{n = 0}^{N -1} h^{-1} (\ul_1,\wl_1)_{\Sigma^n}. 
 \end{align*}
+~\jp{I think that in the CIP we have to switch from the full gradient to the normal derivative  $\jump{c^2 \nabla \ul_1} \cdot \mathbf{n}$ only. Indeed, it follows from the first conditon in \eqref{eq:IF-conditions} that the tangential part of the gradient on $\Gamma$ must be continuous $\jump{\nabla_{\Gamma} u} = 0$. So stabbilizing the full gradient is not consistent, which becomes an issue in Cor.~\ref{cor:tnormConvRates}.
+}
 $J(\cdot,\cdot)$ is a continuous interior penalty term in space, $G(\cdot,\cdot)$ is a Galerkin least squares term enforcing the PDE locally on each element, $I_0(\cdot,\cdot)$ enforces that $\ul_2 = \dt \ul_1$, and $R(\cdot,\cdot)$ ensures boundary stability. 
 Then we define the primal stabilizer $S_h$ as 
 \begin{equation}\label{eq:primalStab}
@@ -456,9 +470,9 @@ and its strengthened version
 	   & \Vert \wop \ul_1 \Vert^2_{H^{-1}(Q)} := \sup_{\substack{  y \in H^1_0(Q), \\ \norm{y}_{H^1(Q) } = 1  }} \int_{Q} \left\{ -(\dt \ul_1) \dt y + c^2 \nabla \ul_1 \nabla y \right\}  \\
         &= \sup_{\substack{  y \in H^1_0(Q), \\ \norm{y}_{H^1(Q) } = 1  }} \Big\{ \sum_{n = 0}^{N-1} (\ul_2 - \dt \ul_1, \dt y)_{Q_n} 
         + \sum_{n = 0}^{N-1} \int_{I_n} \sum_{K \in \mathcal{T}_h} (\dt \ul_2 - \div(c^2 \nabla \ul_1),y)_{K} \ \dT \\
-	    & \hspace{6em} + \sum_{n = 0}^{N-1} \int_{I_n} \sum_{F \in \mathcal{F}_i} (\jump{c^2 \nabla \ul_1 \cdot \mathbf{n}}, y)_F \ \dT + \sum_{n = 0}^{N-1} (\jump{\ul_1^n},y)_{\Sigma^n} \Big\},
+	    & \hspace{6em} + \sum_{n = 0}^{N-1} \int_{I_n} \sum_{F \in \mathcal{F}_i} (\jump{c^2 \nabla \ul_1} \cdot \mathbf{n}, y)_F \ \dT + \sum_{n = 0}^{N-1} (\jump{\ul_1^n},y)_{\Sigma^n} \Big\},
     \end{align*}
-where $ \jump{c^2 \nabla \ul_1 \cdot \mathbf{n}}$  denotes the jump of the normal derivative over interior facets. It follows by definition of the stabilizers and $\tnorm{(\Uh,\Zh)} = 0$ that $\Vert \wop \ul_1 \Vert_{H^{-1}(Q)} = 0$. Thus, $\ul_1$ solves \eqref{eq:waveEquation} and by taking $\mu \rightarrow \infty$ in Thm. \ref{thm:filippas}, we conclude that $u_0 = u_1 = 0$. As solutions to \eqref{eq:waveEquation}-\eqref{eq:initialData} depend continuously on the data \cite{StolkPhD}, it follows that $\Uh = 0$. 
+where $\jump{c^2 \nabla \ul_1} \cdot \mathbf{n}$  denotes the jump of the normal derivative over interior facets. It follows by definition of the stabilizers and $\tnorm{(\Uh,\Zh)} = 0$ that $\Vert \wop \ul_1 \Vert_{H^{-1}(Q)} = 0$ and that the interface conditions \eqref{eq:IF-conditions} are fulfilled. Thus, by taking $\mu \rightarrow \infty$ in Thm. \ref{thm:filippas}, we conclude that $u_0 = u_1 = 0$. As solutions to \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:initialData} depend continuously on the data \cite{StolkPhD}, it follows that $\Uh = 0$. 
 \end{proof}
 
 \noindent From this result and the identity
@@ -598,7 +612,7 @@ If $\mathbf{U}|_{Q^n} \in [H^1(Q^n) \cap L^2(0,T;H^2(\mathcal{T}_h))] \times H^1
 
 \section{Numerical experiments}
 \noindent In this section, we present numerical experiments carried out with the proposed method. The examples are implemented using the \texttt{FEniCSx} library \cite{BarattaEtal2023,BasixJoss,ScroggsEtal2022,AlnaesEtal2014}. 
-%Reproduction material is available at \textbf{insert reproduction files...}
+~\jp{We need to setup some reproduction material.}
 
 \subsection{Examples in one space dimension}
 \noindent We consider the unit interval $\Omega \coloneqq [0,1] \subset \mathbb{R}$. For a refinement level $L \in \mathbb{N}$, we partition the domain into $2^{L+1}$ uniform elements such that $h = 1/2^{L+1}$. The time step is chosen as $\Delta t = h$. 
