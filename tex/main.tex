@@ -325,9 +325,7 @@ one has for any $\mu > 0$ that
     \end{equation} 
 \end{thm} 
 
-
-
-\noindent In this article, we introduce a discontinuous in time finite element method to solve the data assimilation problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} in the heterogeneous case. In particular, we want to investigate numerically if the following assumption is justified. 
+\noindent In this article, we introduce a discontinuous in time finite element method to solve the data assimilation problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} in the heterogeneous case. In particular, we want to investigate numerically if the following assumption, motivated by Thm. \ref{thm:Lipschitz} for the homogeneous case, is justified. 
 
 \begin{assum}\label{assum:LipschitzStability}
     If $\omega_T \subset Q$ fulfills the GCC, then there exists a constant $C > 0$ such that for any $\phi \in H^1(Q)$ we have the following estimates
@@ -337,6 +335,7 @@ one has for any $\mu > 0$ that
     \end{align*}
 \end{assum}
 
+That is, we would like to understand whether the Lipschitz stability property is preserved in presence of strong heterogeneity in the medium if the GCC holds. This question is of high practical importance since discontinuous media appear in many applications, e.g.\ in seismology. If the corresponding data assimilation problems were indeed subject to the poor logarithmic stability property ensured by \eqref{eq:FilippasEstimateLog}, this would pose an enormous challenge for the design of accurate and realiable numerical methods for their resolution.
 
 \section{Discretization (fully discrete \& dG in time)} 
 \noindent In this section, we introduce a fully discrete discontinuous in time finite element method to discretize the data assimilation problem \eqref{eq:waveEquation}-\eqref{eq:dataMatch} for the wave equation in heterogeneous media. The discretization is based on the scheme introduced in \cite{BP24} for the homogeneous case. Before introducing the method in Section \ref{sec:method}, we describe the geometric partition of the space-time domain $Q$ into time slabs in Section \ref{sec:spaceTimeDiscretization}. 
@@ -612,12 +611,12 @@ If $\mathbf{U}|_{Q^n} \in [H^1(Q^n) \cap L^2(0,T;H^2(\mathcal{T}_h))] \times H^1
 
 \section{Numerical experiments}
 \noindent In this section, we present numerical experiments carried out with the proposed method. The examples are implemented using the \texttt{FEniCSx} library \cite{BarattaEtal2023,BasixJoss,ScroggsEtal2022,AlnaesEtal2014}. 
-~\jp{We need to prepare some reproduction material.}
+~\jp{We need to prepare some reproduction material ...}
 \subsection{Examples in one space dimension}
-\noindent We consider the unit interval $\Omega \coloneqq [0,1] \subset \mathbb{R}$. For a refinement level $L \in \mathbb{N}$, we partition the domain into $2^{L+1}$ uniform elements such that $h = 1/2^{L+1}$. The time step is chosen as $\Delta t = h$. 
+\noindent We consider the unit interval $\Omega \coloneqq (0,1) \subset \mathbb{R}$. For a refinement level $L \in \mathbb{N}$, we partition the domain into $2^{L+1}$ uniform elements such that $h = 1/2^{L+1}$. The time step is chosen as $\Delta t = h$. 
 
 \subsubsection{Simple Example}\label{sec:numex:1D:simple}
-\noindent We define the subdomains $\Omega_1 = (0,0.5)$ and $\Omega_2 = (0.5,1.0)$ such that $\Omega = \overline{\Omega}_1 \cup \overline{\Omega}_2$. Then, we fix the wavespeed $c_2 := c \vert_{\Omega_2} = 1$ and consider different values for $c_1 := c \vert_{\Omega_1}$. As a first example, we consider the following exact solution \cite{MHI08}
+\noindent We define the subdomains $\Omega_1 = (0,0.5)$ and $\Omega_2 = (0.5,1.0)$ such that $\bar{\Omega} = \overline{\Omega}_1 \cup \overline{\Omega}_2$. Then, we fix the wavespeed $c_2 := c \vert_{\Omega_2} = 1$ and consider different values for $c_1 := c \vert_{\Omega_1}$. As a first example, we consider the following exact solution \cite{MHI08}
 \begin{equation}\label{eq:1D:exact:simple}
     u(x,t) := \begin{cases}
         \cos(w_1 c_1 t) \cos(w_1(x-0.5)), & x \in \Omega_1, \\
@@ -626,7 +625,7 @@ If $\mathbf{U}|_{Q^n} \in [H^1(Q^n) \cap L^2(0,T;H^2(\mathcal{T}_h))] \times H^1
 \end{equation}
 where we set $w_1 = 3 \pi$ and $w_2 = w_1 c_1 / c_2$. Furthermore, we define
 \begin{equation}
-    \omega \coloneqq [0.0,0.25] \cup [0.75,1.0], \quad \text{and} \quad \Omega_R \coloneqq \Omega \setminus \omega = [0.25,0.75].
+	\omega \coloneqq [0.0,0.25] \cup [0.75,1.0], \quad \text{and} \quad \Omega_R \coloneqq \bar{\Omega} \setminus \omega = [0.25,0.75].
 \end{equation}
 Note that in one space dimension, the requirement \eqref{eq:Tcondition} on $T$ already implies the GCC. Let $d(x,y) \coloneqq \vert x - y \vert$, $x, y \in \Omega$, be the Euclidean metric. Then, we set
 \begin{equation}
@@ -638,10 +637,12 @@ Thus, for $\omega$ as above, $c_2 = 1$ fixed and $c_1 > 1.0$, the condition \eqr
 
 
 \noindent Figure \ref{fig:jumpCoefs:contrast:2.5} shows that for $T$ large enough, the errors $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ and $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$ converge with order $\mathcal{O}(h^k)$. In contrast, if $T$ is chosen too small such that the GCC is not satisfied, the errors do not converge optimally. 
-Figures \ref{fig:jumpCoefs:quality} and \ref{fig:jumpCoefs:increasingcontrast} show that ... 
 
-
-
+In Fig.~\ref{fig:jumpCoefs:increasingcontrast} the dependence of the errors for increasing $c_1$ and 
+leaving $c_2 = 1$ fixed (i.e.\ increasing the contrast value) is investigated. When $T$ is chosen such that the GCC is barely fulfilled we observe that the errors grow polynomially in the contrast, more precisely like $\mathcal{O}(c_1^3)$.
+This is an important observation, since an exponential growth in the contrast would have rendered the corresponding problems nearly impossible to resolve numerically.
+Still, compared to the best approximation error which grows quadratically we 
+loose a factor of $c_1$. This entails that a strong refinement of the discretization is required to maintain the accuracy of the numerical solution as the contrast increases. We illustrate this problem in Fig.~\ref{fig:jumpCoefs:quality}. For $c_1 = 2.5$ the exact solution is already well-captured by the numerical solution on refinement level $L=2$. However, for $c_1 = 5.5$ this refinement level is clearly insufficient. 
  
 \begin{figure}[!htbp]
     \begin{center}
@@ -1087,7 +1088,7 @@ As a first example, we choose $p_1 = 0.4$ and $n = 3$ such that $p_2 \approx 0.6
 \begin{equation}
     T > 2 \left[ (p_2 - p_1) + \frac{p_1 - 0.3 + 1 - p_2}{c_1} \right]. 
 \end{equation}
-Figure \ref{fig:jumpCoefs:multipleJumps:noGCC} shows once more that the approximate solution matches the exact solution well if the GCC is fulfilled, but fails to do so if the GCC is not fulfilled.
+Fig.~\ref{fig:jumpCoefs:multipleJumps:noGCC} shows once more that the approximate solution matches the exact solution well if the GCC is fulfilled, but fails to do so if the GCC is not fulfilled.
 
 
 
@@ -1256,7 +1257,8 @@ Figure \ref{fig:jumpCoefs:multipleJumps:noGCC} shows once more that the approxim
 
 \subsubsection{Simple example} 
 As a simple test case, we can extend the one-dimensional exact solution defined in \eqref{eq:1D:exact:simple} to the two-dimensional case by setting $u(x,y;t) = u(x;t)$, i.e. we consider the original solution in the $x$-direction. We define the data domain $\omega = \Omega \setminus [0.25,0.75]^2$ and note that $\omega$ fulfills the GCC. To ensure that the data domain and the interface $\Gamma$ are meshed exactly, we consider a quadrilateral mesh with $2^{L+1}$, $L \in \{1,2,3,4\}$, elements in each direction. We consider the final time $T = 0.75$  and set the time step size to $\Delta t = (1/2)^{L+1}$. As before, we fix $c_2 = 1$ and consider different values for $c_1$. The results of the experiment are presented in Fig. \ref{fig:2DjumpCoefs}. 
-
+For $c_1 = 2.5$, $\Vert \dt(u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega))}$ and $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$ converge quasi-optimally with order $\mathcal{O}(h^k)$ for polynomial degrees $k \in \{2,3\}$. Similar as already observed in the one-dimensional case the right plot in Fig.~\ref{fig:2DjumpCoefs} shows that these errors are more sensitive to inreasing $c_1$ than the corresponding best approximation errors. 
+In particular, the ratio for $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$ with $k=2$ appears to grow as $\mathcal{O}(c_1^{3/2})$ which renders it very demanding to maintain a resonable accuracy as the contrast increases. 
 
 \begin{comment}
   \begin{figure}[!htbp]
@@ -1441,7 +1443,7 @@ As a simple test case, we can extend the one-dimensional exact solution defined 
             \end{groupplot}
         \end{tikzpicture}
     \end{center}
-    \caption{For $c_1 = 2.5$, $\Vert \dt(u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega))}$ (solid) and $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$ (dashed) converge quasi-optimally with order $\mathcal{O}(h^k)$ for polynomial degrees $k \in \{2,3\}$ (left) and the ratio between the approximation error and the $L^2$-bestapproximation error (right).}
+    \caption{Left: Convergence of $\Vert \dt(u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega))}$ (solid) and $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$ (dashed) for $c_1 = 2.5$. Right: Ratio between these errors and the $L^2$-bestapproximation error for increasing $c_1$.}
     \label{fig:2DjumpCoefs}
   \end{figure}
 
@@ -1481,7 +1483,8 @@ As a simple test case, we can extend the one-dimensional exact solution defined 
 
 \subsubsection{2nd one dimensional example}
 
-~\jp{I am not sure whether this section really fits into the narrative ... Shall we just remove it?}
+Let us consider a final two-dimensional example to illustrate the high computational demand 
+required to simulate wave propagation in heterogeneous media. 
 We consider the same geometrical setup as in Sec. \ref{sec:numex:1D:simple} with a more intricate reference solution considered in \cite{BDE22,MEMM19}. With $u_0 (x) := \frac{1}{100} \exp(-(20(x-\frac{1}{5}))^2)$, we consider the exact solution 
 \begin{equation}\label{eq:1D:complicatedSol}
     u(x,t) = \begin{cases}
@@ -1491,6 +1494,7 @@ We consider the same geometrical setup as in Sec. \ref{sec:numex:1D:simple} with
 \end{equation}
 This solution describes a wave traveling towards the interface $\Gamma$. Due to the jump in the wave speed, a part of the wave is reflected from the interface into the domain $\Omega_1$, while the other part passes through the interface into $\Omega_2$ and oscillates stronger. 
 
+In Fig.~\ref{fig:2D-complicated-sol} we consider the approximation of this function by the $L^2$-interpolation. The plot on the right shows that for $c_1 = 2.5$ the velocity is not captured well yet even for $k=3$ on the finest refinement level we considered. In terms of convergence rates, we merely observe $\mathcal{O}(h^2)$ for $k=2$. In view of the previous experiments it is clear that this poses a serious obstruction to obtaining accurate solutions to the corresponding unique continuation problem.
 
 \begin{comment}
 \begin{figure}[!htbp]
@@ -1587,7 +1591,8 @@ This solution describes a wave traveling towards the interface $\Gamma$. Due to 
                 \nextgroupplot[width=9cm,height=7cm,domain=0:4,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$L^2$-best approximation ($k = 2$)}, %cycle list name=paulcolors, 
                 legend pos=south west, 
                 %yticklabels={,,}, 
-                xlabel={$L$}, ylabel={$\Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$},
+                xlabel={$L$}, 
+		%ylabel={$\Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$},
                 ]
                 \addplot+[discard if not={order}{2},discard if not={contrast}{1.0},line width=1.1pt] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/weakDisc_noRestrict_1D_jumpingCoefs_k2.csv};
                 \addplot+[discard if not={order}{2},discard if not={contrast}{1.5},line width=1.1pt] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/weakDisc_noRestrict_1D_jumpingCoefs_k2.csv};
@@ -1643,7 +1648,7 @@ This solution describes a wave traveling towards the interface $\Gamma$. Due to 
         \end{tikzpicture}
     \end{center}
     \caption{The $L^2$-bestapproximation error of \eqref{eq:1D:complicatedSol} with $k = 2$ for $c_2 = 1$ and $c_1 \in \{1.0,1.5,2.0\}$ (left) and the approximation of the time derivative of \eqref{eq:1D:complicatedSol} with $k = 3$ for $c_1 = 2.5$ for $L = 4,5$, $h = 1/2^{L+1} = \Delta t$ (right).}
-    %\label{fig:2DjumpCoefs}
+    \label{fig:2D-complicated-sol}
   \end{figure}
 
 
@@ -1654,6 +1659,8 @@ Lalala
 \appendix
 
 \section{More material}
+
+~\jp{Remove Fig.~\ref{fig:GCC-illustration} ?}
 
 \begin{figure}
     \centering
@@ -1686,6 +1693,7 @@ Lalala
         \end{scope}
     \end{tikzpicture}
     \caption{(\textbf{Can be deleted lateron, only for our own understanding:}) Illustration of the GCC and condition \eqref{eq:Tcondition} in one space dimension. The geometrical setup where the data is given only in one half of the domain is the worst case, because the ray can be reflected at the boundary. We still calculate that $1 = \tan(\alpha) = t_0 / \sup_{x \in \Omega} \operatorname{dist}_c(x,\omega_T)$, i.e. $T > 2 t_0 = 2\sup_{x \in \Omega} \operatorname{dist}_c(x,\omega_T)$ is required for the GCC. Note we can also assume that $c_1 = c_2 = 1$, because the metric is rescaled wrt to the wavespeed. Could probably show that the GCC and the condition on $T$ are in fact equivalent in one dimension.}
+\label{fig:GCC-illustration}
 \end{figure}
 
 
