@@ -263,7 +263,17 @@ Set1-5\nextlist
 \noindent In this article, we consider the discretization of a data assimilation problem for the wave equation in heterogeneous media. In the following, let $\Omega \subset \mathbb{R}^d$ be a bounded domain with smooth boundary $\partial \Omega$. We assume that $\Omega$ is split by a smooth $(d-1)$-dimensional 
 interface $\Gamma$ into two disjoint components, i.e.\ $\Omega \setminus \Gamma = \Omega_1 \cup 
 \Omega_2$ and $\Omega_1 \cap \Omega_2 = \emptyset$.
- We consider a scalar wave speed $c(x) = \mathbbm{1}_{\Omega_1} c_1(x) + \mathbbm{1}_{\Omega_2} c_2(x)$, $c_i \in C^\infty(\Omega_i)$, $i = 1,2$, which may be discontinuous across the interface $\Gamma$, but constant in time. For a final time $T > 0$, we consider the space-time domain $Q = (0,T) \times \Omega$ with lateral boundary $\Sigma \coloneqq (0,T) \times \partial \Omega$. For any nonempty subset $\omega \subset \Omega$, we set $\omega_T \coloneqq (0,T) \times \omega$. In the following, let $\wop$ be the wave operator with discontinuous wave-speed defined as 
+ We consider a scalar wave speed
+\[
+ c(x) := \begin{cases}
+       c_1(x),  & x \in \Omega_1, \\
+        c_2(x), & x \in \Omega_2,
+    \end{cases}
+    \quad 
+    \text{ with } c_i \in C^\infty(\Omega_i), \; i = 1,2,
+\]
+ %$c(x) = \mathbbm{1}_{\Omega_1} c_1(x) + \mathbbm{1}_{\Omega_2} c_2(x)$, $c_i \in C^\infty(\Omega_i)$, $i = 1,2$,
+which may be discontinuous across the interface $\Gamma$, but constant in time. For a final time $T > 0$, we consider the space-time domain $Q = (0,T) \times \Omega$ with lateral boundary $\Sigma \coloneqq (0,T) \times \partial \Omega$. For any nonempty subset $\omega \subset \Omega$, we set $\omega_T \coloneqq (0,T) \times \omega$. In the following, let $\wop$ be the wave operator with discontinuous wave-speed defined as 
 \begin{equation*}
     \wop u := \partial_t^2 - \div(c^2 \nabla u).
 \end{equation*}
@@ -278,7 +288,7 @@ along with the natural interface conditions
 	\quad \jump{c^2 \nabla u}_{\Gamma} \cdot \mathbf{n}_{\Gamma} = 0 \text{ on } \Sigma, 
 \end{equation}
 where $\mathbf{n}_{\Gamma}$ is the normal vector on $\Gamma$ pointing into $\Omega_+$ 
-and the jump is defined\textsuperscript{1}\footnotemark \footnotetext{\textsuperscript{1}And anologously for vector-valued functions.} as $\jump{u}_{\Gamma} = u_{+}-u_{-}$ with $u_{\pm}$ being the traces 
+and the jump across $\Gamma$ is defined\textsuperscript{1}\footnotemark \footnotetext{\textsuperscript{1}And anologously for vector-valued functions.} as $\jump{u}_{\Gamma} = u_{+}-u_{-}$ with $u_{\pm}$ being the traces 
 of $u|_{\Omega_{\pm}}$ on $\Gamma$. \par 
 \noindent To ensure that the problem is well posed, one usually prescribes initial data
 \begin{equation}\label{eq:initialData}
@@ -310,7 +320,7 @@ Here we consider a data assimilation problem instead, i.e. we assume that the in
 \begin{equation}\label{eq:Tcondition}
     T > 2 \sup_{x \in \Omega} \operatorname{dist}_{c}(x,\omega_T),
 \end{equation}
-where $\operatorname{dist}_c(x,\omega_T) := \inf_{y \in \omega_T} d_c(x,y)$ with $d_c$ being the distance function defined as the length of the shortest continuous path in $\Omega$ connecting $x$ and $y$ with respect to the metric adapted to the discontinuous wave speed $c$. While the condition \eqref{eq:Tcondition} guarantees unique solvability, the stability of problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} can be poor. It has been shown \cite[Thm. 5.19]{Filippas22} under the assumption \eqref{eq:Tcondition} the following stability result holds:  
+where $\operatorname{dist}_c(x,\omega_T) := \inf_{y \in \omega_T} d_c(x,y)$ with $d_c$ being the distance function defined as the length of the shortest continuous path in $\Omega$ connecting $x$ and $y$ with respect to the metric adapted to the discontinuous wave speed $c$. While the condition \eqref{eq:Tcondition} guarantees unique solvability, the stability of problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} can be poor. It has been shown in \cite[Thm. 5.19]{Filippas22} that under the assumption \eqref{eq:Tcondition} the following stability result holds:  
 \begin{thm}[Thm. 5.19 of \cite{Filippas22}]\label{thm:filippas}
     Let $\omega_T \subset \Omega$ be nonempty and let $T$ be s.t. \eqref{eq:Tcondition} holds. Then, there exists $C,\kappa$ such that for any initial data $(u_0,u_1) \in H^1_0(\Omega) \times L^2(\Omega)$ and $u$ solving \eqref{eq:IF-conditions}+\eqref{eq:initialData} and  
 \[
@@ -336,10 +346,10 @@ one has for any $\mu > 0$ that
     \end{align*}
 \end{assum}
 
-That is, we would like to understand whether the Lipschitz stability property is preserved in presence of strong heterogeneity in the medium if the GCC holds. This question is of high practical importance since discontinuous media appear in many applications, e.g.\ in seismology. If the corresponding data assimilation problems were indeed subject to the poor logarithmic stability property ensured by \eqref{eq:FilippasEstimateLog}, this would pose an enormous challenge for the design of accurate and realiable numerical methods for their resolution.
+That is, we would like to understand whether the Lipschitz stability property is preserved in presence of strong heterogeneity in the medium provided that the GCC holds. This question is of high practical importance since discontinuous media appear in many applications, e.g.\ in seismology. If the corresponding data assimilation problems were indeed subject to the poor logarithmic stability property ensured by \eqref{eq:FilippasEstimateLog}, this would pose an enormous challenge for the design of accurate and realiable numerical methods for their resolution.
 
 \section{Discretization (fully discrete \& dG in time)} 
-\noindent In this section, we introduce a fully discrete discontinuous in time finite element method to discretize the data assimilation problem \eqref{eq:waveEquation}-\eqref{eq:dataMatch} for the wave equation in heterogeneous media. The discretization is based on the scheme introduced in \cite{BP24} for the homogeneous case. Before introducing the method in Section \ref{sec:method}, we describe the geometric partition of the space-time domain $Q$ into time slabs in Section \ref{sec:spaceTimeDiscretization}. 
+\noindent In this section, we introduce a fully discrete discontinuous in time finite element method to discretize the data assimilation problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} for the wave equation in heterogeneous media. The discretization is based on the scheme introduced in \cite{BP24} for the homogeneous case. Before introducing the method in Section \ref{sec:method}, we describe the geometric partition of the space-time domain $Q$ into time slabs in Section \ref{sec:spaceTimeDiscretization}. 
 
 \subsection{Discretization of the space-time domain}\label{sec:spaceTimeDiscretization}
 Let $\hat{\mathcal{T}}_h$ be a quasi-uniform triangulation with mesh size $h$ such that $\hat{\Omega}:= \cup_{K \in \hat{\mathcal{T}}_h} K $ contains $\Omega$, i.e.\ $\Omega \subset \hat{\Omega}$. Setting $\mathcal{T}_h := \{ K \cap \Omega \mid K \in  \hat{\mathcal{T}}_h \}$ then ensures that $\Omega = \cup_{K \in \mathcal{T}_h} K$ holds true.  
@@ -347,7 +357,7 @@ We recall from  \cite[Sec. 4.2]{BFMO21control} that the triangulation $\{ \hat{\
 \begin{equation}\label{eq:traceInequality}
     \Vert v \Vert_{[L^2(\partial K)]^d} \le C \left(h^{-1/2} \Vert v \Vert_{[L^2(K)]^d} + h^{1/2} \Vert \nabla v \Vert_{[L^2(K)]^d} \right).  
 \end{equation}
-We assume in what follows additionally that the triangulation $\mathcal{T}_h$ fits the interface $\Gamma$ and the data domain $\omega$. An extension to allow for unfitted interfaces could be possible utilizing techniques we introduced for a stationary problem in \cite{BP23arxiv} but is certainly beyond the scope of this article. 
+We assume in what follows additionally that the triangulation $\mathcal{T}_h$ fits the interface $\Gamma$ and the data domain $\omega$. An extension to allow for unfitted interfaces could be possible utilizing techniques we introduced for a stationary problem in \cite{BP23arxiv}, but is certainly beyond the scope of this article. 
 
 \noindent For $k \ge 1$, we define the $H^1$-conforming finite element space 
 \begin{equation}
@@ -391,7 +401,7 @@ and introduce a bilinear form $A$ that represents the wave-equation \eqref{eq:wa
     \end{aligned}
 \end{equation} 
 where $\Uh \in \ProdFullyDiscrSpace{k}{q}$ and $\Yh \in \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ with $k, k^\ast, q \in \mathbb{N}$ and $q^\ast \in \mathbb{N}_0$. 
-To approximate solutions of \eqref{eq:waveEquation}-\eqref{eq:dataMatch}, we search for stationary points of the Lagrangian 
+To approximate solutions of \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch}, we search for stationary points of the Lagrangian 
 \begin{align*}
     \cL_h (\Uh, \Zh) := &\frac{1}{2} \Vert \ul_1 - u_{\omega} \Vert^2_{\omega_T} + A[\Uh,\Zh] + \frac{1}{2}  S_h(\Uh,\Uh) \\
     &- \frac{1}{2}  S_h^\ast(\Zh,\Zh) + \frac{1}{2} \Sud(\Uh,\Uh),
@@ -403,7 +413,7 @@ where $S_h$, $S_h^\ast$, and $\Sud$ are stabilization terms yet to be defined. N
     I_0(\Uh,\Wh) &:= \sum_{n = 0}^{N -1} (\ul_2 - \dt \ul_1, \wl_2-\dt \wl_1)_{Q_n}, \qquad 
     R(\Uh,\Wh) := \sum_{n = 0}^{N -1} h^{-1} (\ul_1,\wl_1)_{\Sigma^n}. 
 \end{align*}
-~\jp{I think that in the CIP we have to switch from the full gradient to the normal derivative  $\jump{c^2 \nabla \ul_1} \cdot \mathbf{n}$ only. Indeed, it follows from the first conditon in \eqref{eq:IF-conditions} that the tangential part of the gradient on $\Gamma$ must be continuous $\jump{\nabla_{\Gamma} u} = 0$. So stabbilizing the full gradient is not consistent, which becomes an issue in Cor.~\ref{cor:tnormConvRates}.
+~\jp{I think that in the CIP we have to switch from the full gradient to the normal derivative  $\jump{c^2 \nabla \ul_1} \cdot \mathbf{n}$ only. Indeed, it follows from the first conditon in \eqref{eq:IF-conditions} that the tangential part of the gradient on $\Gamma$ must be continuous $\jump{\nabla_{\Gamma} u} = 0$. So stabbilizing the full gradient is not consistent, which becomes an issue in Thm.~\ref{thm:bestapprox} as $S_h(\mathbf{U},\Wh) = 0$ would not hold.
 }
 $J(\cdot,\cdot)$ is a continuous interior penalty term in space, $G(\cdot,\cdot)$ is a Galerkin least squares term enforcing the PDE locally on each element, $I_0(\cdot,\cdot)$ enforces that $\ul_2 = \dt \ul_1$, and $R(\cdot,\cdot)$ ensures boundary stability. 
 Then we define the primal stabilizer $S_h$ as 
@@ -442,7 +452,7 @@ where
 \end{equation}
 
 \section{Error analysis}
-\noindent In this section, we analyze the approximation of the continuous problem \eqref{eq:waveEquation}-\eqref{eq:dataMatch} through \eqref{eq:discreteProblem}. In particular, we show that the error between the first component $\ul_1$ of the discrete solution and the continuous solution $u$ is bounded by the best approximation error in suitable discrete norms defined below. Then, we show that under Assumption \ref{assum:LipschitzStability}, we can recover convergence rates in a physically relevant norm.
+\noindent In this section, we analyze the approximation of the continuous problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} through \eqref{eq:discreteProblem}. In particular, we show that the error between the first component $\ul_1$ of the discrete solution and the continuous solution $u$ is bounded by the best approximation error in suitable discrete norms defined below. Then, we show that under Assumption \ref{assum:LipschitzStability}, we can recover convergence rates in a physically relevant norm.
 Let $\vert \cdot \vert_{S_h}, \vert \cdot \vert_{\uparrow \downarrow}$, and $\Vert \cdot \Vert_{S_h^{\ast}}$ be the semi-norms, respectively norms, induced by the stabilizers $S_h$, $\Sud$, and $S_h^{\ast}$:
 \begin{equation}
     \vert \Uh \vert^2_{S_h} := S_h(\Uh,\Uh), \quad \vert \Uh \vert^2_{\uparrow \downarrow} := \Sud(\Uh,\Uh), \quad \Vert \Zh \Vert^2_{S_h^{\ast}} := S_h^{\ast}(\Zh,\Zh).
@@ -489,7 +499,7 @@ it directly follows that the bilinear form $B$ enjoys inf-sup stability on $\Pro
 \end{cor}
 
 %\begin{proof}
-%    Since $B[(\Uh,\Zh),(\Uh,-\Zh)] = \tnorm{(\Uh,\Zh)}^2 = \tnorm{(\Uh,\Zh)}\tnorm{(\Uh,-\Zh)}$, we conclude that  
+%    Since $B[(\Uh,\Zh),(\Uh,-\Zh)] = \tnorm{(\Uh,\Zh)}^2 = \tnoas .. does not holdm{(\Uh,\Zh)}\tnorm{(\Uh,-\Zh)}$, we conclude that  
 %    \begin{align*}
 %        \sup_{(\Wh,\Yh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}} &\frac{B[(\Uh,\Zh),(\Wh,\Yh)]}{\tnorm{(\Wh,\Yh)}} \\
 %        &\quad \ge \frac{B[(\Uh,\Zh),(\Uh,-\Zh)]}{\tnorm{(\Uh,-\Zh)}} = \tnorm{(\Uh,\Zh)}.
@@ -526,7 +536,7 @@ If $\mathbf{U}|_{Q^n} \in [H^1(Q^n) \cap L^2(0,T;H^2(\mathcal{T}_h))] \times H^1
 \noindent Using the inf-sup stability of $B$ and the continuity of $A$, we can show that the approximation error in the $\tnorm{(\cdot,\cdot)}$-norm is bounded by the best approximation error in the $\tnorm{(\cdot,\cdot)}_{\wop}$-norm.
 
 \begin{thm}\label{thm:bestapprox}
-    Let $u$ be a sufficient regular solution of \eqref{eq:waveEquation} and $(\Uh,\Zh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ be the solution to \eqref{eq:discreteProblem}. Set $\mathbf{U} := (u,\partial_t u)$. Then, there exists a constant $C>0$ such that
+    Let $u$ be a sufficient regular solution of \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} and $(\Uh,\Zh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ be the solution to \eqref{eq:discreteProblem}. Set $\mathbf{U} := (u,\partial_t u)$. Then, there exists a constant $C>0$ such that
     \begin{equation}
    \tnorm{(\mathbf{U} - \Uh,\Zh)} \le \left( 1 + \frac{C}{C_B} \right) \inf_{\Vh \in \ProdFullyDiscrSpace{k}{q}} \tnorm{(\mathbf{U} - \Vh, 0)}_{\wop}.  
     \end{equation}
@@ -594,7 +604,7 @@ If $\mathbf{U}|_{Q^n} \in [H^1(Q^n) \cap L^2(0,T;H^2(\mathcal{T}_h))] \times H^1
 
 
 \begin{rmk}[Homogenous media]\label{rem:homMedia}
-    In the homogenous case where $c_i = 1$, $i = 1,2$, we know that Assumption \ref{assum:LipschitzStability} is satisfied, cf. Thm. \ref{thm:Lipschitz}. Thus, we recover the result from \cite[Thm. 4.4]{BP24}.
+    In the homogenous case where $c_i = 1$, $i = 1,2$, we know that Assumption \ref{assum:LipschitzStability} is satisfied, cf. Thm. \ref{thm:Lipschitz}. Thus, we recover the result from \cite[Theorem 10]{BP24}.
 \end{rmk}
 
 \begin{rmk}
