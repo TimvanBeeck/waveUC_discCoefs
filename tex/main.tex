@@ -641,7 +641,10 @@ where we set $w_1 = 3 \pi$ and $w_2 = w_1 c_1 / c_2$. Furthermore, we define
 Note that in one space dimension, the requirement \eqref{eq:Tcondition} on $T$ already implies the GCC. Let $d(x,y) \coloneqq \vert x - y \vert$, $x, y \in \Omega$, be the Euclidean metric. Then, we set
 \begin{equation}
     d_c(x,y) \coloneqq \mathbbm{1}_{\Omega_1} c_1(x)^{-1} d(x,y) + \mathbbm{1}_{\Omega_2} d(x,y), \quad x,y \in \Omega.
-\end{equation} 
+\end{equation}
+~\jp{I am confused by this formula. What is the argument of the characteristic functions $\mathbbm{1}_{\Omega_1}$? Also, a metric is required to be symmetric, so $d_c(x,y) = d_c(y,x) $ 
+needs to be ensured?
+}
 Thus, for $\omega$ as above, $c_2 = 1$ fixed and $c_1 > 1.0$, the condition \eqref{eq:Tcondition} translates to $T > 0.25(1+c_1^{-1})$. 
 
 
@@ -650,8 +653,8 @@ Thus, for $\omega$ as above, $c_2 = 1$ fixed and $c_1 > 1.0$, the condition \eqr
 \noindent Figure \ref{fig:jumpCoefs:contrast:2.5} shows that for $T$ large enough, the errors $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ and $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$ converge with order $\mathcal{O}(h^k)$. In contrast, if $T$ is chosen too small such that the GCC is not satisfied, the errors do not converge optimally. 
 
 In Fig.~\ref{fig:jumpCoefs:increasingcontrast} the dependence of the errors for increasing $c_1$ and 
-leaving $c_2 = 1$ fixed (i.e.\ increasing the contrast value) is investigated. When $T$ is chosen such that the GCC is barely fulfilled we observe that the errors grow polynomially in the contrast, more precisely like $\mathcal{O}(c_1^3)$.
-This is an important observation, since an exponential growth in the contrast would have rendered the corresponding problems nearly impossible to resolve numerically.
+leaving $c_2 = 1$ fixed (i.e.\ increasing the contrast value) is investigated. When $T$ is chosen such that the GCC is barely fulfilled we observe that the errors merely grow polynomially in the contrast, more precisely like $\mathcal{O}(c_1^3)$.
+This is an important observation since an exponential growth in the contrast would have rendered the corresponding problems nearly impossible to resolve numerically.
 Still, compared to the best approximation error which grows quadratically we 
 loose a factor of $c_1$. This entails that a strong refinement of the discretization is required to maintain the accuracy of the numerical solution as the contrast increases. We illustrate this problem in Fig.~\ref{fig:jumpCoefs:quality}. For $c_1 = 2.5$ the exact solution is already well-captured by the numerical solution on refinement level $L=2$. However, for $c_1 = 5.5$ this refinement level is clearly insufficient. 
  
@@ -999,7 +1002,7 @@ loose a factor of $c_1$. This entails that a strong refinement of the discretiza
 
 
 \subsubsection{Multiple jumps}
-\noindent The exact solution \eqref{eq:1D:exact:simple} can be extended to the case where we have multiple jumps in the wave speed $c$. For points $p_1,p_2 \in (0,1)$, we decompose $\Omega$ into three subdomains $\Omega_1 = (0,p_1)$, $\Omega_2 = (p_1,p_2)$, and $\Omega_3 = (p_2,1)$ s.t. $\Omega = \cup_{i = 1,2,3} \overline{\Omega}_i$. Then, we consider the following Ansatz for the exact solution: 
+\noindent The exact solution \eqref{eq:1D:exact:simple} can be extended to the case where we have multiple jumps in the wave speed $c$. For points $p_1,p_2 \in (0,1)$, we decompose $\Omega$ into three subdomains $\Omega_1 = (0,p_1)$, $\Omega_2 = (p_1,p_2)$, and $\Omega_3 = (p_2,1)$ s.t. $\bar{\Omega} = \cup_{i = 1,2,3} \overline{\Omega}_i$. Then, we consider the following ansatz for the exact solution: 
 \begin{equation}\label{eq:1D:exact:simpleMult}
     u(x,t) := \begin{cases}
         \cos(w_1 c_1 t) \cos(w_1(x-p_1)), & x \in \Omega_1, \\
@@ -1262,7 +1265,7 @@ Fig.~\ref{fig:jumpCoefs:multipleJumps:noGCC} shows once more that the approximat
 
 \subsubsection{2nd one dimensional example}
 
-Let us consider a final one-dimensional example to illustrate the high computational demand 
+Let us consider a final one-dimensional example to illustrate the high resolution 
 required to simulate wave propagation in heterogeneous media. 
 We consider the same geometrical setup as in Sec. \ref{sec:numex:1D:simple} with a more intricate reference solution considered in \cite{BDE22,MEMM19}. With $u_0 (x) := \frac{1}{100} \exp(-(20(x-\frac{1}{5}))^2)$, we consider the exact solution 
 \begin{equation}\label{eq:1D:complicatedSol}
@@ -1433,7 +1436,7 @@ In Fig.~\ref{fig:1D-complicated-sol} we consider the approximation of this funct
 
 
 \subsection{Example in two space dimensions}
-\noindent In this section, we present a numerical examples in two space dimensions. We consider the unit-square $\Omega \coloneqq [0,1]^2 \subset \mathbb{R}^2$ partitioned into subdomains $\Omega_1 = (0.0,0.5)^2$ and $\Omega^2 = (0.5,1.0)^2$. 
+\noindent In this section, we present a numerical example in two space dimensions. We consider the unit-square $\Omega \coloneqq [0,1]^2 \subset \mathbb{R}^2$ partitioned into subdomains $\Omega_1 = (0.0,0.5)^2$ and $\Omega_2 = (0.5,1.0)^2$. 
 As a simple test case, we can extend the one-dimensional exact solution defined in \eqref{eq:1D:exact:simple} to the two-dimensional case by setting $u(x,y;t) = u(x;t)$, i.e. we consider the original solution in the $x$-direction. We define the data domain $\omega = \Omega \setminus [0.25,0.75]^2$ and note that $\omega$ fulfills the GCC. To ensure that the data domain and the interface $\Gamma$ are meshed exactly, we consider a quadrilateral mesh with $2^{L+1}$, $L \in \{1,2,3,4\}$, elements in each direction. We consider the final time $T = 0.75$  and set the time step size to $\Delta t = (1/2)^{L+1}$. As before, we fix $c_2 = 1$ and consider different values for $c_1$. The results of the experiment are presented in Fig. \ref{fig:2DjumpCoefs}. 
 For $c_1 = 2.5$, $\Vert \dt(u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega))}$ and $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$ converge quasi-optimally with order $\mathcal{O}(h^k)$ for polynomial degrees $k \in \{2,3\}$. Similar as already observed in the one-dimensional case the right plot in Fig.~\ref{fig:2DjumpCoefs} shows that these errors are more sensitive to inreasing $c_1$ than the corresponding best approximation errors. 
 In particular, the ratio for $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$ with $k=2$ appears to grow as $\mathcal{O}(c_1^{3/2})$ which renders it very demanding to maintain a resonable accuracy as the contrast increases. 
@@ -1664,7 +1667,8 @@ In particular, the ratio for $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2
  \section{Conclusion}
 
 In this article we have investigated a numerical method to solve the unique continuation problem 
-for the wave equation in the presence of a jump discontinuity in the wavespeed. The main conclusion from our numerical experiments is that obtaining accurate numerical solutions in the presence of material interface involving large contrasts is computationally demanding. Even though the problem appears to be Lipschitz stable if the geometric control condition is fulfilled, the resolution required to capture the complex behavior of the solution is a limiting factor in numerical simulations. Note here that unique continuation problems are globally coupled in space and time which poses an obstacle for their efficient numerical solution. 
+for the wave equation in the presence of a jump discontinuity in the wavespeed. The main conclusion from our numerical experiments is that obtaining accurate numerical solutions in the presence of material interfaces involving large contrasts is computationally demanding. Even though the problem appears to be Lipschitz stable if the geometric control condition is fulfilled, the resolution required to capture the complex behavior of the solution is a limiting factor in numerical simulations. Note here that unique continuation problems are globally coupled in space and time which poses an obstacle for their efficient numerical solution. 
+
 
 \appendix
 
