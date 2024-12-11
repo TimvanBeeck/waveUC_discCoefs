@@ -252,7 +252,7 @@ Set1-5\nextlist
 
 \affil[2]{\orgdiv{Institute for Numerical and Applied Mathematics}, \orgname{University of G\"{o}ttingen}, \orgaddress{\street{Lotzestr. 16-18}, \city{G\"{o}ttingen}, \postcode{37083}, \country{Germany}}}
 
-\abstract{In recent years several numerical methods for solving the unique continuation problem for the wave equation in a homogeneous medium with given data on the lateral boundary of the space-time cylinder have been proposed. Under these conditions the problem enjoys Lipschitz stability which allows to devise optimally convergent numerical methods. In this article we investigate whether these results carry over to the case in which the medium exhibits a jump discontinuity. Our numerical experiments suggest a positive answer provided that the geometric control condition is satisfied. However, we also observe that the presence of discontinuities in the medium renders the computations far more demanding than in the homogeneous case.
+\abstract{In recent years several numerical methods for solving the unique continuation problem for the wave equation in a homogeneous medium with given data on the lateral boundary of the space-time cylinder have been proposed. This problem enjoys Lipschitz stability if the geometric control condition is fulfilled, which allows to devise optimally convergent numerical methods. In this article we investigate whether these results carry over to the case in which the medium exhibits a jump discontinuity. Our numerical experiments suggest a positive answer. However, we also observe that the presence of discontinuities in the medium renders the computations far more demanding than in the homogeneous case.
 }
 
 \keywords{Unique continuation, data assimilation, wave equation, discontinuous coefficients, geometric control condition}
@@ -363,7 +363,7 @@ We assume in what follows additionally that the triangulation $\mathcal{T}_h$ fi
 \begin{equation}
     V_h^k := \{ v \in H^1(\Omega) : v \vert_{K} \in \mathcal{P}^k(K) \ \forall K \in \mathcal{T}_h \},
 \end{equation}
-where $\mathcal{P}^k(K)$ denotes the space of polynomials of degree at most $k \in \mathbb{N}$ on $K \in \mathcal{T}_h$. Furthermore, we partition the time axis into $N$ subinterals $I_n = (t_n,t_{n+1})$, $n = 0, \dots, N-1$, where $0 = t_0 \le t_1 \le \dots \le t_N = T$. We assume that the intervals are of equal length and denote $\Delta t = \vert t_{n+1} -t_n \vert$. Then, we partition of $Q$ and $\Sigma$ into time-slabs 
+where $\mathcal{P}^k(K)$ denotes the space of polynomials of degree at most $k \in \mathbb{N}$ on $K \in \mathcal{T}_h$. Furthermore, we partition the time axis into $N$ subintervals $I_n = (t_n,t_{n+1})$, $n = 0, \dots, N-1$, where $0 = t_0 \le t_1 \le \dots \le t_N = T$. We assume that the intervals are of equal length and denote $\Delta t = \vert t_{n+1} -t_n \vert$. Then, we partition of $Q$ and $\Sigma$ into time-slabs 
 \begin{equation}
     \begin{aligned}
         Q^n := &I_n \times \Omega, \quad \Sigma^n := I_n \times \Sigma, \quad n = 0, \dots, N-1, \\
