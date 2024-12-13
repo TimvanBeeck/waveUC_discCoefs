@@ -363,7 +363,7 @@ We assume in what follows additionally that the triangulation $\mathcal{T}_h$ fi
 \begin{equation}
     V_h^k := \{ v \in H^1(\Omega) : v \vert_{K} \in \mathcal{P}^k(K) \ \forall K \in \mathcal{T}_h \},
 \end{equation}
-where $\mathcal{P}^k(K)$ denotes the space of polynomials of degree at most $k \in \mathbb{N}$ on $K \in \mathcal{T}_h$. Furthermore, we partition the time axis into $N$ subintervals $I_n = (t_n,t_{n+1})$, $n = 0, \dots, N-1$, where $0 = t_0 \le t_1 \le \dots \le t_N = T$. We assume that the intervals are of equal length and denote $\Delta t = \vert t_{n+1} -t_n \vert$. Then, we partition of $Q$ and $\Sigma$ into time-slabs 
+where $\mathcal{P}^k(K)$ denotes the space of polynomials of degree at most $k \in \mathbb{N}$ on $K \in \mathcal{T}_h$. Furthermore, we partition the time axis into $N$ subintervals $I_n = (t_n,t_{n+1})$, $n = 0, \dots, N-1$, where $0 = t_0 \le t_1 \le \dots \le t_N = T$. We assume that the intervals are of equal length and denote $\Delta t = \vert t_{n+1} -t_n \vert$. Then, we partition $Q$ and $\Sigma$ into time-slabs 
 \begin{equation}
     \begin{aligned}
         Q^n := &I_n \times \Omega, \quad \Sigma^n := I_n \times \Sigma, \quad n = 0, \dots, N-1, \\
@@ -413,7 +413,7 @@ where $S_h$, $S_h^\ast$, and $\Sud$ are stabilization terms yet to be defined. N
     I_0(\Uh,\Wh) &:= \sum_{n = 0}^{N -1} (\ul_2 - \dt \ul_1, \wl_2-\dt \wl_1)_{Q_n}, \qquad 
     R(\Uh,\Wh) := \sum_{n = 0}^{N -1} h^{-1} (\ul_1,\wl_1)_{\Sigma^n}. 
 \end{align*}
-~\jp{I think that in the CIP we have to switch from the full gradient to the normal derivative  $\jump{c^2 \nabla \ul_1} \cdot \mathbf{n}$ only. Indeed, it follows from the first conditon in \eqref{eq:IF-conditions} that the tangential part of the gradient on $\Gamma$ must be continuous $\jump{\nabla_{\Gamma} u} = 0$. So stabbilizing the full gradient is not consistent, which becomes an issue in Thm.~\ref{thm:bestapprox} as $S_h(\mathbf{U},\Wh) = 0$ would not hold.
+~\jp{I think that in the CIP we have to switch from the full gradient to the normal derivative  $\jump{c^2 \nabla \ul_1} \cdot \mathbf{n}$ only. Indeed, it follows from the first condition in \eqref{eq:IF-conditions} that the tangential part of the gradient on $\Gamma$ must be continuous $\jump{\nabla_{\Gamma} u} = 0$. So stabbilizing the full gradient is not consistent, which becomes an issue in Thm.~\ref{thm:bestapprox} as $S_h(\mathbf{U},\Wh) = 0$ would not hold.
 }
 $J(\cdot,\cdot)$ is a continuous interior penalty term in space, $G(\cdot,\cdot)$ is a Galerkin least squares term enforcing the PDE locally on each element, $I_0(\cdot,\cdot)$ enforces that $\ul_2 = \dt \ul_1$, and $R(\cdot,\cdot)$ ensures boundary stability. 
 Then we define the primal stabilizer $S_h$ as 
