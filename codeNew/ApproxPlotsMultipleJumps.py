@@ -20,6 +20,15 @@ import cProfile
 import resource
 import pandas as pd 
 from meshes import get_1Dmesh
+import sys
+
+
+if len(sys.argv) > 2:
+    ref_lvl = int(sys.argv[1])
+    contrast = float(sys.argv[2])
+    print("Solving on level {} with contrast {}".format(ref_lvl,contrast))
+else: 
+    raise ValueError('Please provide ref level and contrast')
 
 #solver_type = "petsc-LU"  
 solver_type = "pypardiso" # 
@@ -132,7 +141,8 @@ def Solve(ref_lvl,order,contrast,stabs,plot_sol=False,plot_error=False,T=0.5):
 
     data_size = 0.3
     N = 32 
-    Nx = 64
+    Nxs = [4,8,16,32,64]
+    Nx = Nxs[ref_lvl]
 
     k = order
     q = order
@@ -155,7 +165,7 @@ def Solve(ref_lvl,order,contrast,stabs,plot_sol=False,plot_error=False,T=0.5):
     w2 = c1*w1/c2
 
     pos= 0.4
-    n_cos = 1
+    n_cos = 3 if contrast == 7.5 else 4
     pos2 = (2*np.pi*n_cos+w2*pos)/w2 
 
 
@@ -165,7 +175,7 @@ def Solve(ref_lvl,order,contrast,stabs,plot_sol=False,plot_error=False,T=0.5):
 
 
     # define quantities depending on space
-    msh_pts = gen_msh_pts_uniform(64,data_size,pos,pos2)
+    msh_pts = gen_msh_pts_uniform(Nx,data_size,pos,pos2)
     print(msh_pts)
 
 
@@ -340,46 +350,31 @@ def set_stabs(c1,c2=1.0):
 df = pd.DataFrame()
 
 
-#for single contrast, (for T = 0.5: well-posed=False, GCC = True)
-def ref_lvls(order,T):
-    if T == 0.5: 
-        lvls = [1,2,3,4]
-    else: 
-        lvls = [1,2,3,4] if order < 3 else [1,2,3]
-    lvls = [1]
-    return lvls    
-
-orders = [3]
-contrasts = [7.5,11.5]
-
-#time
-#T = 0.1
-
-T = 1.0
+order = 3
+T = 0.5
 
 make_plots=True
 
 plot_df = pd.DataFrame()
 
-for order in orders:
-    for contrast in contrasts: 
-        print("Solving with time T = ", T)
-        for ref_lvl in ref_lvls(order,T):
-            print("Order = {}, ref_lvl = {}, contrast = {}".format(order,ref_lvl,contrast))
-            stabs = set_stabs(c1=contrast)
-            results = Solve(ref_lvl=ref_lvl,order=order,contrast=contrast,stabs=stabs,plot_sol=make_plots,plot_error=make_plots,T=T)
-            plot_data_sol = results
-            #Generate Data for plots (approximate solution)
-            x_pts = np.array(plot_data_sol[0])
-            ts = plot_data_sol[1]
-            fun_y_pts = np.array(plot_data_sol[2][ int(len(ts)/2) ,: ])
-            dt_y_pts = np.array(plot_data_sol[3][ int(len(ts)/2) ,: ])
-            new_plot_data = {'x':x_pts,'y':fun_y_pts,'y_dt':dt_y_pts,'L':np.repeat(ref_lvl,len(x_pts)),'k':np.repeat(order,len(x_pts)),'contrast':np.repeat(contrast,len(x_pts))}
-            plot_df = pd.concat([plot_df,pd.DataFrame.from_dict(new_plot_data)],ignore_index=True)
-            plot_df.to_csv('../dataNew/plots/MultipleJumpsExact_ApproxPlot_T{0}.csv'.format(T),index=False)
 
-         
-        
+print("Solving with time T = ", T)
+   
+print("Order = {}, ref_lvl = {}, contrast = {}".format(order,ref_lvl,contrast))
+stabs = set_stabs(c1=contrast)
+results = Solve(ref_lvl=ref_lvl,order=order,contrast=contrast,stabs=stabs,plot_sol=make_plots,plot_error=make_plots,T=T)
+plot_data_sol = results
+#Generate Data for plots (approximate solution)
+x_pts = np.array(plot_data_sol[0])
+ts = plot_data_sol[1]
+fun_y_pts = np.array(plot_data_sol[2][ int(len(ts)/2) ,: ])
+dt_y_pts = np.array(plot_data_sol[3][ int(len(ts)/2) ,: ])
+new_plot_data = {'x':x_pts,'y':fun_y_pts,'y_dt':dt_y_pts,'L':np.repeat(ref_lvl,len(x_pts)),'k':np.repeat(order,len(x_pts)),'contrast':np.repeat(contrast,len(x_pts))}
+plot_df = pd.concat([plot_df,pd.DataFrame.from_dict(new_plot_data)],ignore_index=True)
+plot_df.to_csv('../dataNew/plots/MultipleJumpsExact_ApproxPlot_T{}_L{}_contrast{}.csv'.format(T,ref_lvl,contrast),index=False)
+
+            
+            
 
 
 
