@@ -254,7 +254,7 @@ Set1-5\nextlist
 
 \affil[3]{\orgdiv{Institute for Numerical and Applied Mathematics}, \orgname{University of G\"{o}ttingen}, \orgaddress{\street{Lotzestr. 16-18}, \city{G\"{o}ttingen}, \postcode{37083}, \country{Germany}}}
 
-\abstract{In recent years several numerical methods for solving the unique continuation problem for the wave equation in a homogeneous medium with given data on the lateral boundary of the space-time cylinder have been proposed. This problem enjoys Lipschitz stability if the geometric control condition is fulfilled, which allows to devise optimally convergent numerical methods. In this article we investigate whether these results carry over to the case in which the medium exhibits a jump discontinuity. Our numerical experiments suggest a positive answer. However, we also observe that the presence of discontinuities in the medium renders the computations far more demanding than in the homogeneous case.
+\abstract{In recent years, several numerical methods for solving the unique continuation problem for the wave equation in a homogeneous medium with given data on the lateral boundary of the space-time cylinder have been proposed. This problem enjoys Lipschitz stability if the geometric control condition is fulfilled, which allows devising optimally convergent numerical methods. In this article, we investigate whether these results carry over to the case in which the medium exhibits a jump discontinuity. Our numerical experiments suggest a positive answer. However, we also observe that the presence of discontinuities in the medium renders the computations far more demanding than in the homogeneous case.
 }
 
 \keywords{Unique continuation, data assimilation, wave equation, discontinuous coefficients, geometric control condition}
@@ -263,10 +263,11 @@ Set1-5\nextlist
 
 \section{Introduction}
 \todo[inline]{@JP: please update affiliation}
-\noindent We consider the discretization of a data assimilation problem for the wave equation in heterogeneous media. In the following, let $\Omega \subset \mathbb{R}^d$ be a bounded domain with smooth boundary $\partial \Omega$. We assume that $\Omega$ is split by a smooth $(d-1)$-dimensional 
-interface $\Gamma$ into two disjoint components, i.e.\ $\Omega \setminus \Gamma = \Omega_1 \cup 
+\todo[inline]{@JP: Let's discuss the title again, I feel like we should include 'stability' somewhere, because it's our main objective...}
+We consider the discretization of a data assimilation problem for the wave equation in heterogeneous media. In the following, let $\Omega \subset \mathbb{R}^d$ be a bounded domain with smooth boundary $\partial \Omega$. We assume that $\Omega$ is split by a smooth $(d-1)$-dimensional interface $\Gamma$ into two disjoint components such that $\Omega \setminus \Gamma = \Omega_1 \cup 
 \Omega_2$ and $\Omega_1 \cap \Omega_2 = \emptyset$.
- We consider a scalar wave speed
+ 
+We consider a scalar wave speed
 \[
  c(x) := \begin{cases}
        c_1(x),  & x \in \Omega_1, \\
@@ -276,11 +277,14 @@ interface $\Gamma$ into two disjoint components, i.e.\ $\Omega \setminus \Gamma 
     \text{ with } c_i \in C^\infty(\Omega_i), \; i = 1,2,
 \]
  %$c(x) = \mathbbm{1}_{\Omega_1} c_1(x) + \mathbbm{1}_{\Omega_2} c_2(x)$, $c_i \in C^\infty(\Omega_i)$, $i = 1,2$,
-which may be discontinuous across the interface $\Gamma$, but constant in time. For a final time $T > 0$, we consider the space-time domain $Q = (0,T) \times \Omega$ with lateral boundary $\Sigma \coloneqq (0,T) \times \partial \Omega$. For any nonempty subset $\omega \subset \Omega$, we set $\omega_T \coloneqq (0,T) \times \omega$. In the following, let $\wop$ be the wave operator with discontinuous wave-speed defined as 
+which may be discontinuous across the interface $\Gamma$, but is constant in time. For a final time $T > 0$, we consider the space-time domain $Q = (0,T) \times \Omega$ with lateral boundary $\Sigma \coloneqq (0,T) \times \partial \Omega$, and for any nonempty subset $\omega \subset \Omega$, we set $\omega_T \coloneqq (0,T) \times \omega$. 
+
+Let $\wop$ be the wave operator with discontinuous wave-speed defined as 
 \begin{equation*}
-    \wop u := \partial_t^2 - \div(c^2 \nabla u).
+    \wop u := \partial_t^2 u - \div(c^2 \nabla u).
 \end{equation*}
-In particular, we write $\square_1$ if $c_i = 1$, $i = 1,2$, i.e. if we are considering the case of homogeneous media. 
+In particular, we write $\square_1$ if $c_i = 1$ for $i = 1,2$, corresponding to the case of a homogeneous medium with unit wave speed.
+
 Then, we consider the problem: find $u : Q \rightarrow \mathbb{R}$ such that 
 \begin{equation}\label{eq:waveEquation}
         (\wop u, u) = (0,0) \quad \text{ in } Q \times \Sigma,
@@ -291,24 +295,23 @@ along with the natural interface conditions
 	\quad \jump{c^2 \nabla u}_{\Gamma} \cdot \mathbf{n}_{\Gamma} = 0 \text{ on } \Sigma, 
 \end{equation}
 where $\mathbf{n}_{\Gamma}$ is the normal vector on $\Gamma$ pointing into $\Omega_+$ 
-and the jump across $\Gamma$ is defined\textsuperscript{1}\footnotemark \footnotetext{\textsuperscript{1}And anologously for vector-valued functions.} as $\jump{u}_{\Gamma} = u_{+}-u_{-}$ with $u_{\pm}$ being the traces 
+and the jump across $\Gamma$ is defined\textsuperscript{1}\footnotemark \footnotetext{\textsuperscript{1}And analogously for vector-valued functions.} as $\jump{u}_{\Gamma} = u_{+}-u_{-}$ with $u_{\pm}$ being the traces 
 of $u|_{\Omega_{\pm}}$ on $\Gamma$. \par 
-\noindent To ensure that the problem is well posed, one usually prescribes initial data
+To ensure that the problem is well posed, one usually prescribes initial data
 \begin{equation}\label{eq:initialData}
     (u,\dt u) \vert_{t = 0} = (u_0,u_1) \text{ in } \Omega, \tag{IVP} 
 \end{equation}
-where $u_0 \in H^1(Q)$ and $u_1 \in L^2(Q)$ are given. For a detailed analysis of the well-posedness of the problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:initialData} in heterogeneous media we refer to \cite{StolkPhD}. 
-Here we consider a data assimilation problem instead, i.e. we assume that the initial data is unknown and that there are given measurements $u_{\omega} \in L^2(\omega_T)$ which are prescribed in a data domain $\omega_T$, $\omega \subset \Omega$, $\omega \not = \emptyset$:
+where $u_0 \in H^1(Q)$ and $u_1 \in L^2(Q)$ are given. For a detailed analysis of the well-posedness of the problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:initialData} in heterogeneous media, we refer to \cite{StolkPhD}. 
+
+In this work, we consider a \emph{data assimilation} problem instead, where the initial data is unknown, and we assume that there are given measurements $u_{\omega} \in L^2(\omega_T)$ prescribed in a data domain $\omega_T$, with $\omega \subset \Omega$, $\omega \not = \emptyset$:
 \begin{equation}\label{eq:dataMatch}
     u = u_{\omega} \text{ in } \omega_T. \tag{DA}
 \end{equation}
-
-
-%\noindent In a homogeneous medium, where $c_i = 1$, $i = 1,2$,
-\noindent In a medium without an interface the problem \eqref{eq:waveEquation}+\eqref{eq:dataMatch} is well-studied, see e.g.~References \cite{CM15,BFO20,BFMO21,MM21,DMS23,BDE24}. In particular, it is known that if $c_i = 1$, $i = 1,2$, the boundary $\partial \Omega$ is strictly convex and the set $\omega_T \subset Q$ fulfills the geometric control condition (GCC) \cite{BLR92}, then the problem is Lipschitz stable. Roughly speaking, a set $\omega \subset \Omega$ and a final time $T$ fulfill the GCC if all geometric optic rays traveling with unit speed\textsuperscript{2}\footnotemark \footnotetext{\textsuperscript{2}with adapting the metric to the wave speed $c$.} in $\Omega$, taking into account possible reflections on the boundary $\partial \Omega$, intersect the set $(0,T) \times \omega$. For a precise definition, we refer to \cite{BLR92}. Assuming that the GCC is satisfied, we have the following result.
+In a medium without an interface, the problem \eqref{eq:waveEquation}+\eqref{eq:dataMatch} is well-studied; see for example \cite{CM15,BFO20,BFMO21,MM21,DMS23,BDE24}. In particular, if the boundary $\partial \Omega$ is strictly convex, the problem is Lipschitz stable provided that the set $\omega_T \subset Q$ fulfills the geometric control condition (GCC) \cite{BLR92}. 
+Roughly speaking, a set $\omega \subset \Omega$ and a final time $T$ fulfill the GCC if all geometric optic rays traveling with unit speed\textsuperscript{2}\footnotemark \footnotetext{\textsuperscript{2}We consider the metric to be adapted to the wave speed $c$.} in $\Omega$, accounting for possible reflections on the boundary $\partial \Omega$, intersect the set $(0,T) \times \omega$. For a more precise definition, we refer to \cite{BLR92}. Assuming that the GCC is satisfied, we have the following result.
 
 \begin{thm}\label{thm:Lipschitz}
-    Assume that $c_i = 1$, $i = 1,2$, and that $\partial \Omega$ is stricly convex. If $\omega_T \subset Q$ fulfills the GCC, then there exists a constant $C > 0$ such that for any $\phi \in H^1(Q)$ we have the following estimates
+    Assume that $\partial \Omega$ is strictly convex and $c_i = 1$ for $i = 1,2$. If $\omega_T \subset Q$ fulfills the GCC, then there exists a constant $C > 0$ such that for any $\phi \in H^1(Q)$, we have the following estimates:
     \begin{align*}
         \Vert \phi \Vert_{L^\infty(0,T;L^2(\Omega))} + \Vert \dt \phi \Vert_{L^2(0,T;H^{-1}(\Omega))} &\le C \left(  \Vert \phi \Vert_{L^2(\omega_T)} + \Vert \phi \Vert_{L^2(\Sigma)} + \Vert \square_1 \phi \Vert_{H^{-1}(Q)} \right), \\
         \Vert \phi \vert_{t = 0} \Vert_{L^2(\Omega)} + \Vert \dt \phi \vert_{t = 0} \Vert_{H^{-1}(\Omega)} &\le C \left(\Vert \phi \Vert_{L^2(\omega_T)} + \Vert \phi \Vert_{L^2(\Sigma)} + \Vert \square_1 \phi \Vert_{H^{-1}(Q)} \right). 
@@ -319,13 +322,14 @@ Here we consider a data assimilation problem instead, i.e. we assume that the in
     See \cite[Thm. A.4]{BFMO21control} and \cite[Rem. A.5]{BFMO21control}.
 \end{proof}
 
-\noindent For the heterogeneous case where $c_1 \not =  c_2$, the problem is less studied. In the absence of the GCC, we have to assume that the final time $T$ is large enough to ensure that problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} is well-posed. To be precise, Holmgren's unique continuation theorem guarantees that \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} is uniquely solvable if
+In the heterogeneous case, where $c_1 \not =  c_2$, the problem is less studied. In the absence of the GCC, we have to assume that the final time $T$ is large enough to ensure that problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} is well-posed. To be precise, Holmgren's unique continuation theorem guarantees that \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} is uniquely solvable if
 \begin{equation}\label{eq:Tcondition}
     T > 2 \sup_{x \in \Omega} \operatorname{dist}_{c}(x,\omega_T),
 \end{equation}
-where $\operatorname{dist}_c(x,\omega_T) := \inf_{y \in \omega_T} d_c(x,y)$ with $d_c$ being the distance function defined as the length of the shortest continuous path in $\Omega$ connecting $x$ and $y$ with respect to the metric adapted to the discontinuous wave speed $c$. While the condition \eqref{eq:Tcondition} guarantees unique solvability, the stability of problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} can be poor. It has been shown in \cite[Thm. 5.19]{Filippas22} that under the assumption \eqref{eq:Tcondition} the following stability result holds:  
+where $\operatorname{dist}_c(x,\omega_T) := \inf_{y \in \omega_T} d_c(x,y)$. Here, $d_c$ is the distance function defined as the length of the shortest continuous path in $\Omega$ connecting $x$ and $y$ with respect to the metric adapted to the discontinuous wave speed $c$. While the condition \eqref{eq:Tcondition} guarantees unique solvability, the stability of problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} can be poor. However, as shown \cite[Thm. 5.19]{Filippas22}, assumption \eqref{eq:Tcondition} grants the following stability result holds. 
+
 \begin{thm}[Thm. 5.19 of \cite{Filippas22}]\label{thm:filippas}
-    Let $\omega_T \subset \Omega$ be nonempty and let $T$ be s.t. \eqref{eq:Tcondition} holds. Then, there exists $C,\kappa$ such that for any initial data $(u_0,u_1) \in H^1_0(\Omega) \times L^2(\Omega)$ and $u$ solving \eqref{eq:IF-conditions}+\eqref{eq:initialData} and  
+    Let $\omega_T \subset \Omega$ be nonempty and let $T > 0$ be s.t. \eqref{eq:Tcondition} holds. Then, there exists $C,\kappa$ such that for any initial data $(u_0,u_1) \in H^1_0(\Omega) \times L^2(\Omega)$ and $u$ solving \eqref{eq:IF-conditions}+\eqref{eq:initialData} and  
 \[
 \wop u \in L^2(Q), \quad u = 0 \text{ on } \Sigma,
 \]
@@ -339,7 +343,9 @@ one has for any $\mu > 0$ that
     \end{equation} 
 \end{thm} 
 
-\noindent In this article, we introduce a discontinuous in time finite element method to solve the data assimilation problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} in the heterogeneous case. In particular, we want to investigate numerically if the following assumption, motivated by Thm. \ref{thm:Lipschitz} for the homogeneous case, is justified. 
+\todo[inline]{@JP: I made some minor changes to the introduction... Here, I felt that we should manage the reader's expectation a bit more and stress that we do not focus on a complete analysis. }
+
+In this article, we consider a discontinuous-in-time finite element method to solve the data assimilation problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} in the heterogeneous case. This method was originally introduced for the homogeneous case in \cite{BP24}. The focus of this article is not on the numerical analysis of the proposed discretization, but rather on investigating the numerically observed stability under the assumption of the GCC. Specifically, we want to investigate numerically whether the following assumption -- motivated by \cref{thm:Lipschitz} for the homogeneous case -- is justified. 
 
 \begin{assum}\label{assum:LipschitzStability}
     If $\omega_T \subset Q$ fulfills the GCC, then there exists a constant $C > 0$ such that for any $\phi \in H^1(Q)$ we have the following estimates
@@ -349,10 +355,14 @@ one has for any $\mu > 0$ that
     \end{align*}
 \end{assum}
 
-That is, we would like to understand whether the Lipschitz stability property is preserved in presence of strong heterogeneity in the medium provided that the GCC holds. This question is of high practical importance since discontinuous media appear in many applications, e.g.\ in seismology. If the corresponding data assimilation problems were indeed subject to the poor logarithmic stability property ensured by \eqref{eq:FilippasEstimateLog}, this would pose an enormous challenge for the design of accurate and realiable numerical methods for their resolution.
+In summary, our goal is to understand whether the Lipschitz stability property is preserved in the presence of strong heterogeneity in the medium, provided that the GCC holds. This question is of high practical importance, as discontinuous media appear in many applications, for example, in seismology. If the corresponding data assimilation problems were indeed subject to the poor logarithmic stability property ensured by \eqref{eq:FilippasEstimateLog}, this would pose an enormous challenge for the design of accurate and reliable numerical methods. 
 
-\section{Discretization (fully discrete \& dG in time)} 
-\noindent In this section, we introduce a fully discrete discontinuous in time finite element method to discretize the data assimilation problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} for the wave equation in heterogeneous media. The discretization is based on the scheme introduced in \cite{BP24} for the homogeneous case. Before introducing the method in Section \ref{sec:method}, we describe the geometric partition of the space-time domain $Q$ into time slabs in Section \ref{sec:spaceTimeDiscretization}. 
+\vspace*{1cm}
+\noindent \textbf{Struture of the article.} In \cref{sec:discretization}, we introduce the method used to discretize \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch}. 
+
+
+\section{Fully discrete discontinuous-in-time discretization}\label{sec:discretization} 
+In this section, we present a fully discrete discontinuous-in-time finite element method for discretizing the data assimilation problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch}, extending the method from \cite{BP24} to the heterogeneous case. \Cref{sec:spaceTimeDiscretization} describes the geometric partition of the space-time domain $Q$ into time slabs, followed by the full discretization in \cref{sec:method}.
 
 \subsection{Discretization of the space-time domain}\label{sec:spaceTimeDiscretization}
 Let $\hat{\mathcal{T}}_h$ be a quasi-uniform triangulation with mesh size $h$ such that $\hat{\Omega}:= \cup_{K \in \hat{\mathcal{T}}_h} K $ contains $\Omega$, i.e.\ $\Omega \subset \hat{\Omega}$. Setting $\mathcal{T}_h := \{ K \cap \Omega \mid K \in  \hat{\mathcal{T}}_h \}$ then ensures that $\Omega = \cup_{K \in \mathcal{T}_h} K$ holds true.  
@@ -360,9 +370,9 @@ We recall from  \cite[Sec. 4.2]{BFMO21control} that the triangulation $\{ \hat{\
 \begin{equation}\label{eq:traceInequality}
     \Vert v \Vert_{[L^2(\partial K)]^d} \le C \left(h^{-1/2} \Vert v \Vert_{[L^2(K)]^d} + h^{1/2} \Vert \nabla v \Vert_{[L^2(K)]^d} \right).  
 \end{equation}
-We assume in what follows additionally that the triangulation $\mathcal{T}_h$ fits the interface $\Gamma$ and the data domain $\omega$. An extension to allow for unfitted interfaces could be possible utilizing techniques we introduced for a stationary problem in \cite{BP25}, but is certainly beyond the scope of this article. 
+We assume additionally that the triangulation $\mathcal{T}_h$ fits the interface $\Gamma$ and the data domain $\omega$. An extension to allow for unfitted interfaces could be possible by utilizing techniques introduced in \cite{BP25} for a stationary problem, but this is certainly beyond the scope of this article. 
 
-\noindent For $k \ge 1$, we define the $H^1$-conforming finite element space 
+For polynomial degree $k \ge 1$, we define the $H^1$-conforming finite element space 
 \begin{equation}
     V_h^k := \{ v \in H^1(\Omega) : v \vert_{K} \in \mathcal{P}^k(K) \ \forall K \in \mathcal{T}_h \},
 \end{equation}
@@ -387,8 +397,8 @@ Finally, we define the time jump operator
     v^n_{\pm} (x) := \lim_{s \rightarrow 0^+} v(x,t_n \pm s), \quad \jump{v^n} := v^n_+ - v^n_-. 
 \end{equation*}
 
-\subsection{A discontinuous in time FEM for the data assimilation problem}\label{sec:method}
-\noindent We define the discontinuous in time finite element spaces 
+\subsection{Full discretization}\label{sec:method}
+ We define the discontinuous in time finite element spaces 
 \begin{equation}
     \FullyDiscrSpace{k}{q} := \otimes_{n = 0}^{N-1} \mathcal{P}^q(I_n) \otimes V_h^k, \quad \ProdFullyDiscrSpace{k}{q} :=  \FullyDiscrSpace{k}{q} \times \FullyDiscrSpace{k}{q}, \quad q \in \mathbb{N}_0, k \in \mathbb{N}. 
 \end{equation}
@@ -416,7 +426,7 @@ where $S_h$, $S_h^\ast$, and $\Sud$ are stabilization terms yet to be defined. N
     I_0(\Uh,\Wh) &:= \sum_{n = 0}^{N -1} (\ul_2 - \dt \ul_1, \wl_2-\dt \wl_1)_{Q_n}, \qquad 
     R(\Uh,\Wh) := \sum_{n = 0}^{N -1} h^{-1} (\ul_1,\wl_1)_{\Sigma^n}. 
 \end{align*}
-~\jp{I think that in the CIP we have to switch from the full gradient to the normal derivative  $\jump{c^2 \nabla \ul_1} \cdot \mathbf{n}$ only. Indeed, it follows from the first condition in \eqref{eq:IF-conditions} that the tangential part of the gradient on $\Gamma$ must be continuous $\jump{\nabla_{\Gamma} u} = 0$. So stabbilizing the full gradient is not consistent, which becomes an issue in Thm.~\ref{thm:bestapprox} as $S_h(\mathbf{U},\Wh) = 0$ would not hold.
+~\jp{I think that in the CIP we have to switch from the full gradient to the normal derivative  $\jump{c^2 \nabla \ul_1} \cdot \mathbf{n}$ only. Indeed, it follows from the first condition in \eqref{eq:IF-conditions} that the tangential part of the gradient on $\Gamma$ must be continuous $\jump{\nabla_{\Gamma} u} = 0$. So stabbilizing the full gradient is not consistent, which becomes an issue in \cref{thm:bestapprox} as $S_h(\mathbf{U},\Wh) = 0$ would not hold.
 }
 $J(\cdot,\cdot)$ is a continuous interior penalty term in space, $G(\cdot,\cdot)$ is a Galerkin least squares term enforcing the PDE locally on each element, $I_0(\cdot,\cdot)$ enforces that $\ul_2 = \dt \ul_1$, and $R(\cdot,\cdot)$ ensures boundary stability. 
 Then we define the primal stabilizer $S_h$ as 
@@ -437,7 +447,7 @@ where
     \underline{I}_2^{\uparrow \downarrow}(\Uh,\Wh) &:= \sum_{n = 0}^{N-1} \frac{1}{\Delta t} (\jump{\ul_2^n},\jump{\wl_2^n})_{\Omega}.
 \end{align*}
 
-\noindent With the definition of $\cL_h$, the first order optimality conditions take the form: Find $(\Uh,\Zh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ such that 
+ With the definition of $\cL_h$, the first order optimality conditions take the form: Find $(\Uh,\Zh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ such that 
 \begin{alignat*}{2}
     (\ul_1,\wl_1)_{\omega_T} \! + \! A[\Wh,\Zh] + S_h(\Uh,\Wh) + \Sud(\Uh,\Wh) &= (u_{\omega},\wl_1)_{\omega_T} \ &&\forall \Wh \in \ProdFullyDiscrSpace{k}{q} \\
     A[\Uh,\Yh] -  S_h^\ast(\Yh,\Zh) &= 0 \ &&\forall \Yh \in \ProdFullyDiscrSpace{k^\ast}{q^\ast} 
@@ -455,12 +465,16 @@ where
 \end{equation}
 
 \section{Error analysis}
-\noindent In this section, we analyze the approximation of the continuous problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} through \eqref{eq:discreteProblem}. In particular, we show that the error between the first component $\ul_1$ of the discrete solution and the continuous solution $u$ is bounded by the best approximation error in suitable discrete norms defined below. Then, we show that under Assumption \ref{assum:LipschitzStability}, we can recover convergence rates in a physically relevant norm.
-Let $\vert \cdot \vert_{S_h}, \vert \cdot \vert_{\uparrow \downarrow}$, and $\Vert \cdot \Vert_{S_h^{\ast}}$ be the semi-norms, respectively norms, induced by the stabilizers $S_h$, $\Sud$, and $S_h^{\ast}$:
+This section outlines how the steps from \cite{BP24} can be adapted to the heterogeneous setting to analyze the approximation of \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} through \eqref{eq:discreteProblem}. In \cref{sec:analysis:infsup}, we establish inf-sup stability and continuity of the discrete problem with respect to suitable discrete norms.
+In \cref{sec:analysis:approx}, we show that the error between the first component $\ul_1$ of the discrete solution and the continuous solution $u$ is bounded by the best approximation error in these norms. Finally, we argue that \cref{assum:LipschitzStability} allows recovering convergence rates in a physically relevant norm.
+
+
+\subsection{Inf-sup stability and continuity}\label{sec:analysis:infsup}
+Let $\vert \cdot \vert_{S_h}, \vert \cdot \vert_{\uparrow \downarrow}$, and $\Vert \cdot \Vert_{S_h^{\ast}}$ be the (semi-)norms induced by the stabilizers $S_h$, $\Sud$, and $S_h^{\ast}$:
 \begin{equation}
     \vert \Uh \vert^2_{S_h} := S_h(\Uh,\Uh), \quad \vert \Uh \vert^2_{\uparrow \downarrow} := \Sud(\Uh,\Uh), \quad \Vert \Zh \Vert^2_{S_h^{\ast}} := S_h^{\ast}(\Zh,\Zh).
 \end{equation}
-\noindent Then, we define the discrete norm 
+Then, we define the discrete norm 
 \begin{equation}
     \tnorm{ (\Uh,\Zh) }^2 :=  \vert \Uh \vert^2_{S_h} + \vert \Uh \vert^2_{\uparrow \downarrow} + \Vert \ul_1 \Vert^2_{\omega_T} + \Vert \Zh \Vert^2_{S_h^\ast},
 \end{equation}
@@ -485,20 +499,21 @@ and its strengthened version
         + \sum_{n = 0}^{N-1} \int_{I_n} \sum_{K \in \mathcal{T}_h} (\dt \ul_2 - \div(c^2 \nabla \ul_1),y)_{K} \ \dT \\
 	    & \hspace{6em} + \sum_{n = 0}^{N-1} \int_{I_n} \sum_{F \in \mathcal{F}_i} (\jump{c^2 \nabla \ul_1} \cdot \mathbf{n}, y)_F \ \dT + \sum_{n = 0}^{N-1} (\jump{\ul_1^n},y)_{\Sigma^n} \Big\},
     \end{align*}
-where $\jump{c^2 \nabla \ul_1} \cdot \mathbf{n}$  denotes the jump of the normal derivative over interior facets. It follows by definition of the stabilizers and $\tnorm{(\Uh,\Zh)} = 0$ that $\Vert \wop \ul_1 \Vert_{H^{-1}(Q)} = 0$ and that the interface conditions \eqref{eq:IF-conditions} are fulfilled. Thus, by taking $\mu \rightarrow \infty$ in Thm. \ref{thm:filippas}, we conclude that $u_0 = u_1 = 0$. As solutions to \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:initialData} depend continuously on the data \cite{StolkPhD}, it follows that $\Uh = 0$. 
+where $\jump{c^2 \nabla \ul_1} \cdot \mathbf{n}$  denotes the jump of the normal derivative over interior facets. It follows by definition of the stabilizers and $\tnorm{(\Uh,\Zh)} = 0$ that $\Vert \wop \ul_1 \Vert_{H^{-1}(Q)} = 0$ and that the interface conditions \eqref{eq:IF-conditions} are fulfilled. Thus, by taking $\mu \rightarrow \infty$ in \cref{thm:filippas}, we conclude that $u_0 = u_1 = 0$. As solutions to \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:initialData} depend continuously on the data \cite{StolkPhD}, it follows that $\Uh = 0$. 
 \end{proof}
 
-\noindent From this result and the identity
+ From this result and the identity
 \[
-B[(\Uh,\Zh),(\Uh,-\Zh)] = \tnorm{(\Uh,\Zh)}^2 = \tnorm{(\Uh,\Zh)}\tnorm{(\Uh,-\Zh)}
+B[(\Uh,\Zh),(\Uh,-\Zh)] = \tnorm{(\Uh,\Zh)}^2 = \tnorm{(\Uh,\Zh)}\tnorm{(\Uh,-\Zh)},
 \]
 it directly follows that the bilinear form $B$ enjoys inf-sup stability on $\ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ with respect to the $\tnorm{(\cdot,\cdot)}$-norm. 
 
-\begin{cor}
+\begin{cor}\label{cor:infsup}
     There exists a constant $C_B>0$ such that 
     \begin{equation}
-        \sup_{(\Wh,\Yh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}} \frac{B[(\Uh,\Zh),(\Wh,\Yh)]}{\tnorm{(\Wh,\Yh)}} \ge C_B \tnorm{(\Uh,\Zh)}.
+        \sup_{(\Wh,\Yh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}} \frac{B[(\Uh,\Zh),(\Wh,\Yh)]}{\tnorm{(\Wh,\Yh)}} \ge C_B \tnorm{(\Uh,\Zh)}
     \end{equation}
+    for all $(\Uh,\Zh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$.
 \end{cor}
 
 %\begin{proof}
@@ -509,7 +524,9 @@ it directly follows that the bilinear form $B$ enjoys inf-sup stability on $\Pro
 %    \end{align*}
 %\end{proof}
 
-We report a continuity result for the bilinear form $A$ which follows from the Cauchy-Schwarz and the trace inequality \eqref{eq:traceInequality}. 
+
+The trace inequality \eqref{eq:traceInequality} and the Cauchy-Schwarz inequality immediately yield the continuity of the bilinear form $A$.
+
 \begin{lem}[Continuity of $A$]\label{lem:continuityA}
 If $\mathbf{U}|_{Q^n} \in [H^1(Q^n) \cap L^2(0,T;H^2(\mathcal{T}_h))] \times H^1(Q^n)$ for $n=0,\ldots,N-1$ and for all $\Yh \in \ProdFullyDiscrSpace{k^\ast}{q^\ast}$, we have that 
     \begin{equation*}
@@ -536,7 +553,8 @@ If $\mathbf{U}|_{Q^n} \in [H^1(Q^n) \cap L^2(0,T;H^2(\mathcal{T}_h))] \times H^1
 \end{proof}
 \end{comment}
 
-\noindent Using the inf-sup stability of $B$ and the continuity of $A$, we can show that the approximation error in the $\tnorm{(\cdot,\cdot)}$-norm is bounded by the best approximation error in the $\tnorm{(\cdot,\cdot)}_{\wop}$-norm.
+\subsection{Approximation results}\label{sec:analysis:approx}
+With \cref{cor:infsup} and \cref{lem:continuityA}, we can show that the approximation error in the $\tnorm{(\cdot,\cdot)}$-norm is bounded by the best approximation error in the $\tnorm{(\cdot,\cdot)}_{\wop}$-norm.
 
 \begin{thm}\label{thm:bestapprox}
     Let $u$ be a sufficient regular solution of \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} and $(\Uh,\Zh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ be the solution to \eqref{eq:discreteProblem}. Set $\mathbf{U} := (u,\partial_t u)$. Then, there exists a constant $C>0$ such that
@@ -557,7 +575,7 @@ If $\mathbf{U}|_{Q^n} \in [H^1(Q^n) \cap L^2(0,T;H^2(\mathcal{T}_h))] \times H^1
         &= (u_{\omega}, \underline{w}_1)_{\omega_T} - (\underline{v}_1, \underline{w}_1)_{\omega_T} - S_h(\Vh,\Wh) - \Sud(\Vh,\Wh) - A[\Vh,\Yh] \\
         &= (u - \underline{v}_1, \underline{w}_1)_{\omega_T}  +  S_h(\mathbf{U} - \Vh,\Wh) + \Sud(\mathbf{U} - \Vh,\Wh) + A[\mathbf{U} - \Vh,\Yh],
     \end{align*} 
-    where we use the fact that $\mathbf{U}$ is sufficiently smooth and $u = u_{\omega}$ on $\omega_T$. Then, we can apply Lem. \ref{lem:continuityA} to obtain 
+    where we use the fact that $\mathbf{U}$ is sufficiently smooth and $u = u_{\omega}$ on $\omega_T$. Then, we can apply \cref{lem:continuityA} to obtain 
     \begin{align*}
         (u - &\underline{v}_1, \underline{w}_1)_{\omega_T}  +  S_h(\mathbf{U} - \Vh,\Wh) + \Sud(\mathbf{U} - \Vh,\Wh) + A[\mathbf{U} - \Vh,\Yh] \\
         &\le C(\tnorm{(\mathbf{U} - \Vh,0)}_{\wop} \tnorm{(0,\Yh)}  + \tnorm{(\mathbf{U} - \Vh,0)} \tnorm{(\Wh,0)} ) \\
@@ -572,7 +590,7 @@ If $\mathbf{U}|_{Q^n} \in [H^1(Q^n) \cap L^2(0,T;H^2(\mathcal{T}_h))] \times H^1
 
 
 \begin{cor}\label{cor:tnormConvRates}
-    Under the assumption of Thm. \ref{thm:bestapprox}, we have that
+    Under the assumption of \cref{thm:bestapprox}, we have that
     \begin{equation*}
         \tnorm{(\mathbf{U} - \Uh,\Zh)} \le C h^s \Vert u \Vert_{H^m(Q)},
     \end{equation*}
@@ -588,10 +606,10 @@ If $\mathbf{U}|_{Q^n} \in [H^1(Q^n) \cap L^2(0,T;H^2(\mathcal{T}_h))] \times H^1
 \end{proof}
 
 
-\noindent In the following, we want to note that the assumption of Lipschitz stability, cf. Assumption \ref{assum:LipschitzStability} or Thm. \ref{thm:Lipschitz} in the homogeneous case, can be used to show convergence in a physically relevant norm. To utilize these results, we need to deal with the fact that the discrete solution is discontinuous in time. To this end, let $L_{\Delta t} : \FullyDiscrSpace{k}{q} \rightarrow C^0(0,T;V_h^k)$ be a suitable lifting operator such that $L_{\Delta t} \ul_1 \in H^1(Q)$ as introduced in \cite[Sec. 4]{BP24}. Then, we formulate the following result.
+If the problem is Lipschitz stable, for instance in the homogeneous case (see \cref{thm:Lipschitz}), we can prove convergence in a physically relevant norm. To deal with the discontinuity in time of the discrete solution, a suitable lifting operator$L_{\Delta t} : \FullyDiscrSpace{k}{q} \rightarrow C^0(0,T;V_h^k)$ that ensures that $L_{\Delta t} \ul_1 \in H^1(Q)$ has been introduced in \cite[Sec. 4]{BP24}. Then, we state the following result.
 
 \begin{thm}\label{thm:convergence}
-    Let Assumption \ref{assum:LipschitzStability} be satisfied. For $u$ being a sufficiently regular solution of \eqref{eq:waveEquation} and $(\Uh,\Zh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ being the solution to \eqref{eq:discreteProblem}, there exists a constant $C>0$ such that
+    Let \cref{assum:LipschitzStability} be satisfied. For $u$ being a sufficiently regular solution of \eqref{eq:waveEquation} and $(\Uh,\Zh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ being the solution to \eqref{eq:discreteProblem}, there exists a constant $C>0$ such that
     \begin{equation}
         \Vert u - L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))} + \Vert \dt (u - L_{\Delta t} \ul_1) \Vert_{L^2(0,T;H^{-1}(\Omega))} \le C h^s \Vert u \Vert_{H^m(Q)}. 
     \end{equation}
@@ -602,35 +620,35 @@ If $\mathbf{U}|_{Q^n} \in [H^1(Q^n) \cap L^2(0,T;H^2(\mathcal{T}_h))] \times H^1
 \end{thm}
 
 \begin{proof}
-    The proof follows from the same argumentation as the proof of \cite[Theorem 10]{BP24}.
+    The proof follows with the same arguments as the proof of \cite[Theorem 10]{BP24}.
 \end{proof}
 
 
 \begin{rmk}[Homogenous media]\label{rem:homMedia}
-    In the homogenous case where $c_i = 1$, $i = 1,2$, we know that Assumption \ref{assum:LipschitzStability} is satisfied, cf. Thm. \ref{thm:Lipschitz}. Thus, we recover the result from \cite[Theorem 10]{BP24}.
+    If $c_i = 1$ for $i = 1,2$, \cref{assum:LipschitzStability} holds (see \cref{thm:Lipschitz}), and we recover the result from \cite[Theorem 10]{BP24}.
 \end{rmk}
 
-\begin{rmk}
-    Suppose that Assumption \ref{assum:LipschitzStability} is not satisfied, e.g. if the GCC is not fulfilled. If $T$ is large enough such that \eqref{eq:Tcondition} holds, we can still apply the results from Thm. \ref{thm:filippas}. To utilize this result similarly to Assumption \ref{assum:LipschitzStability}, we would have to deal with the following technicalities:  
+\begin{rmk}[Logarithmic stability]
+    If \cref{assum:LipschitzStability} is not satisfied, we could still hope to utilize the results from \cref{thm:filippas}, provided that $T$ is large enough such that \eqref{eq:Tcondition} holds. To this end, we would have to deal with the following technicalities:  
     \begin{enumerate}
-        \item The results from Thm. \ref{thm:filippas} are formulated in terms of $\Vert \wop u \Vert_{L^2(Q)}$. However, we can only control $\Vert \wop \tilde{e}_h \Vert_{H^{-1}(Q)}$ for the residual $\tilde{e}_h = u - L_{\Delta t} \ul_1$. Thus, we would have to rewrite the estimates from Thm. \ref{thm:filippas} with $\Vert \wop u \Vert_{H^{-1}(Q)}$ instead of $\Vert \wop u \Vert_{L^2(Q)}$. To this end, one might be able to shift the regularity suitably, cf. \cite[Sec. 2.6]{StolkPhD}, or use similar arguments as in \cite[Thm. A.1]{BFMO21}.
-        \item We have to ensure that the constants in the estimates from Thm. \ref{thm:filippas} remain bounded when we consider the residual $\tilde{e}_h$. In particular, we have to control $C_{0,1} := \Vert (\tilde{e}_h \vert_{t = 0}, \dt \tilde{e}_h \vert_{t = 0}) \Vert_{H^1 \times L^2}$. We note that we can always ensure that $C_{0,1}$ is bounded by adding a suitable Tikhonov regularization term to \eqref{eq:primalStab}. 
+        \item The results from \cref{thm:filippas} are formulated in terms of $\Vert \wop u \Vert_{L^2(Q)}$, but we can only control $\Vert \wop \tilde{e}_h \Vert_{H^{-1}(Q)}$ for the residual $\tilde{e}_h = u - L_{\Delta t} \ul_1$. Thus, we would have to rewrite the estimates from \cref{thm:filippas} with $\Vert \wop u \Vert_{H^{-1}(Q)}$ instead of $\Vert \wop u \Vert_{L^2(Q)}$. To this end, one might be able to shift the regularity suitably, cf. \cite[Sec. 2.6]{StolkPhD}, or use similar arguments as in \cite[Thm. A.1]{BFMO21}.
+        \item We have to ensure that the constants in the estimates from \cref{thm:filippas} remain bounded when we consider the residual $\tilde{e}_h$. In particular, we have to control $C_{0,1} := \Vert (\tilde{e}_h \vert_{t = 0}, \dt \tilde{e}_h \vert_{t = 0}) \Vert_{H^1 \times L^2}$. We note that we can always ensure that $C_{0,1}$ is bounded by adding a suitable Tikhonov regularization term to \eqref{eq:primalStab}. 
     \end{enumerate}
     Then, we can use the arguments of \cite[Theorem 10]{BP24} to show that 
-    \begin{equation}
+    \begin{equation*}
         \Vert (u - \ul_1) \vert_{t = 0} \Vert_{L^2(\Omega)}  + \Vert \dt (u - \ul_1) \vert_{t = 0} \Vert_{H^{-1}(\Omega)} \le C C_{0,1} \log(1 + C_{0,1} h^{-s} \Vert u \Vert_{H^m(Q)}^{-1})^{-1}. 
-    \end{equation}
+    \end{equation*}
 \end{rmk}
 
 
 \section{Numerical experiments}
-\noindent In this section, we present numerical experiments carried out with the proposed method. The examples are implemented using the \texttt{FEniCSx} library \cite{BarattaEtal2023,BasixJoss,ScroggsEtal2022,AlnaesEtal2014}. 
+ In this section, we present numerical experiments carried out with the proposed method. The examples are implemented using the \texttt{FEniCSx} library \cite{BarattaEtal2023,BasixJoss,ScroggsEtal2022,AlnaesEtal2014}. 
 ~\jp{We need to prepare some reproduction material ...}
 \subsection{Examples in one space dimension}
-\noindent We consider the unit interval $\Omega \coloneqq (0,1) \subset \mathbb{R}$. For a refinement level $L \in \mathbb{N}$, we partition the domain into $2^{L+1}$ uniform elements such that $h = 1/2^{L+1}$. The time step is chosen as $\Delta t = h$. 
+ We consider the unit interval $\Omega \coloneqq (0,1) \subset \mathbb{R}$ partitioned into $2^{L+1}$, $L \in \mathbb{N}$, uniform elements of size $h = 1/2^{L+1}$. Unless specified otherwise, we choose the time step as $\Delta t = h$. 
 
 \subsubsection{Simple Example}\label{sec:numex:1D:simple}
-\noindent We define two subdomains $\Omega_1 = (0,0.5)$ and $\Omega_2 = (0.5,1.0)$ such that $\bar{\Omega} = \overline{\Omega}_1 \cup \overline{\Omega}_2$ and fix the wavespeed $c_2 := c \vert_{\Omega_2} = 1$ in $\Omega_2$. For variable $c_1 := c \vert_{\Omega_1}$, we consider the exact solution \cite{MHI08}
+ We define two subdomains $\Omega_1 = (0,0.5)$ and $\Omega_2 = (0.5,1.0)$ such that $\bar{\Omega} = \overline{\Omega}_1 \cup \overline{\Omega}_2$ and fix the wavespeed $c_2 := c \vert_{\Omega_2} = 1$ in $\Omega_2$. For variable $c_1 := c \vert_{\Omega_1}$, we consider the exact solution \cite{MHI08}
 \begin{equation}\label{eq:1D:exact:simple}
     u(x,t) := \begin{cases}
         \cos(w_1 c_1 t) \cos(w_1(x-0.5)), & x \in \Omega_1, \\
@@ -641,6 +659,8 @@ where we set $w_1 = 3 \pi$ and $w_2 = w_1 c_1 / c_2$. Furthermore, we define
 \begin{equation}
 	\omega \coloneqq [0.0,0.25] \cup [0.75,1.0], \quad \text{and} \quad \Omega_R \coloneqq \bar{\Omega} \setminus \omega = [0.25,0.75].
 \end{equation}
+
+
 In one space dimension, the requirement \eqref{eq:Tcondition} on $T$ already implies the GCC. Let $d(x,y) \coloneqq \vert x - y \vert$, $x, y \in \Omega$, be the Euclidean metric. Then, we set
 \begin{equation}
     d_c(x,y) \coloneqq \mathbbm{1}_{\Omega_1} c_1(x)^{-1} d(x,y) + \mathbbm{1}_{\Omega_2} d(x,y), \quad x,y \in \Omega.
@@ -651,12 +671,12 @@ needs to be ensured?
 Thus, for $\omega$ as above, $c_2 = 1$ fixed and $c_1 > 1.0$, the condition \eqref{eq:Tcondition} translates to $T > 0.25(1+c_1^{-1})$. 
 
 
-\noindent \Cref{fig:jumpCoefs:contrast:2.5} shows that the errors $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ and $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$ converge with order $\mathcal{O}(h^k)$ for $T$ large enough, but if $T$ is chosen too small, the order of convergence degrades.
+\Cref{fig:jumpCoefs:contrast:2.5} shows that the errors $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ and $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$ converge with order $\mathcal{O}(h^k)$ for $T$ large enough, but if $T$ is chosen too small, the order of convergence degrades.
 
 In \cref{fig:jumpCoefs:increasingcontrast} the dependence of the errors for increasing $c_1$ and 
 leaving $c_2 = 1$ fixed (i.e.\ increasing the contrast value) is investigated. When $T$ is chosen such that the GCC is barely fulfilled we observe that the errors merely grow polynomially in the contrast, more precisely like $\mathcal{O}(c_1^3)$.
 This is an important observation since an exponential growth in the contrast would have rendered the corresponding problems nearly impossible to resolve numerically.
-Still, compared to the best approximation error which grows quadratically we loose a factor of $c_1$. This entails that a strong refinement of the discretization is required to maintain the accuracy of the numerical solution as the contrast increases. We illustrate this problem in Fig.~\ref{fig:jumpCoefs:quality}. For $c_1 = 2.5$ the exact solution is already well-captured by the numerical solution on refinement level $L=2$. However, for $c_1 = 5.5$ this refinement level is clearly insufficient. 
+Still, compared to the best approximation error which grows quadratically we loose a factor of $c_1$. This entails that a strong refinement of the discretization is required to maintain the accuracy of the numerical solution as the contrast increases. We illustrate this problem in \cref{fig:jumpCoefs:quality}. For $c_1 = 2.5$ the exact solution is already well-captured by the numerical solution on refinement level $L=2$. However, for $c_1 = 5.5$ this refinement level is clearly insufficient. 
 
 %should come from: 1D-jump-convergence_Ex2.py
 \begin{comment}
@@ -988,102 +1008,7 @@ Still, compared to the best approximation error which grows quadratically we loo
 
 
 
-%old figure
-  \begin{comment}
-  \begin{figure}[!htbp]
-    \begin{center}
-        \begin{tikzpicture}[scale=0.72]
-            \begin{groupplot}[%
-                group style={%
-                group size=2 by 1,
-                horizontal sep=1.5cm,
-                vertical sep=2cm,
-                },
-            ymajorgrids=true,
-            grid style=dashed,
-            %ymin = 1e-3, ymax = 0.5e1,
-            ]    
-                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=linear, xlabel={$x$}, ylabel={}, title={$u$ vs. $u_h$ ($c_1 = 2.5$)}, %cycle list name=paulcolors, 
-                legend style={legend columns=5, draw=none,nodes={scale=.8}},legend to name=named, %yticklabels={,,},
-                ]
-                %\draw[fill=gray!40,draw=none,opacity=0.5] (0.25,-3) -- (0.25,3) -- (0,3) -- (0,-3) -- cycle;
-                %\draw[fill=gray!40,draw=none,opacity=0.5] (0.75,-3) -- (0.75,3) -- (1.0,3) -- (1.0,-3) -- cycle;
-                %\addplot+[discard if not={contrast}{1.0},line width=2.5pt,mark=None,color=black] table [x=x, y=y, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/exact_plot_data.csv};
-                \addplot+[discard if not={contrast}{2.5},line width=3.0pt,mark=None,color=black] table [x=x, y=y, col sep=comma] {../data/exact_plot_data_1D_simple.csv};
-                \addplot+[discard if not={L}{1},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/newexact_approx_plot_data_WPFalse_contrast2.5_k3.csv};
-                \addplot+[discard if not={L}{2},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/newexact_approx_plot_data_WPFalse_contrast2.5_k3.csv};
-                \addplot+[discard if not={L}{3},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/newexact_approx_plot_data_WPFalse_contrast2.5_k3.csv};
-                \addplot+[discard if not={L}{4},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/newexact_approx_plot_data_WPFalse_contrast2.5_k3.csv};
-                
-                
 
-                \draw[dashed,gray,very thick] (0.5,-2) -- (0.5,2);
-                \node [draw=none] at (axis description cs:0.45,0.23) {\color{gray} $\Gamma$};
-
-                \legend{exact,$L=1$, $L=2$, $L=3$, $L=4$}
-                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=linear, xlabel={$x$}, ylabel={}, title={$u$ vs. $u_h$ ($c_1 = 5.5$)}, %cycle list name=paulcolors, 
-                legend pos=north west, %yticklabels={,,},
-                ]
-                %\draw[fill=gray!40,draw=none,opacity=0.5] (0.25,-3) -- (0.25,3) -- (0,3) -- (0,-3) -- cycle;
-                %\draw[fill=gray!40,draw=none,opacity=0.5] (0.75,-3) -- (0.75,3) -- (1.0,3) -- (1.0,-3) -- cycle;
-                %\addplot+[discard if not={contrast}{1.0},line width=2.5pt,mark=None,color=black] table [x=x, y=y, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/exact_plot_data.csv};
-                \addplot+[discard if not={contrast}{5.5},line width=3.0pt,mark=None,color=black] table [x=x, y=y, col sep=comma] {../data/exact_plot_data_1D_simple.csv};
-                \addplot+[discard if not={L}{1},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/newexact_approx_plot_data_WPFalse_contrast5.5_k3.csv};
-                \addplot+[discard if not={L}{2},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/newexact_approx_plot_data_WPFalse_contrast5.5_k3.csv};
-                \addplot+[discard if not={L}{3},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/newexact_approx_plot_data_WPFalse_contrast5.5_k3.csv};
-                \addplot+[discard if not={L}{4},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/newexact_approx_plot_data_WPFalse_contrast5.5_k3.csv};
-            
-
-                \draw[dashed,gray,very thick] (0.5,-3) -- (0.5,3);
-                \node [draw=none] at (axis description cs:0.45,0.23) {\color{gray} $\Gamma$};
-
-                %Colors
-                \definecolor{L1Color}{RGB}{55,126,184}
-                \definecolor{L2Color}{RGB}{77,175,74}
-                \definecolor{L3Color}{RGB}{152,78,163}
-                \definecolor{L4Color}{RGB}{255,127,0}
-
-                %L = 1
-                \draw[color=L1Color,thick] (0.75,-2) -- (1,-2);
-                \draw[color=L1Color,thick] (0.75,-2.05) -- (0.75,-1.95);
-                \draw[color=L1Color,thick] (1.0,-2.05) -- (1.0,-1.95);
-
-                %L = 2
-                \draw[color=L2Color,thick] (0.75,-1.75) -- (1,-1.75);
-                \draw[color=L2Color,thick] (0.75,-1.70) -- (0.75,-1.8);
-                \draw[color=L2Color,thick] (0.875,-1.70) -- (0.875,-1.8);
-                \draw[color=L2Color,thick] (1.0,-1.70) -- (1.0,-1.8);
-                
-                %L = 3
-                \draw[color=L3Color,thick] (0.75,-1.5) -- (1,-1.5);
-                \draw[color=L3Color,thick] (0.75,-1.45) -- (0.75,-1.55);
-                \draw[color=L3Color,thick] (0.8125,-1.45) -- (0.8125,-1.55);
-                \draw[color=L3Color,thick] (0.875,-1.45) -- (0.875,-1.55);
-                \draw[color=L3Color,thick] (0.9375,-1.45) -- (0.9375,-1.55);
-                \draw[color=L3Color,thick] (1.0,-1.45) -- (1.0,-1.55);
-            
-                %L = 4
-                \draw[color=L4Color,thick] (0.75,-1.25) -- (1,-1.25);
-                \draw[color=L4Color,thick] (0.75,-1.20) -- (0.75,-1.30);
-                \draw[color=L4Color,thick] (0.78125,-1.20) -- (0.78125,-1.30);
-                \draw[color=L4Color,thick] (0.8125,-1.20) -- (0.8125,-1.30);
-                \draw[color=L4Color,thick] (0.84375,-1.20) -- (0.84375,-1.30);
-                \draw[color=L4Color,thick] (0.875,-1.20) -- (0.875,-1.30);
-                \draw[color=L4Color,thick] (0.90625,-1.20) -- (0.90625,-1.30);
-                \draw[color=L4Color,thick] (0.9375,-1.20) -- (0.9375,-1.30);
-                \draw[color=L4Color,thick] (0.96875,-1.20) -- (0.96875,-1.30);
-                \draw[color=L4Color,thick] (1.0,-1.20) -- (1.0,-1.30);
-
-                %\legend{exact, $L=1$, $L=2$, $L=3$, $L=4$}
-                
-            \end{groupplot}
-        \end{tikzpicture}
-        \pgfplotslegendfromname{named}
-    \end{center}
-    \caption{Exact solution \eqref{eq:1D:exact:simple} and approximations with $k = 3$ on refinement levels $L \in \{1,2,3,4 \}$ for contrasts $c_1 = 2.5$ (left) and $c_1= 5.5$ (right). The scale in the right plot indicates the mesh size $h = 1/2^{L+1}$ for the different refinement levels.}
-    \label{fig:jumpCoefs:quality}
-  \end{figure}
-  \end{comment}
 
   \begin{figure}[!htbp]
     \begin{center}
@@ -1101,18 +1026,16 @@ Still, compared to the best approximation error which grows quadratically we loo
                 \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=linear, xlabel={$x$}, ylabel={}, title={$u$ vs. $u_h$ ($c_1 = 2.5$)}, %cycle list name=paulcolors, 
                 legend style={legend columns=5, draw=none,nodes={scale=.8}},legend to name=named, %yticklabels={,,},
                 ]
-                %\draw[fill=gray!40,draw=none,opacity=0.5] (0.25,-3) -- (0.25,3) -- (0,3) -- (0,-3) -- cycle;
-                %\draw[fill=gray!40,draw=none,opacity=0.5] (0.75,-3) -- (0.75,3) -- (1.0,3) -- (1.0,-3) -- cycle;
-                %\addplot+[discard if not={contrast}{1.0},line width=2.5pt,mark=None,color=black] table [x=x, y=y, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/exact_plot_data.csv};
-                
-                
-                %\addplot+[discard if not={contrast}{2.5},line width=3.0pt,mark=None,color=black] table [x=x, y=y, col sep=comma] {../data/exact_plot_data_1D_simple.csv};
+  
 
                 \addplot[black,line width=3pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/exact_plotSJ_contrast2.5_time0.25.csv};
 
                 \addplot+[discard if not={L}{1},discard if not={contrast}{2.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/simpleExact_ApproxPlot_T0.5.csv};
+                %
                 \addplot+[discard if not={L}{2},discard if not={contrast}{2.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/simpleExact_ApproxPlot_T0.5.csv};
+                %
                 \addplot+[discard if not={L}{3},discard if not={contrast}{2.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/simpleExact_ApproxPlot_T0.5.csv};
+                %
                 \addplot+[discard if not={L}{4},discard if not={contrast}{2.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/simpleExact_ApproxPlot_T0.5.csv};
                 
 
@@ -1124,15 +1047,15 @@ Still, compared to the best approximation error which grows quadratically we loo
                 legend pos=north west, %yticklabels={,,},
                 ymin = -2.25, ymax = 2.25,
                 ]
-                %\draw[fill=gray!40,draw=none,opacity=0.5] (0.25,-3) -- (0.25,3) -- (0,3) -- (0,-3) -- cycle;
-                %\draw[fill=gray!40,draw=none,opacity=0.5] (0.75,-3) -- (0.75,3) -- (1.0,3) -- (1.0,-3) -- cycle;
-                %\addplot+[discard if not={contrast}{1.0},line width=2.5pt,mark=None,color=black] table [x=x, y=y, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/exact_plot_data.csv};
-                
+               
                 \addplot[black,line width=3pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/exact_plotSJ_contrast5.5_time0.25.csv};
 
                 \addplot+[discard if not={L}{1},discard if not={contrast}{5.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/simpleExact_ApproxPlot_T0.5.csv};
+                %
                 \addplot+[discard if not={L}{2},discard if not={contrast}{5.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/simpleExact_ApproxPlot_T0.5.csv};
+                %
                 \addplot+[discard if not={L}{3},discard if not={contrast}{5.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/simpleExact_ApproxPlot_T0.5.csv};
+                %
                 \addplot+[discard if not={L}{4},discard if not={contrast}{5.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/simpleExact_ApproxPlot_T0.5.csv};
             
 
@@ -1182,78 +1105,13 @@ Still, compared to the best approximation error which grows quadratically we loo
         \end{tikzpicture}
         \pgfplotslegendfromname{named}
     \end{center}
-    \caption{Exact solution \eqref{eq:1D:exact:simple} and approximations with $k = 3$ on refinement levels $L \in \{1,2,3,4 \}$ for contrasts $c_1 = 2.5$ (left) and $c_1= 5.5$ (right). The scale in the right plot indicates the mesh size $h = 1/2^{L+1}$ for the different refinement levels.v \textbf{generate the data for the exact plots, at which time are we? $t = 0.25$}}
+    \caption{At $t = 0.25$, we compare the exact solution \eqref{eq:1D:exact:simple} and approximations with polynomial degree $k = 3$ on refinement levels $L \in \{1,2,3,4 \}$ for contrasts $c_1 = 2.5$ (left) and $c_1= 5.5$ (right). The scale in the right plot indicates the mesh size $h = 1/2^{L+1}$ for the different refinement levels.}
     \label{fig:jumpCoefs:quality}
   \end{figure}
 
 
-  \begin{comment}
-  \begin{figure}[!htbp]
-    \begin{center}
-        \begin{tikzpicture}[scale=0.72]
-            \begin{groupplot}[%
-                group style={%
-                group size=3 by 1,
-                horizontal sep=1.5cm,
-                vertical sep=2cm,
-                },
-            ymajorgrids=true,
-            grid style=dashed,
-            %ymin = 1e-3, ymax = 0.5e1,
-            ]    
-                \nextgroupplot[width=9cm,height=7cm,domain=0:4,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$\Vert u_0 - u_h \vert_{t = 0} \Vert_{H^1(\Omega)}$}, %cycle list name=paulcolors, 
-                legend pos=south east, %yticklabels={,,},
-                ]
-                %\addplot+[discard if not={contrast}{1.0},line width=2.5pt,mark=None,color=black] table [x=x, y=y, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/exact_plot_data.csv};
-                \addplot+[discard if not={order}{2},discard if not={L}{4},line width=1.1pt] table [x=contrast, y=H1-u1-0, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/initialH1Test_1D_jumpingCoefs_k2_WPFalse_contrast3.5.csv};
-                \addplot+[discard if not={order}{2},discard if not={L}{4},line width=1.5pt] table [x=contrast, y=H1-dt-at-t-0, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/initialH1TestGCC_1D_jumpingCoefs_k2_WPFalse_contrast3.5.csv};
-                \addplot+[discard if not={order}{3},discard if not={L}{4},line width=1.1pt] table [x=contrast, y=H1-u1-0, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/initialH1Test_1D_jumpingCoefs_k3_WPFalse_contrast3.5.csv};
-                \addplot+[line width=1.1pt,dashed] table [x=contrast, y expr=\thisrow{exp_Lambda}*0.00000001, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/1DsimpleSol_Filippas.csv};
-
-                \addplot[gray, dashed, domain=1:4] {0.03*(1/2^(-2))^(x-0.9)};
-                \addplot[gray, dashed, domain=1:4] {0.003*(1/2^(-2))^(x-0.9)};
-                
-    
-                \legend{$k=2 \quad L = 4$, $k = 3 \quad L = 4$, $e^\Lambda$ (rescaled)}
-                
-                \nextgroupplot[width=9cm,height=7cm,domain=0:4,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$\Vert u_0 - u_h \vert_{t = 0} \Vert_{H^1(\Omega)}$}, %cycle list name=paulcolors, 
-                legend pos=south east, %yticklabels={,,},
-                ]
-                %\addplot+[discard if not={contrast}{1.0},line width=2.5pt,mark=None,color=black] table [x=x, y=y, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/exact_plot_data.csv};
-                \addplot+[discard if not={order}{2},discard if not={L}{4},line width=1.1pt] table [x=contrast, y=H1-u1-0, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/initialH1TestNoGCC_1D_jumpingCoefs_k2_WPFalse_contrast3.5.csv};
-                \addplot+[discard if not={order}{2},discard if not={L}{4},line width=1.5pt] table [x=contrast, y=H1-dt-at-t-0, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/initialH1TestnoGCC_1D_jumpingCoefs_k2_WPFalse_contrast3.5.csv};
-                %\addplot+[discard if not={order}{3},discard if not={L}{4},line width=1.1pt] table [x=contrast, y=H1-u1-0, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/initialH1TestNoGCC_1D_jumpingCoefs_k3_WPFalse_contrast3.5.csv};
-                \addplot+[line width=1.1pt,dashed] table [x=contrast, y expr=\thisrow{exp_Lambda}*0.0001, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/1DsimpleSol_Filippas.csv};
-
-                \addplot[gray, dashed, domain=1:4] {0.03*(1/2^(-2))^(x-0.9)};
-                \addplot[gray, dashed, domain=1:4] {0.003*(1/2^(-2))^(x-0.9)};
-                
-    
-                \legend{$k=2 \quad L = 4$, $k = 3 \quad L = 4$, $e^\Lambda$ (rescaled)}
-                \nextgroupplot[width=9cm,height=7cm,domain=0:4,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$\Vert u_0 - u_h \vert_{t = 0} \Vert_{H^1(\Omega)}$}, %cycle list name=paulcolors, 
-                legend pos=south east, %yticklabels={,,},
-                ]
-                %\addplot+[discard if not={contrast}{1.0},line width=2.5pt,mark=None,color=black] table [x=x, y=y, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/exact_plot_data.csv};
-                \addplot+[discard if not={order}{2},discard if not={L}{4},line width=1.1pt] table [x=contrast, y=H1-u1-0, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/initialH1TestRestricted_NoGCC_1D_jumpingCoefs_k2_WPFalse_contrast3.5.csv};
-               
-                \addplot+[line width=1.1pt,dashed] table [x=contrast, y expr=\thisrow{exp_Lambda}*0.00000001, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/1DsimpleSol_Filippas.csv};
-
-                \addplot[gray, dashed, domain=1:4] {0.03*(1/2^(-2))^(x-0.9)};
-                \addplot[gray, dashed, domain=1:4] {0.003*(1/2^(-2))^(x-0.9)};
-                
-    
-                \legend{$k=2 \quad L = 4$, $k = 3 \quad L = 4$, $e^\Lambda$ (rescaled)}
-            \end{groupplot}
-        \end{tikzpicture}
-    \end{center}
-    \caption{Filippas lambda...}
-  \end{figure}
-\end{comment}
-
-
-
 \subsubsection{Multiple jumps}
-\noindent The exact solution \eqref{eq:1D:exact:simple} can be extended to the case where we have multiple jumps in the wave speed $c$. For points $p_1,p_2 \in (0,1)$, we decompose $\Omega$ into three subdomains $\Omega_1 = (0,p_1)$, $\Omega_2 = (p_1,p_2)$, and $\Omega_3 = (p_2,1)$ s.t. $\bar{\Omega} = \cup_{i = 1,2,3} \overline{\Omega}_i$. Then, we consider the following ansatz for the exact solution: 
+ The exact solution \eqref{eq:1D:exact:simple} can be extended to the case where we have multiple jumps in the wave speed $c$. For two points $p_1,p_2 \in (0,1)$, we decompose $\Omega$ into three subdomains $\Omega_1 = (0,p_1)$, $\Omega_2 = (p_1,p_2)$, and $\Omega_3 = (p_2,1)$ s.t. $\bar{\Omega} = \cup_{i = 1,2,3} \overline{\Omega}_i$. Then, we consider the following ansatz for the exact solution: 
 \begin{equation}\label{eq:1D:exact:simpleMult}
     u(x,t) := \begin{cases}
         \cos(w_1 c_1 t) \cos(w_1(x-p_1)), & x \in \Omega_1, \\
@@ -1261,13 +1119,14 @@ Still, compared to the best approximation error which grows quadratically we loo
         \cos(w_3 c_3 t) \cos(w_3(x-p_2)), & x \in \Omega_3. 
     \end{cases}
 \end{equation}
-To ensure that the solution is continuous, we choose $p_2$ in dependence of $p_1$ and $w_2$ in the following way. We know that 
-\begin{equation*}
-    \cos(w_2(x-p_1)) = 1 \Leftrightarrow w_2(x-p_1) = 2 \pi n, n \in \mathbb{Z} \Leftrightarrow x = \frac{2 \pi n + w_2 p_1}{w_2}, n \in \mathbb{Z}. 
-\end{equation*}
-Thus, if we choose $p_2 = \frac{2 \pi n + w_2 p_1}{w_2}$ for some $n \in \mathbb{Z}$, the function \eqref{eq:1D:exact:simpleMult} is indeed continuous.  
+To ensure the continuity of \eqref{eq:1D:exact:simpleMult}, we choose $p_2$ in dependence of $p_1$ and $w_2$. For $n \in \mathbb{Z}$, we set
+\begin{align*}
+    p_2 \coloneqq \frac{2 \pi n + w_2 p_1}{w_2} \quad \Longrightarrow \quad \cos(w_2(p_2-p_1)) = 1.
+\end{align*}
+
+
 In the following, we fix $c_2 = 1.0$ and choose $w_1 = 3 \pi$, $w_2 = w_1 c_1/c_2$ as above. Furthermore, we set $c_3 = c_1$, $w_3 = w_1$. 
-As a first example, we choose $p_1 = 0.4$ and $n = 3$ such that $p_2 \approx 0.667$ and consider the data domain $\omega = [0.0,0.3] \times [0.7,1.0]$. For contrast $c_1 \in \{ 7.5,11.5 \}$, Fig. \ref{fig:jumpCoefs:multipleJumps} shows the exact solution and the approximation with $k = 3$ for fixed time step $\Delta t = 1/32$. 
+As a first example, we choose $p_1 = 0.4$ and $n = 3$ such that $p_2 \approx 0.667$ and consider the data domain $\omega = [0.0,0.3] \times [0.7,1.0]$. For contrast $c_1 \in \{ 7.5,11.5 \}$, \cref{fig:jumpCoefs:multipleJumps} shows the exact solution and the approximation with $k = 3$ for fixed time step $\Delta t = 1/32$. 
 
 \begin{figure}[!htbp]
     \begin{center}
@@ -1287,38 +1146,24 @@ As a first example, we choose $p_1 = 0.4$ and $n = 3$ such that $p_2 \approx 0.6
                 ]
                 \draw[fill=gray!40,draw=none,opacity=0.5] (0.3,-2) -- (0.3,2) -- (0,2) -- (0,-2) -- cycle;
                 \draw[fill=gray!40,draw=none,opacity=0.5] (0.7,-2) -- (0.7,2) -- (1.0,2) -- (1.0,-2) -- cycle;
-                %\addplot+[line width=1.5pt,mark=None,color=black] table [x=x, y=y, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/exact_plot_data_1D_multipleJumps.csv};
+   
 
                 \addplot[black,line width=3pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/exact_plotMJ_contrast7.5_time0.25.csv};
-
+                %
                 \addplot+[discard if not={L}{3},discard if not={contrast}{7.5},line width=1.0pt,mark=None,color=orange] table [x=x, y=y, col sep=comma] {../dataNew/plots/MultipleJumpsExact_ApproxPlot_T0.5_L3_contrast7.5.csv};
-
+                %
                 \addplot+[discard if not={L}{4},discard if not={contrast}{7.5},line width=1.0pt,mark=None,color=blue!75!white] table [x=x, y=y, col sep=comma] {../dataNew/plots/MultipleJumpsExact_ApproxPlot_T0.5_L4_contrast7.5.csv};
 
-
-                %\addplot+[line width=1.0pt,mark=None,color=orange] table [x=x, y=y, col sep=comma] {../data/multipleJumps_approx_plot_data_WPFalse_contrast7.5_k3_uniform.csv};
-                %\addplot+[line width=1.0pt,mark=None,color=blue!75!white] table [x=x, y=y, col sep=comma] {../data/multipleJumps_approx_plot_data_WPFalse_contrast7.5_k3_uniform_T0.5_L4.csv};
-                %\addplot+[line width=1.0pt,mark=None,color=orange] table [x=x, y=y, col sep=comma] {../data/multipleJumps_approx_plot_data_WPFalse_contrast7.5_k3_uniform_T0.5_L3.csv};
                 
-
                 \draw[dashed,gray,very thick] (0.4,-2) -- (0.4,2);
                 \draw[dashed,gray,very thick] (0.6666,-2) -- (0.6666,2);
-                %\node [draw=none] at (axis description cs:0.45,0.23) {\color{gray} $\Gamma$};
+   
 
                 \node [draw=none] at (axis description cs:0.38,0.125) {\color{gray} $\Gamma_1$};
                 \node [draw=none] at (axis description cs:0.7,0.125) {\color{gray} $\Gamma_2$};
                 \node [draw=none] at (axis description cs:0.2,0.125) {\color{gray} $\omega$};
                 \node [draw=none] at (axis description cs:0.8,0.125) {\color{gray} $\omega$};
 
-
-                 %L = 3
-                %\draw[color=orange,thick] (0.4,-0.5) -- (2/3,-0.5);
-                %\draw[color=orange,thick] (0.4,-0.48) -- (0.4,-0.52);
-                %\draw[color=orange,thick] (0.4375,-0.48) -- (0.4375,-0.52);
-                %\draw[color=orange,thick] (0.5,-0.48) -- (0.5,-0.52);
-                %\draw[color=orange,thick] (0.5625,-0.48) -- (0.5625,-0.52);
-                %\draw[color=orange,thick] (0.625,-0.48) -- (0.625,-0.52);
-                %\draw[color=orange,thick] (0.6666,-0.48) -- (0.6666,-0.52);
                 
                 \legend{exact, $L = 3$, $L = 4$}
                 \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=linear, xlabel={}, ylabel={}, title={$u$ vs. $u_h$ ($c_1 = 11.5$)}, %cycle list name=paulcolors, 
@@ -1326,18 +1171,11 @@ As a first example, we choose $p_1 = 0.4$ and $n = 3$ such that $p_2 \approx 0.6
                 ]
                 \draw[fill=gray!40,draw=none,opacity=0.5] (0.3,-2) -- (0.3,2) -- (0,2) -- (0,-2) -- cycle;
                 \draw[fill=gray!40,draw=none,opacity=0.5] (0.7,-2) -- (0.7,2) -- (1.0,2) -- (1.0,-2) -- cycle;
-                %\addplot+[line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/multipleJumps_approx_plot_data_WPFalse_contrast7.5_k3_uniform.csv};
-                %\addplot+[line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/multipleJumps_approx_plot_data_WPFalse_contrast7.5_k3_uniform_T0.5.csv};
-                
-
-                %\addplot+[line width=3.0pt,mark=None,color=yellow] table [x=x, y=y, col sep=comma] {../data/exact_plot_data_1D_multipleJumps_contrast11.5.csv};
-                %\addplot+[line width=1.0pt,mark=None,color=blue!75!white] table [x=x, y=y, col sep=comma] {../data/multipleJumps_approx_plot_data_WPFalse_contrast11.5_k3_uniform_T0.5_L4.csv};
-                %\addplot+[line width=1.0pt,mark=None,color=orange] table [x=x, y=y, col sep=comma] {../data/multipleJumps_approx_plot_data_WPFalse_contrast11.5_k3_uniform_T0.5_L3.csv};
 
                 \addplot[black,line width=3pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/exact_plotMJ_contrast11.5_time0.25.csv};
-
+                %
                 \addplot+[discard if not={L}{3},discard if not={contrast}{11.5},line width=1.0pt,mark=None,color=orange] table [x=x, y=y, col sep=comma] {../dataNew/plots/MultipleJumpsExact_ApproxPlot_T0.5_L3_contrast11.5.csv};
-
+                %
                 \addplot+[discard if not={L}{4},discard if not={contrast}{11.5},line width=1.0pt,mark=None,color=blue!75!white] table [x=x, y=y, col sep=comma] {../dataNew/plots/MultipleJumpsExact_ApproxPlot_T0.5_L4_contrast11.5.csv};
                
 
@@ -1362,11 +1200,11 @@ As a first example, we choose $p_1 = 0.4$ and $n = 3$ such that $p_2 \approx 0.6
   \end{figure}
 
 
-\noindent As a second example, we consider the case where the data is only given in one half of the interval, i.e. $\omega = [0,0.3]$. The GCC is fulfilled if 
+ As a second example, we consider the case where the data is only given in one half of the interval, i.e. $\omega = [0,0.3]$. The GCC is fulfilled if 
 \begin{equation}
     T > 2 \left[ (p_2 - p_1) + \frac{p_1 - 0.3 + 1 - p_2}{c_1} \right]. 
 \end{equation}
-Fig.~\ref{fig:jumpCoefs:multipleJumps:noGCC} shows once more that the approximate solution matches the exact solution well if the GCC is fulfilled, but fails to do so if the GCC is not fulfilled.
+\Cref{fig:jumpCoefs:multipleJumps:noGCC} shows once more that the approximate solution matches the exact solution well if the GCC is fulfilled, but fails to do so if the GCC is not fulfilled.
 
 
 
@@ -1387,7 +1225,9 @@ Fig.~\ref{fig:jumpCoefs:multipleJumps:noGCC} shows once more that the approximat
                 legend style={legend columns=3, draw=none,nodes={scale=.8}},legend to name=named,, %yticklabels={,,},
                 ]
                 \draw[fill=gray!40,draw=none,opacity=0.5] (0.3,-2) -- (0.3,2) -- (0,2) -- (0,-2) -- cycle;
-                \addplot+[line width=3.0pt,mark=None,color=black] table [x=x, y=y, col sep=comma] {../data/exact_plot_data_1D_multipleJumps_contrast2.5.csv};
+
+                \addplot[black,line width=3.0pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/exact_plotMJ_contrast2.5_time0.5.csv};
+
                 \addplot+[line width=1.0pt,mark=None,color=orange] table [x=x, y=y, col sep=comma] {../data/multipleJumps_approx_plot_data_WPFalse_contrast2.5_k3_uniform_noGCC.csv};
 
                 \addplot+[line width=1.0pt,mark=None,color=blue!75!white] table [x=x, y=y, col sep=comma] {../data/multipleJumps_approx_plot_data_WPFalse_contrast2.5_k3_dataLeft_T0.5.csv};
@@ -1405,10 +1245,16 @@ Fig.~\ref{fig:jumpCoefs:multipleJumps:noGCC} shows once more that the approximat
                 legend pos=north west, %yticklabels={,,},
                 ]
                 \draw[fill=gray!40,draw=none,opacity=0.5] (0.3,-2) -- (0.3,2) -- (0,2) -- (0,-2) -- cycle;
-                \addplot+[line width=3.0pt,mark=None,color=black] table [x=x, y=y, col sep=comma] {../data/exact_plot_data_1D_multipleJumps_contrast7.5.csv};
-                \addplot+[line width=1.0pt,mark=None,color=orange] table [x=x, y=y, col sep=comma] {../data/multipleJumps_approx_plot_data_WPFalse_contrast7.5_k3_uniform_noGCC.csv};
+
+                \addplot[black,line width=3.0pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/exact_plotMJ_contrast7.5_time0.5.csv};
+
+
+
+                \addplot+[line width=3.0pt,mark=None,color=blue!75!white] table [x=x, y=y, col sep=comma] {../dataNew/plots/MultipleJumpsExact_ApproxPlot_CompareT0.5_contrast7.5Test.csv};
+
+     
                 
-                \addplot+[line width=1.0pt,mark=None,color=blue!75!white] table [x=x, y=y, col sep=comma] {../data/multipleJumps_approx_plot_data_WPFalse_contrast7.5_k3_dataLeft_T0.5.csv};
+                \addplot+[line width=1.0pt,mark=None,color=orange] table [x=x, y=y, col sep=comma] {../dataNew/plots/MultipleJumpsExact_ApproxPlot_CompareT1.0_contrast7.5.csv};
     
 
                 \draw[dashed,gray,very thick] (0.4,-2) -- (0.4,2);
@@ -1426,112 +1272,12 @@ Fig.~\ref{fig:jumpCoefs:multipleJumps:noGCC} shows once more that the approximat
     \label{fig:jumpCoefs:multipleJumps:noGCC}
   \end{figure}
 
-  \begin{comment}
-  \begin{figure}[!htbp]
-    \begin{center}
-        \begin{tikzpicture}[scale=0.72]
-            \begin{groupplot}[%
-                group style={%
-                group size=2 by 1,
-                horizontal sep=1.5cm,
-                vertical sep=2cm,
-                },
-            ymajorgrids=true,
-            grid style=dashed,
-            ymin = -1.1e0, ymax = 1.1e0,
-            ]    
-                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=linear, xlabel={}, ylabel={}, title={$u$}, %cycle list name=paulcolors, 
-                legend pos=north west, %yticklabels={,,},
-                ]
-                \addplot+[line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/exact_plot_data_1D_multipleJumps_contrast11.5.csv};
-                
-
-                \draw[dashed,gray,very thick] (0.4,-2) -- (0.4,2);
-                \draw[dashed,gray,very thick] (0.63188,-2) -- (0.63188,2);
-                %\node [draw=none] at (axis description cs:0.45,0.23) {\color{gray} $\Gamma$};
-
-                \node [draw=none] at (axis description cs:0.38,0.65) {\color{gray} $\Gamma_1$};
-                \node [draw=none] at (axis description cs:0.71,0.65) {\color{gray} $\Gamma_2$};
-
-                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=linear, xlabel={}, ylabel={}, title={$u_h$ ($k = 3$)}, %cycle list name=paulcolors, 
-                legend pos=north west, %yticklabels={,,},
-                ]
-                \draw[fill=gray!40,draw=none,opacity=0.5] (0.3,-2) -- (0.3,2) -- (0,2) -- (0,-2) -- cycle;
-                \draw[fill=gray!40,draw=none,opacity=0.5] (0.7,-2) -- (0.7,2) -- (1.0,2) -- (1.0,-2) -- cycle;
-                \addplot+[line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/multipleJumps_approx_plot_data_WPFalse_contrast11.5_k3.csv};
-                
-
-                \draw[dashed,gray,very thick] (0.4,-2) -- (0.4,2);
-                \draw[dashed,gray,very thick] (0.63188,-2) -- (0.63188,2);
-                \node [draw=none] at (axis description cs:0.38,0.65) {\color{gray} $\Gamma_1$};
-                \node [draw=none] at (axis description cs:0.71,0.65) {\color{gray} $\Gamma_2$};
-                \node [draw=none] at (axis description cs:0.2,0.15) {\color{gray} $\omega$};
-                \node [draw=none] at (axis description cs:0.8,0.15) {\color{gray} $\omega$};
-                
-
-            \end{groupplot}
-        \end{tikzpicture}
-    \end{center}
-    \caption{Exact solution (left) and approximated solution with $k = 3$ (right) of \eqref{eq:1D:exact:simpleMult} at $t = 0.5$ with $c_1 = c_3 = 11.5$ and $c_2 = 1.0$ - with bug in the code....}
-    \label{fig:jumpCoefs:multipleJumps2}
-  \end{figure}
-
-  \begin{figure}[!htbp]
-    \begin{center}
-        \begin{tikzpicture}[scale=0.72]
-            \begin{groupplot}[%
-                group style={%
-                group size=2 by 1,
-                horizontal sep=1.5cm,
-                vertical sep=2cm,
-                },
-            ymajorgrids=true,
-            grid style=dashed,
-            %ymin = -1.1e0, ymax = 1.1e0,
-            ]    
-                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=linear, xlabel={}, ylabel={}, title={$u$}, %cycle list name=paulcolors, 
-                legend pos=north west, %yticklabels={,,},
-                ]
-                \addplot+[line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/exact_plot_data_1D_multipleJumps_contrast11.5.csv};
-                
-
-                \draw[dashed,gray,very thick] (0.4,-2) -- (0.4,2);
-                \draw[dashed,gray,very thick] (0.63188,-2) -- (0.63188,2);
-                %\node [draw=none] at (axis description cs:0.45,0.23) {\color{gray} $\Gamma$};
-
-                \node [draw=none] at (axis description cs:0.38,0.65) {\color{gray} $\Gamma_1$};
-                \node [draw=none] at (axis description cs:0.71,0.65) {\color{gray} $\Gamma_2$};
-
-                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=linear, xlabel={}, ylabel={}, title={$u_h$ ($k = 3$)}, %cycle list name=paulcolors, 
-                legend pos=north west, %yticklabels={,,},
-                ]
-                \draw[fill=gray!40,draw=none,opacity=0.5] (0.3,-2) -- (0.3,2) -- (0,2) -- (0,-2) -- cycle;
-                \draw[fill=gray!40,draw=none,opacity=0.5] (0.7,-2) -- (0.7,2) -- (1.0,2) -- (1.0,-2) -- cycle;
-                \addplot+[line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/multipleJumps_approx_plot_data_WPFalse_contrast11.5_k3_uniform.csv};
-                
-
-                \draw[dashed,gray,very thick] (0.4,-2) -- (0.4,2);
-                \draw[dashed,gray,very thick] (0.63188,-2) -- (0.63188,2);
-                \node [draw=none] at (axis description cs:0.38,0.65) {\color{gray} $\Gamma_1$};
-                \node [draw=none] at (axis description cs:0.71,0.65) {\color{gray} $\Gamma_2$};
-                \node [draw=none] at (axis description cs:0.2,0.15) {\color{gray} $\omega$};
-                \node [draw=none] at (axis description cs:0.8,0.15) {\color{gray} $\omega$};
-                
-
-            \end{groupplot}
-        \end{tikzpicture}
-    \end{center}
-    \caption{Exact solution (left) and approximated solution with $k = 3$ (right) of \eqref{eq:1D:exact:simpleMult} at $t = 0.25$ with $c_1 = c_3 = 11.5$ and $c_2 = 1.0$ (uniform mesh), computed with $64$ points in space, $32$ in time and $T = 0.5$.}
-    \label{fig:jumpCoefs:multipleJumps3}
-  \end{figure}
-\end{comment}
-
 
 \subsubsection{2nd one dimensional example}
 
 Let us consider a final one-dimensional example to illustrate the high resolution 
 required to simulate wave propagation in heterogeneous media. 
-We consider the same geometrical setup as in Sec. \ref{sec:numex:1D:simple} with a more intricate reference solution considered in \cite{BDE22,MEMM19}. With $u_0 (x) := \frac{1}{100} \exp(-(20(x-\frac{1}{5}))^2)$, we consider the exact solution 
+We consider the same geometrical setup as in \cref{sec:numex:1D:simple} with a more intricate reference solution considered in \cite{BDE22,MEMM19}. With $u_0 (x) := \frac{1}{100} \exp(-(20(x-\frac{1}{5}))^2)$, we consider the exact solution 
 \begin{equation}\label{eq:1D:complicatedSol}
     u(x,t) = \begin{cases}
       \sum_{k \ge 0} \left( \frac{c_2-c_1}{c_2+c_1}\right)^k \left( u_0 (k + x - c_1 t) - u_0(k-x-c_1 t)\right), &x \in \Omega_1, \\
@@ -1540,86 +1286,8 @@ We consider the same geometrical setup as in Sec. \ref{sec:numex:1D:simple} with
 \end{equation}
 This solution describes a wave traveling towards the interface $\Gamma$. Due to the jump in the wave speed, a part of the wave is reflected from the interface into the domain $\Omega_1$, while the other part passes through the interface into $\Omega_2$ and oscillates stronger. 
 
-In Fig.~\ref{fig:1D-complicated-sol} we consider the approximation of this function by the $L^2$-interpolation. The plot on the right shows that for $c_1 = 2.5$ the velocity is not captured well yet even for $k=3$ on the finest refinement level we considered. In terms of convergence rates, we merely observe $\mathcal{O}(h^2)$ for $k=2$. In view of the previous experiments it is clear that this poses a serious obstruction to obtaining accurate solutions to the corresponding unique continuation problem.
+In \cref{fig:1D:complicatedSol} we consider the approximation of this function by the $L^2$-interpolation. The plot on the right shows that for $c_1 = 2.5$ the velocity is not captured well yet even for $k=3$ on the finest refinement level we considered. In terms of convergence rates, we merely observe $\mathcal{O}(h^2)$ for $k=2$. In view of the previous experiments it is clear that this poses a serious obstruction to obtaining accurate solutions to the corresponding unique continuation problem.
 
-\begin{comment}
-\begin{figure}[!htbp]
-    \begin{center}with 
-        \begin{tikzpicture}[scale=0.72]
-            \begin{groupplot}[%
-                group style={%
-                group size=2 by 2,
-                horizontal sep=1.5cm,
-                vertical sep=2cm,
-                },
-            ymajorgrids=true,
-            grid style=dashed,
-            %ymin = 1e-3, ymax = 0.5e1,
-            ]    
-                \nextgroupplot[width=9cm,height=7cm,domain=0:4,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 1.0, \Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=paulcolors, 
-                legend pos=south west, %yticklabels={,,},
-                ]
-                \addplot+[discard if not={order}{2},discard if not={contrast}{1.0},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast1.0.csv};
-                \addplot+[discard if not={order}{2},discard if not={contrast}{1.0},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast1.0.csv};
-                %\addplot+[discard if not={order}{3},discard if not={contrast}{1.0},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast1.0.csv};
-                \addplot+[discard if not={order}{3},discard if not={contrast}{1.0},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast1.0.csv};
-                
-
-
-                %\addplot[gray, dashed, domain=1:4] {0.005*(1/2^(2))^(x-0.9)};
-                %\addplot[gray, dashed, domain=1:4] {0.0005*(1/2^(3))^(x-0.9)};
-                %\node [draw=none] at (axis description cs:0.80,0.45) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-                %\node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
-    
-                \legend{$k=2$,best,$k = 3$,best}
-                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 1.5, \Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=paulcolors, 
-                legend pos=south west, %yticklabels={,,},
-                ]
-                \addplot+[discard if not={order}{2},discard if not={contrast}{1.5},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast1.5.csv};
-                \addplot+[discard if not={order}{2},discard if not={contrast}{1.5},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast1.5.csv};
-                \addplot+[discard if not={order}{3},discard if not={contrast}{1.5},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast1.5.csv};
-                \addplot+[discard if not={order}{3},discard if not={contrast}{1.5},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast1.5.csv};
-
-                %\addplot[gray, dashed, domain=1:4] {6.5*(1/2^(2))^(x-0.9)};
-                %\addplot[gray, dashed, domain=1:4] {1.5*(1/2^(3))^(x-0.9)};
-                %\node [draw=none] at (axis description cs:0.80,0.40) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-                %\node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
-                \legend{$k=2$,best,$k = 3$,best}
-
-                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 2.0, \Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=paulcolors, 
-                legend pos=south west, %yticklabels={,,},
-                ]
-                \addplot+[discard if not={order}{2},discard if not={contrast}{2.0},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast2.0.csv};
-                \addplot+[discard if not={order}{2},discard if not={contrast}{2.0},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast2.0.csv};
-                \addplot+[discard if not={order}{3},discard if not={contrast}{2.0},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast2.0.csv};
-                \addplot+[discard if not={order}{3},discard if not={contrast}{2.0},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast2.0.csv};
-
-                %\addplot[gray, dashed, domain=1:4] {12.5*(1/2^(2))^(x-0.9)};
-                %\addplot[gray, dashed, domain=1:4] {5.5*(1/2^(3))^(x-0.9)};
-                %\node [draw=none] at (axis description cs:0.80,0.40) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-                %\node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
-                \legend{$k=2$,best,$k = 3$,best}
-
-                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 2.5, \Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=paulcolors, 
-                legend pos=south west, %yticklabels={,,},
-                ]
-                \addplot+[discard if not={order}{2},discard if not={contrast}{2.5},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast2.5.csv};
-                \addplot+[discard if not={order}{2},discard if not={contrast}{2.5},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k2_WPFalse_contrast2.5.csv};
-                \addplot+[discard if not={order}{3},discard if not={contrast}{2.5},line width=1.1pt] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast2.5.csv};
-                \addplot+[discard if not={order}{3},discard if not={contrast}{2.5},line width=1.1pt,dashed] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/travelingWave_1D_jumpingCoefs_k3_WPFalse_contrast2.5.csv};
-
-                %\addplot[gray, dashed, domain=1:4] {22.5*(1/2^(2))^(x-0.9)};
-                %\addplot[gray, dashed, domain=1:4] {12.5*(1/2^(3))^(x-0.9)};
-                %\node [draw=none] at (axis description cs:0.80,0.40) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-                %\node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
-                \legend{$k=2$,best,$k = 3$,best}
-            \end{groupplot}
-        \end{tikzpicture}
-    \end{center}
-    \caption{...}
-    %\label{fig:2DjumpCoefs}
-  \end{figure}
-\end{comment}
 
   \begin{figure}[!htbp]
     \begin{center}
@@ -1707,129 +1375,21 @@ In Fig.~\ref{fig:1D-complicated-sol} we consider the approximation of this funct
             \end{groupplot}
         \end{tikzpicture}
         \caption{The $L^2$-bestapproximation error of \eqref{eq:1D:complicatedSol} with $k = 2$ for $c_2 = 1$ and $c_1 \in \{1.0,1.5,2.0\}$ (left) and the approximation of the time derivative of \eqref{eq:1D:complicatedSol} with $k = 3$ for $c_1 = 2.5$ for $L = 4,5$, $h = 1/2^{L+1} = \Delta t$ (right). \textbf{what is happening here now? before it was $\mathcal{O}(h^2)$ and $\mathcal{O}(h^{3/2})$..., right plot looks fine, also $c_1 = 2.0$ for the right plot...}}
+        \label{fig:1D:complicatedSol}
     \end{center}
-    \label{fig:1D-complicated-sol}
   \end{figure}
 
 
 
 \subsection{Example in two space dimensions}
-\noindent In this section, we present a numerical example in two space dimensions. We consider the unit-square $\Omega \coloneqq [0,1]^2 \subset \mathbb{R}^2$ partitioned into subdomains $\Omega_1 = (0.0,0.5)^2$ and $\Omega_2 = (0.5,1.0)^2$. 
-As a simple test case, we can extend the one-dimensional exact solution defined in \eqref{eq:1D:exact:simple} to the two-dimensional case by setting $u(x,y;t) = u(x;t)$, i.e. we consider the original solution in the $x$-direction. We define the data domain $\omega = \Omega \setminus [0.25,0.75]^2$ and note that $\omega$ fulfills the GCC. To ensure that the data domain and the interface $\Gamma$ are meshed exactly, we consider a quadrilateral mesh with $2^{L+1}$, $L \in \{1,2,3,4\}$, elements in each direction. We consider the final time $T = 0.75$  and set the time step size to $\Delta t = (1/2)^{L+1}$. As before, we fix $c_2 = 1$ and consider different values for $c_1$. The results of the experiment are presented in Fig. \ref{fig:2DjumpCoefs}. 
-For $c_1 = 2.5$, $\Vert \dt(u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega))}$ and $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$ converge quasi-optimally with order $\mathcal{O}(h^k)$ for polynomial degrees $k \in \{2,3\}$. Similar as already observed in the one-dimensional case the right plot in Fig.~\ref{fig:2DjumpCoefs} shows that these errors are more sensitive to increasing $c_1$ than the corresponding best approximation errors. 
+To conclude the numerical examples, we consider another example in two space dimensions. We partition the unit-square $\Omega \coloneqq [0,1]^2 \subset \mathbb{R}^2$ into subdomains $\Omega_1 = \{ (x,y) \in \Omega: x < 0.5 \}$ and $\Omega_2 = \{ (x,y) \in \Omega: x > 0.5 \}$, and 
+extend the exact solution defined in \eqref{eq:1D:exact:simple} to the two-dimensional case by setting $u(x,y;t) \coloneqq u(x;t)$. 
+
+We define the data domain $\omega \coloneqq \Omega \setminus [0.25,0.75]^2$ and note that $\omega$ fulfills the GCC. To ensure that the data domain and the interface $\Gamma$ are meshed exactly, we consider a quadrilateral mesh with $2^{L+1}$, $L \in \{1,2,3,4\}$, elements in each direction. We consider the final time $T = 0.75$  and set the time step size to $\Delta t = (1/2)^{L+1}$. As before, we fix the wavespeed $c_2 = 1$ and consider different values for $c_1$ to control the contrast. 
+
+The results of the experiment are presented in \cref{fig:2DjumpCoefs}. 
+For $c_1 = 2.5$, $\Vert \dt(u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega))}$ and $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$ converge quasi-optimally with order $\mathcal{O}(h^k)$ for polynomial degrees $k \in \{2,3\}$. Similar as already observed in the one-dimensional case the right plot in \cref{fig:2DjumpCoefs} shows that these errors are more sensitive to increasing $c_1$ than the corresponding best approximation errors. 
 In particular, the ratio for $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$ with $k=2$ appears to grow as $\mathcal{O}(c_1^{3/2})$ which renders it very demanding to maintain a reasonable accuracy as the contrast increases. 
-
-\begin{comment}
-  \begin{figure}[!htbp]
-    \begin{center}
-        \begin{tikzpicture}[scale=0.72]
-            \begin{groupplot}[%
-                group style={%
-                group size=2 by 2,
-                horizontal sep=1.5cm,
-                vertical sep=2cm,
-                },
-            ymajorgrids=true,
-            grid style=dashed,
-            %ymin = 1e-3, ymax = 0.5e1,
-            ]    
-                \nextgroupplot[width=9cm,height=7cm,domain=0:4,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 1.0$}, %cycle list name=paulcolors, 
-                legend pos=north east, %yticklabels={,,},
-                ]
-                %\addplot+[discard if not={contrast}{1.0},line width=2.5pt,mark=None,color=black] table [x=x, y=y, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/exact_plot_data.csv};
-                %\addplot+[discard if not={order}{2},discard if not={contrast}{1.0},line width=1.1pt] table [x=L, y=L-infty-L2-error-ut, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_c1.0.csv};
-                \addplot+[discard if not={order}{2},discard if not={contrast}{1.0},line width=1.1pt,color=orange] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_c1.0.csv};
-
-            
-               
-                %\addplot+[discard if not={order}{2},discard if not={contrast}{1.0},line width=1.1pt,dotted] table [x=L, y=bestapprox-L-infty-L2-error-ut, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_c1.0.csv};
-                %\addplot+[discard if not={contrast}{1.0},line width=1.1pt] table [x=L, y=L-infty-L2-error-ut, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_k3.csv};
-                \addplot+[discard if not={contrast}{1.0},line width=1.1pt,color=teal] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_k3.csv};
-                %\addplot+[discard if not={contrast}{1.0},line width=1.1pt,dotted] table [x=L, y=bestapprox-L-infty-L2-error-ut, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_k3.csv};
-
-                %L-infty-L2-u error
-                \addplot+[discard if not={order}{2},discard if not={contrast}{1.0},line width=1.1pt,dashed,color=orange] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_c1.0.csv};
-                \addplot+[discard if not={contrast}{1.0},line width=1.1pt,dashed,color=teal] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_k3.csv};
-
-
-                \addplot[gray, dashed, domain=1:4] {0.7*(1/2^(2))^(x-0.9)};
-                \addplot[gray, dashed, domain=1:4] {0.1*(1/2^(3))^(x-0.9)};
-                \addplot[gray, dashed, domain=1:4] {0.005*(1/2^(3))^(x-0.9)};
-                \node [draw=none] at (axis description cs:0.80,0.45) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-                \node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
-    
-                \legend{$k=2$,$k=3$}
-                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 1.5$}, %cycle list name=paulcolors, 
-                legend pos=north east, %yticklabels={,,},
-                ]
-                %\addplot+[discard if not={order}{2},discard if not={contrast}{1.5},line width=1.1pt] table [x=L, y=L-infty-L2-error-ut, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_c1.5.csv};
-                \addplot+[discard if not={order}{2},discard if not={contrast}{1.5},line width=1.1pt,color=orange] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_c1.5.csv};
-
-                %\addplot+[discard if not={contrast}{1.5},line width=1.1pt] table [x=L, y=L-infty-L2-error-ut, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_k3.csv};
-                \addplot+[discard if not={contrast}{1.5},line width=1.1pt,color=teal] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_k3.csv};
-
-                %L-infty-L2-u error
-                \addplot+[discard if not={order}{2},discard if not={contrast}{1.5},line width=1.1pt,dashed,color=orange] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_c1.0.csv};
-                \addplot+[discard if not={contrast}{1.5},line width=1.1pt,dashed,color=teal] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_k3.csv};
-
-
-                \addplot[gray, dashed, domain=1:4] {3*(1/2^(2))^(x-0.9)};
-                \addplot[gray, dashed, domain=1:4] {0.75*(1/2^(3))^(x-0.9)};
-                \addplot[gray, dashed, domain=1:4] {0.025*(1/2^(3))^(x-0.9)};
-                \node [draw=none] at (axis description cs:0.80,0.40) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-                \node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
-                \legend{$k=2$,$k = 3$}
-
-                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 2.0$}, %cycle list name=paulcolors, 
-                legend pos=north east, %yticklabels={,,},
-                ]
-                %\addplot+[discard if not={order}{2},discard if not={contrast}{2.0},line width=1.1pt] table [x=L, y=L-infty-L2-error-ut, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_c2.0.csv};
-                \addplot+[discard if not={order}{2},discard if not={contrast}{2.0},line width=1.1pt,color=orange] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_c2.0.csv};
-                
-
-                %\addplot+[discard if not={contrast}{2.0},line width=1.1pt] table [x=L, y=L-infty-L2-error-ut, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_k3.csv};
-                \addplot+[discard if not={contrast}{2.0},line width=1.1pt,color=teal] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_k3.csv};
-
-                %L-infty-L2-u error
-                \addplot+[discard if not={order}{2},discard if not={contrast}{2.0},line width=1.1pt,dashed,color=orange] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_c1.0.csv};
-                \addplot+[discard if not={contrast}{2.0},line width=1.1pt,dashed,color=teal] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_k3.csv};
-
-
-                \addplot[gray, dashed, domain=1:4] {6.5*(1/2^(2))^(x-0.9)};
-                \addplot[gray, dashed, domain=1:4] {2*(1/2^(3))^(x-0.9)};
-                \addplot[gray, dashed, domain=1:4] {0.06*(1/2^(3))^(x-0.9)};
-                \node [draw=none] at (axis description cs:0.80,0.40) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-                \node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
-                \legend{$k=2$,$k = 3$}
-
-                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$c_1 = 2.5$}, %cycle list name=paulcolors, 
-                legend pos=north east, %yticklabels={,,},
-                ]
-                %\addplot+[discard if not={order}{2},discard if not={contrast}{2.5},line width=1.1pt] table [x=L, y=L-infty-L2-error-ut, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_c2.5.csv};
-                \addplot+[discard if not={order}{2},discard if not={contrast}{2.5},line width=1.1pt,color=orange] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_c2.5.csv};
-               
-
-                %\addplot+[discard if not={contrast}{2.5},line width=1.1pt] table [x=L, y=L-infty-L2-error-ut, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_k3.csv};
-                \addplot+[discard if not={contrast}{2.5},line width=1.1pt,color=teal] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_k3.csv};
-                
-                %L-infty-L2-u error
-                \addplot+[discard if not={order}{2},discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_c1.0.csv};
-                \addplot+[discard if not={contrast}{2.5},line width=1.1pt,dashed,color=teal] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_k3.csv};
-
-
-                \addplot[gray, dashed, domain=1:4] {11*(1/2^(2))^(x-0.9)};
-                \addplot[gray, dashed, domain=1:4] {6*(1/2^(3))^(x-0.9)};
-                \addplot[gray, dashed, domain=1:4] {0.1*(1/2^(3))^(x-0.9)};
-                \node [draw=none] at (axis description cs:0.80,0.40) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-                \node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
-                \legend{$k=2$,$k = 3$}
-            \end{groupplot}
-        \end{tikzpicture}
-    \end{center}
-    \caption{Convergence of $\Vert \dt(u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega))}$ and $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$ (dashed) for polynomial degrees $k \in \{2,3\}$ and increasing values of $c_1 \in \{1.0,1.5,2.0,2.5\}$.}
-    \label{fig:2DjumpCoefs}
-  \end{figure}
-\end{comment}
 
   \begin{figure}[!htbp]
     \begin{center}
@@ -1905,208 +1465,11 @@ In particular, the ratio for $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2
   \end{figure}
 
 
-\begin{comment}
-  \begin{figure}[!htbp]
-    \begin{center}
-        \begin{tikzpicture}[scale=0.72]
-            \begin{groupplot}[%
-                group style={%
-                group size=1 by 1,
-                horizontal sep=1.5cm,
-                vertical sep=2cm,
-                },0m,domain=1:4,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$\Vert u_0 - u_h \vert_{t = 0} \Vert_{H^1(\Omega)} + \Vert \partial_t (u-L_{\Delta t} \ul_1) \vert_{t = 0} \Vert_{L^2(\Omega)}$}, %cycle list name=paulcolors, 
-                legend pos=south east, %ymax = 1e2, %yticklabels={,,},
-                ]
-                %\addplot+[discard if not={contrast}{1.0},line width=2.5pt,mark=None,color=black] table [x=x, y=y, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/exact_plot_data.csv};
-                \addplot+[discard if not={order}{2},discard if not={L}{3},line width=1.1pt] table [x=contrast, y=H1-dt-at-t-0, col sep=comma] {../../wave_data_assimilation/data/jumpCoefs/2D_errors_simpleRefsol_noGCC2_Restricted.csv};
-                \addplot+[discard if not={order}{2},discard if not={L}{3},line width=1.1pt,dashed] table [x=contrast, y=bestapprox-H1-dt-at-t-0, col sep=comma] {../../wave_data_assimilation/data/0
-
-                \addplot[gray, dashed, domain=1:4] {1*(1/2^(-2))^(x-0.9)};
-                \addplot[gray, dashed, domain=1:4] {1*(1/2^(-1))^(x-0.9)};
-                %\addplot[gray, dashed, domain=1:4] {0.003*(1/2^(-2))^(x-0.9)};
-                
-    
-                \legend{$k=2$, best, $e^\Lambda$ (rescaled)}
-            
-            \end{groupplot}
-        \end{tikzpicture}
-    \end{center}
-    \caption{Filippas lambda... (2D), noGCC}
-  \end{figure}
-\end{comment}
-
-
-
-
-
-
- \section{Conclusion}
-
+\section{Conclusion}
 In this article we have investigated a numerical method to solve the unique continuation problem 
 for the wave equation in the presence of a jump discontinuity in the wavespeed. The main conclusion from our numerical experiments is that obtaining accurate numerical solutions in the presence of material interfaces involving large contrasts is computationally demanding. Even though the problem appears to be Lipschitz stable if the geometric control condition is fulfilled, the resolution required to capture the complex behavior of the solution is a limiting factor in numerical simulations. Note here that unique continuation problems are globally coupled in space and time which poses an obstacle for their efficient numerical solution. 
 
 
-\appendix
-
-\begin{comment}
-\section{More material}
-
-~\jp{Remove Fig.~\ref{fig:GCC-illustration} ?}
-
-\begin{figure}
-    \centering
-    \begin{tikzpicture}[scale=3]
-        \draw[-stealth] (-0.15,0) -- (1.15,0); 
-        \draw[-stealth] (0,-0.15) -- (0,1.15);
-        \draw (0,0) -- (1,0) -- (1,1) -- (0,1) -- cycle;
-        \draw[fill=gray!40,draw=none,opacity=0.5] (0,0) -- (0.5,0) -- (0.5,1) -- (0,1) -- cycle;
-        \draw[-stealth] (0.5,0) -- (1,0.5) -- (0.5,1);
-        \node at (-0.15,1) {\footnotesize $T$}; 
-        \node at (0.75,-0.15) {\footnotesize $\sup_{x \in \Omega} \operatorname{dist}_c(x,\omega_T)$}; 
-        \node at (1.15,0.5) {\footnotesize $t_0$};
-        \draw (0.7,0) to[bend right=45] (0.65,0.15); 
-        \node at (0.6,0.05) {\footnotesize $\alpha$};
-        \node at (0.25,0.5) {\footnotesize $\omega_T$};
-        \begin{scope}[xshift=2cm]
-            \draw[-stealth] (-0.15,0) -- (1.15,0); 
-            \draw[-stealth] (0,-0.15) -- (0,1.15);
-            \draw (0,0) -- (1,0) -- (1,1) -- (0,1) -- cycle;
-            \draw[fill=gray!40,draw=none,opacity=0.5] (0,0) -- (0.25,0) -- (0.25,1) -- (0,1) -- cycle;
-            \draw[fill=gray!40,draw=none,opacity=0.5] (0.75,0) -- (1,0) -- (1,1) -- (0.75,1) -- cycle;
-            \draw[-stealth] (0.25,0) -- (0.75,0.5);
-            \node at (-0.15,1) {\footnotesize $T$}; 
-            \node at (0.5,-0.15) {\footnotesize $2 \sup_{x \in \Omega} \operatorname{dist}_c(x,\omega_T)$}; 
-            \node at (0.67,0.5) {\footnotesize $t_0$};
-            \draw (0.45,0) to[bend right=45] (0.4,0.15); 
-            \node at (0.35,0.05) {\footnotesize $\alpha$};
-            \node at (0.125,0.5) {\footnotesize $\omega_T$};
-            \node at (0.875,0.5) {\footnotesize $\omega_T$};
-        \end{scope}
-    \end{tikzpicture}
-    \caption{(\textbf{Can be deleted lateron, only for our own understanding:}) Illustration of the GCC and condition \eqref{eq:Tcondition} in one space dimension. The geometrical setup where the data is given only in one half of the domain is the worst case, because the ray can be reflected at the boundary. We still calculate that $1 = \tan(\alpha) = t_0 / \sup_{x \in \Omega} \operatorname{dist}_c(x,\omega_T)$, i.e. $T > 2 t_0 = 2\sup_{x \in \Omega} \operatorname{dist}_c(x,\omega_T)$ is required for the GCC. Note we can also assume that $c_1 = c_2 = 1$, because the metric is rescaled wrt to the wavespeed. Could probably show that the GCC and the condition on $T$ are in fact equivalent in one dimension.}
-\label{fig:GCC-illustration}
-\end{figure}
-\end{comment}
-
-\begin{comment}
-\subsubsection{Snell's law... }
-\noindent Finally, we consider a more elaborate example. We consider the initial conditions 
-\begin{align*}
-    u_0 (x,y) &= \frac{1}{100} \exp(-(80(x+y-t-1/5))^2) \vert_{t=0}, \\
-    u_1(x,y) &= 128(x+y-t-1/5) \exp(-(80(x+y-t-1/5))^2) \vert_{t = 0}
-\end{align*}
-and compute a reference solution $u_{\text{ref}}$ numerically. We consider the data domain $\omega_T$ as described in Fig. \ref{fig:2d:SnellsLaw} and presribe $u = \Pi_h u_{\text{ref}}$ on $\omega_T$. 
-
-
-\newcommand{\hpoint}{0.85}
-\begin{figure}
-    \centering
-    \begin{tikzpicture}[scale=4]
-        \draw (0,0) -- (1,0) -- (1,1) -- (0,1) -- cycle;
-        \draw[fill=gray!40,draw=none,opacity=0.5] (0,1) -- (0,\hpoint) -- (0.65,\hpoint) -- (0.65,1-\hpoint) -- (0,1-\hpoint) -- (0,0) -- (1,0) -- (1,1) -- cycle;
-        \node[draw=none] at (0.85,0.25) {\color{gray} $\omega$};
-        \draw[stealth-stealth] (0.7,1-\hpoint) -- (0.7,\hpoint); 
-        \node[draw=none] at (0.8,0.5) {\color{black} $h_\omega$};
-        \draw[dashed] (0.5,0.5) -- (0,0.5); 
-        \draw[-stealth,red,very thick] (0,0.2) -- (0.49,0.5) -- (0,0.8);
-        \draw[black,very thick] (0.5,0) -- (0.5,1); 
-        \node[draw=none] at (0.55,0.5) {\color{black} $\Gamma$};
-        \draw (0.25,0.5) to [bend right=45] (0.25,0.35);
-        \node[draw=none] at (0.28,0.44) {\color{black} $\theta_c$};
-        \node[draw=none] at (0.5,1.1) {GCC not fulfilled};
-        \begin{scope}[xshift=1.25cm]
-            \draw (0,0) -- (1,0) -- (1,1) -- (0,1) -- cycle;
-            \draw[fill=gray!40,draw=none,opacity=0.5] (0,1) -- (0,0.85*\hpoint) -- (0.65,0.85*\hpoint) -- (0.65,1-0.85*\hpoint) -- (0,1-0.85*\hpoint) -- (0,0) -- (1,0) -- (1,1) -- cycle;
-            \draw[stealth-stealth] (0.7,1-0.85*\hpoint) -- (0.7,0.85*\hpoint); 
-            \node[draw=none] at (0.8,0.5) {\color{black} $h_\omega$};
-            \node[draw=none] at (0.85,0.25) {\color{gray} $\omega$};
-            \draw[dashed] (0.5,0.5) -- (0,0.5); 
-            \draw[-stealth,red,very thick] (0,0.2) -- (0.49,0.5) -- (0,0.8);
-            \draw[black,very thick] (0.5,0) -- (0.5,1); 
-            \node[draw=none] at (0.55,0.5) {\color{black} $\Gamma$};
-            \draw (0.25,0.5) to [bend right=45] (0.25,0.35);
-            \node[draw=none] at (0.28,0.44) {\color{black} $\theta_c$};
-            \node[draw=none] at (0.5,1.1) {GCC fulfilled};
-        \end{scope}
-    \end{tikzpicture}
-    \caption{According to Snell's law, rays hitting the interface with an angle greater than the critical angle $\theta_c := \arcsin(\frac{c_1}{c_2})$ are reflected back into the domain $\Omega_1$. To ensure that the GCC is fulfilled, the height $h_{\omega}$ has to chosen smaller than $\tan(\theta_c)$.}
-    \label{fig:2d:SnellsLaw}
-\end{figure}
-\end{comment}
-
-
-\begin{comment}
-\section*{Outtakes}
-{\color{gray}
-\begin{lem}[Continuity of $A$]
-    \begin{enumerate}
-        \item For $\Uh \in \ProdFullyDiscrSpace{k}{q}$ and $\mathbf{Y} \in ...$ we have that 
-        \begin{equation}
-            A[(\Uh,\mathbf{Y})] \le C ... 
-        \end{equation}
-        \item For $\mathbf{U} \vert_{Q^n} \in ...$ for all $n = 0, \dots, N-1$ and $\Yh \in \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ we have that
-        \begin{equation}
-            A[(\mathbf{U},\Yh)] \le C ...
-        \end{equation}
-    \end{enumerate}
-\end{lem}
-
-We recall the following interpolation result from \cite{BP24}: 
-
-\begin{lem}[Lem. 2.4 of \cite{BP24}]\label{lem:interpolationOperator}
-    Assume that $\Delta t = Ch$ and set $(s,m) = (\min\{k,q\}, \max\{k,q\}+3)$.
-    Then, there exists an interpolation operator $\Pi_h$ into $\FullyDiscrSpace{k}{q}$ such that for $n = 0, \dots, N-1$ the following estimates hold
-    \begin{enumerate}
-        \item $\sum_{n = 0}^{N-1} \{ h^{-1} \Vert u - \Pi_h u \Vert_{L^2(Q^n)} + \Vert \nabla(u - \Pi_h u) \Vert_{L^2(Q^n)} \} \le C \Vert u \Vert_{H^1(Q)}$. 
-        \item $\sum_{n = 0}^{N-1} \{ h^{-1} \Vert u - \Pi_h u \Vert_{L^2(Q^n)} + \Vert u - \Pi_h u \Vert_{H^1(Q^n)} \} \le C h^{s} \Vert u \Vert_{H^{m-1}(Q)}$.
-        \item $\left( \sum_{n = 0}^{N-1} \int_{I_n} \sum_{K \in \mathcal{T}_h} h^2 \Vert u - \Pi_h u \Vert^2_{H^2(K)} \ \dT \right)^{1/2} \le C h^{s} \Vert u \Vert_{H^{m}(Q)}$ for $u \in H^m(Q_n) \cap C^0(I_n,H^2(\Omega))$.
-    \end{enumerate}
-\end{lem}
-
-
-
-\begin{lem}[Similar to Lem. 2.5 \& Lem. 4.2 of \cite{BP24}]
-    In addition to the assumptions of Lem. \ref{lem:interpolationOperator}, let $u \in H^m(Q)$ solve \eqref{eq:waveEquation} and set $\mathbf{U} = (u,\partial_t u)$. Then, the following estimates hold true. 
-    \begin{enumerate}
-        \item For $u \in H^m(Q) \cap C^0([0,2],H^2(\Omega))$ we have that 
-        \begin{equation}
-            \vert \mathbf{\Pi}_h \mathbf{U} \vert_{S_h} = \vert \mathbf{\Pi}_h \mathbf{U} - \mathbf{U} \vert_{S_h} \le C h^{s} \Vert u \Vert_{H^m(Q)}.
-        \end{equation}
-        \item For $u \in H^m(Q)$ we have that
-        \begin{equation}
-            \vert \mathbf{\Pi}_h \mathbf{U} \vert_{\uparrow \downarrow} \le C h^{s} \Vert u \Vert_{H^{m-1}(Q)}.
-        \end{equation}
-        \item For $\Uh \in \ProdFullyDiscrSpace{k}{q}$ it holds that 
-        \begin{equation}
-            \Vert u - \ul_1 \Vert_{\Sigma} + \Vert u - \ul_1 \Vert_{\omega_T} \le C \left( h^{s+1/2} \Vert u \Vert_{H^m(Q)} + \tnorm{(\Uh - \mathbf{\Pi}_h \Uh,0)} \right).
-        \end{equation}
-        \item For $\mathbf{Y} = (y_1,y_2) \in [H^1(Q)]^2$, we have that
-        \begin{equation}
-            \Vert \mathbf{\Pi}^\ast_h \mathbf{Y} \Vert_{S_h^\ast} \le C \left( \Vert y_1 \Vert_{H^1(Q)} + \Vert y_2 \Vert_{H^2(Q)} \right). 
-        \end{equation}
-    \end{enumerate}
-\end{lem}
-
-\begin{proof}
-    has to be adapted to the current setting.
-\end{proof}}
-
-{\color{red} do we need this one? 
-\begin{lem}\label{eq:lemma:stability}
-    Let $u$ be a solution of \eqref{eq:waveEquation} and $\mathbf{U} = (u,\partial_t u)$. For any $(\Wh,\Yh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ it holds that
-    \begin{equation*}
-        (u - \Pi_h u, \wl_1)_{\omega_T} -  S_h(\mathbf{\Pi}_h \mathbf{U},\Wh) - A[\mathbf{\Pi}_h \mathbf{U},\Yh] - \Sud(\mathbf{\Pi}_h \mathbf{U}, \Wh) \le C h^s \Vert u \Vert_{H^m(Q)} \tnorm{(\Wh,\Yh)}.
-    \end{equation*}
-\end{lem}
-
-\begin{proof}
-    We follow the proof of \cite[Lem. 2.6]{BP24}. 
-\end{proof}}
-\end{comment}
-
-%\bibliographystyle{alpha}
 \bibliography{references}
-
-
 
 \end{document}
