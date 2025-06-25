@@ -10,7 +10,8 @@ rfs = ['SJ','MJ']
 if len(sys.argv) > 2 and sys.argv[1] in rfs: 
     rf = sys.argv[1]
     contrast = float(sys.argv[2])
-    print("Generating data for the reference solution = {} and contrast {}".format(rf,contrast))
+    time =  float(sys.argv[3])
+    print("Generating data for the reference solution = {} and contrast {} at time {}".format(rf,contrast,time))
 else: 
     raise ValueError('Please provide one of the following options for the reference solution {} and a contrast'.format(rfs))
 
@@ -75,15 +76,15 @@ def get_params(rf,contrast):
 
 def sol(t,xu,contrast):
     w1,c1,c2,pos = get_params(rf,contrast)
-    return singleJump_refsol(xu=xu,t=t,c1=c1,c2=c2,w1=w1,pos=pos,dt=False) if rf == 'SJ' else multipleJump_refsol(t,xu,c1,c2,w1,pos,n=3 if contrast == 7.5 else 4,dt=False)
+    return singleJump_refsol(xu=xu,t=t,c1=c1,c2=c2,w1=w1,pos=pos,dt=False) if rf == 'SJ' else multipleJump_refsol(t,xu,c1,c2,w1,pos,n=3 if contrast == 7.5 else 1 if contrast == 2.5 else 4,dt=False)
 
 def dt_sol(t,xu,contrast):
     w1,c1,c2,pos = get_params(rf,contrast)
-    return singleJump_refsol(xu=xu,t=t,c1=c1,c2=c2,w1=w1,pos=pos,dt=True) if rf == 'SJ' else multipleJump_refsol(t,xu,c1,c2,w1,pos,n=3 if contrast == 7.5 else 4,dt=True)
+    return singleJump_refsol(xu=xu,t=t,c1=c1,c2=c2,w1=w1,pos=pos,dt=True) if rf == 'SJ' else multipleJump_refsol(t,xu,c1,c2,w1,pos,n=3 if contrast == 7.5 else 1 if contrast == 2.5 else 4,dt=True)
 
 
 
-def plot(t,save_data=False):
+def plot(t,save_data=False,plot=False):
     w1,c1,c2,pos = get_params(rf,contrast)
     x_pts = np.linspace(0.0,1.0,num=500).tolist()
     y_pts = np.zeros(len(x_pts))
@@ -96,8 +97,8 @@ def plot(t,save_data=False):
         df = pd.DataFrame(data)
         df.to_csv('../dataNew/plots/exact_plot{}_contrast{}_time{}.csv'.format(rf,c1,t),index=False)
         
+    if plot: 
+        plt.plot(x_pts,y_pts)
+        plt.show()
 
-    plt.plot(x_pts,y_pts)
-    plt.show()
-
-plot(0.25,True)
+plot(time,True,False)

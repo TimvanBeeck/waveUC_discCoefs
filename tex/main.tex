@@ -647,7 +647,7 @@ If the problem is Lipschitz stable, for instance in the homogeneous case (see \c
 \subsection{Examples in one space dimension}
  We consider the unit interval $\Omega \coloneqq (0,1) \subset \mathbb{R}$ partitioned into $2^{L+1}$, $L \in \mathbb{N}$, uniform elements of size $h = 1/2^{L+1}$. Unless specified otherwise, we choose the time step as $\Delta t = h$. 
 
-\subsubsection{Simple Example}\label{sec:numex:1D:simple}
+\subsubsection{A first example}\label{sec:numex:1D:simple}
  We define two subdomains $\Omega_1 = (0,0.5)$ and $\Omega_2 = (0.5,1.0)$ such that $\bar{\Omega} = \overline{\Omega}_1 \cup \overline{\Omega}_2$ and fix the wavespeed $c_2 := c \vert_{\Omega_2} = 1$ in $\Omega_2$. For variable $c_1 := c \vert_{\Omega_1}$, we consider the exact solution \cite{MHI08}
 \begin{equation}\label{eq:1D:exact:simple}
     u(x,t) := \begin{cases}
@@ -661,22 +661,20 @@ where we set $w_1 = 3 \pi$ and $w_2 = w_1 c_1 / c_2$. Furthermore, we define
 \end{equation}
 
 
-In one space dimension, the requirement \eqref{eq:Tcondition} on $T$ already implies the GCC. Let $d(x,y) \coloneqq \vert x - y \vert$, $x, y \in \Omega$, be the Euclidean metric. Then, we set
+In one space dimension, the requirement \eqref{eq:Tcondition} that $T > 2 \sup_{x \in \Omega} \operatorname{dist}_{c}(x,\omega_T)$ already implies the GCC. Let $d(x,y) \coloneqq \vert x - y \vert$, $x, y \in \Omega$, be the standard Euclidean metric. As in \cite{Filippas22}, we define a metric scaled with the discontinuous wave speed through
 \begin{equation}
     d_c(x,y) \coloneqq \mathbbm{1}_{\Omega_1} c_1(x)^{-1} d(x,y) + \mathbbm{1}_{\Omega_2} d(x,y), \quad x,y \in \Omega.
 \end{equation}
 ~\jp{I am confused by this formula. What is the argument of the characteristic functions $\mathbbm{1}_{\Omega_1}$? Also, a metric is required to be symmetric, so $d_c(x,y) = d_c(y,x) $ 
 needs to be ensured?
 }
-Thus, for $\omega$ as above, $c_2 = 1$ fixed and $c_1 > 1.0$, the condition \eqref{eq:Tcondition} translates to $T > 0.25(1+c_1^{-1})$. 
+Thus, for $\omega$ as above, $c_2 = 1$ fixed and $c_1 > 1.0$, the condition \eqref{eq:Tcondition} translates to $T > 0.25(1+c_1^{-1})$. First, we consider the contrast $c_1 = 2.5$, which means that the GCC is satisfied if $T > 0.35$. 
 
+In \Cref{fig:jumpCoefs:contrast:2.5}, we observe that the errors $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ and $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$ converge with optimal order $\mathcal{O}(h^k)$ for $T = 0.5 > 0.35$. However, if $T = 0.1 < 0.35$, the order of convergence degrades, while the respective best approximation errors still converge with optimal order. This suggests that the GCC seems to imply Lipschitz stability even in the heterogeneous case, and therefore \cref{assum:LipschitzStability} is indeed justified.
 
-\Cref{fig:jumpCoefs:contrast:2.5} shows that the errors $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ and $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$ converge with order $\mathcal{O}(h^k)$ for $T$ large enough, but if $T$ is chosen too small, the order of convergence degrades.
+To investigate the dependence of the errors on the contrast, we fix the polynomial degree $k = 3$, refinement level $L = 3$, and $c_2 = 1$, and consider increasing values of $c_1 \in \{1.0,1.5,\dots,4.5\}$. In \cref{fig:jumpCoefs:increasingcontrast}, we observe that the approximation errors increase polynomially with $\mathcal{O}(c_1^3)$, while the $L^2$-best approximation errors grow quadratically with $\mathcal{O}(c_1^2)$. This is an important observation since an exponential growth in the contrast would have rendered the corresponding problems nearly impossible to resolve numerically.
 
-In \cref{fig:jumpCoefs:increasingcontrast} the dependence of the errors for increasing $c_1$ and 
-leaving $c_2 = 1$ fixed (i.e.\ increasing the contrast value) is investigated. When $T$ is chosen such that the GCC is barely fulfilled we observe that the errors merely grow polynomially in the contrast, more precisely like $\mathcal{O}(c_1^3)$.
-This is an important observation since an exponential growth in the contrast would have rendered the corresponding problems nearly impossible to resolve numerically.
-Still, compared to the best approximation error which grows quadratically we loose a factor of $c_1$. This entails that a strong refinement of the discretization is required to maintain the accuracy of the numerical solution as the contrast increases. We illustrate this problem in \cref{fig:jumpCoefs:quality}. For $c_1 = 2.5$ the exact solution is already well-captured by the numerical solution on refinement level $L=2$. However, for $c_1 = 5.5$ this refinement level is clearly insufficient. 
+However, this also entails that a strong refinement of the discretization is required to maintain the accuracy of the numerical solution as the contrast increases. We illustrate this problem in \cref{fig:jumpCoefs:quality}. For $c_1 = 2.5$, the exact solution is already well-captured by the numerical solution on refinement level $L=2$. However, for higher contrast $c_1 = 5.5$ this refinement level is clearly insufficient. 
 
 %should come from: 1D-jump-convergence_Ex2.py
 \begin{comment}
@@ -819,36 +817,26 @@ Still, compared to the best approximation error which grows quadratically we loo
             grid style=dashed,
             %ymin = 1e-3, ymax = 0.5e1,
             ]    
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$T=0.5$, $\Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega_R))}$}, %cycle list name=,
+            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={refinement level $L$}, title={$T=0.5$, $\Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega_R))}$}, %cycle list name=,
             xtick={1,2,3,4}, 
             legend style={legend columns=4, draw=none,nodes={scale=.8}},legend to name=named,
             ]
            
-            %L-infty-L2-u (k = 2)
-            %\addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,color=orange,mark=square*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/newexact_1D_jumpingCoefs_k3_WPFalse.csv};
-            %\addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange,mark=square*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/newexact_1D_jumpingCoefs_k3_WPFalse.csv};
             
             \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,color=orange,mark=square*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../dataNew/simplexExact_singleContrast_T0.5.csv};
             \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange,mark=square*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../dataNew/simplexExact_singleContrast_T0.5.csv};
-            %\addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=2.1pt,dashed,color=orange,mark=square*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../dataNew/simpleExact_T0.5_multipleContrasts_1D_jumpingCoefs_k2.csv};
-            
- 
-           
-            %L-infty-L2-u (k = 3)
-            %\addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,color=cyan!60!black,mark=diamond*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/newexact_1D_jumpingCoefs_k3_WPFalse.csv};
-            %\addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=cyan!60!black,mark=diamond*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/newexact_1D_jumpingCoefs_k3_WPFalse.csv};
+        
 
             \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,color=cyan!60!black,mark=diamond*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../dataNew/simplexExact_singleContrast_T0.5.csv};
             \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=cyan!60!black,mark=diamond*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../dataNew/simplexExact_singleContrast_T0.5.csv};
         
             \addplot[gray, dotted, domain=1:4] {0.1*(1/2^(3))^(x-0.9)};
             \addplot[gray, dashed, domain=1:4] {1.45*(1/2^(2))^(x-0.9)};
-            %\node [draw=none] at (axis description cs:0.80,0.55) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-            %\node [draw=none] at (axis description cs:0.45,0.35) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
+        
             
             \legend{$k=2 $,, $k = 3$,,$\mathcal{O}(h^{2})$,$\mathcal{O}(h^{3})$}
 
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$T = 0.5$, $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$}, %cycle list name=, 
+            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={refinement level $L$}, title={$T = 0.5$, $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$}, %cycle list name=, 
             xtick={1,2,3,4},
             legend pos=south west, %yticklabels={,,},
             ]
@@ -864,10 +852,8 @@ Still, compared to the best approximation error which grows quadratically we loo
             
             \addplot[gray, dashed, domain=1:4] {4.5*(1/2^(2))^(x-0.9)};
             \addplot[gray, dotted, domain=1:4] {1.0*(1/2^(3))^(x-0.9)};
-            %\node [draw=none] at (axis description cs:0.30,0.87) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-            %\node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
-            %\legend{$k=2 $,, $k = 3$,}
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$T = 0.1$, $\Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=, 
+           
+            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={refinement level $L$}, title={$T = 0.1$, $\Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega_R))}$}, %cycle list name=, 
             xtick={1,2,3,4},
             legend pos=south west, %yticklabels={,,},
             ]
@@ -881,30 +867,20 @@ Still, compared to the best approximation error which grows quadratically we loo
             \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,color=cyan!60!black,mark=diamond*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../dataNew/simplexExact_singleContrast_T0.1.csv};
             \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=cyan!60!black,mark=diamond*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../dataNew/simplexExact_singleContrast_T0.1.csv};
         
-            %\addplot[gray, dashed, domain=1:4] {15*(1/2^(2))^(x-0.9)};
             \addplot[gray, dashed, domain=1:4] {0.09*(1/2^(2))^(x-0.9)};
-            %\addplot[gray, dashed, domain=1:4] {7.5*(1/2^(3))^(x-0.9)};
             \addplot[gray, dotted, domain=1:4] {0.05*(1/2^(3))^(x-0.9)};
-            %\addplot[gray,dashed] table {
-            %    1 0.009999968541169805
-            %    2 0.006666645694113204
-            %    3 0.004999984270584902
-            %    4 0.003999987416467922
-            %};
             \addplot[gray,dashdotted] table {
                 1 1.609999968541169805
                 2 1.606666645694113204
                 3 1.604999984270584902
                 4 1.603999987416467922
             };
-            %\node [draw=none] at (axis description cs:0.75,0.45) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-            %\node [draw=none] at (axis description cs:0.45,0.35) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
+
             \node [draw=none] at (axis description cs:0.7,0.94) {\color{gray}\footnotesize $\!\!\mathcal{O}(\vert \log(h) \vert^{-1})$};
             
-            
-            %\legend{$k=2 $,, $k = 3$,}
 
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$T = 0.1$, $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega))}$}, %cycle list name=, 
+
+            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={refinement level $L$}, title={$T = 0.1$, $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$}, %cycle list name=, 
             xtick={1,2,3,4},
             legend pos=south west, %yticklabels={,,},
             ]
@@ -918,15 +894,7 @@ Still, compared to the best approximation error which grows quadratically we loo
             \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=cyan!60!black,mark=diamond*] table [x=L, y=bestapprox-L2-L2-error-u_t, col sep=comma] {../dataNew/simplexExact_singleContrast_T0.1.csv};
             
             \addplot[gray, dashed, domain=1:4] {0.5*(1/2^(2))^(x-0.9)};
-            %\addplot[gray, dashed, domain=1:4] {1.0*(1/2^(2))^(x-0.9)};
             \addplot[gray, dotted, domain=1:4] {0.2*(1/2^(3))^(x-0.9)};
-            %\addplot[gray, dashed, domain=1:4] {0.5*(1/2^(3))^(x-0.9)};
-            %\addplot[gray,dashed] table {
-            %    1 0.09999968541169805
-            %    2 0.06666645694113204
-            %    3 0.04999984270584902
-            %    4 0.03999987416467922
-            %};
             \addplot[gray,dashdotted] table {
                 1 7.59999968541169805
                 2 7.56666645694113204
@@ -934,15 +902,13 @@ Still, compared to the best approximation error which grows quadratically we loo
                 4 7.53999987416467922
 
             };
-            %\node [draw=none] at (axis description cs:0.80,0.40) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-            %\node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
             \node [draw=none] at (axis description cs:0.7,0.94) {\color{gray}\footnotesize $\!\!\mathcal{O}(\vert \log(h) \vert^{-1})$};
-            %\legend{$k=2 $,, $k = 3$,}
+
             \end{groupplot}
         \end{tikzpicture}
         \pgfplotslegendfromname{named}
     \end{center}
-    \caption{For the approximation of \eqref{eq:1D:exact:simple} with polynomial degree $k \in \{2,3\}$ and contrast $c_1 = 2.5$ we measure the errors $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ (left) and $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$ (right) and compare to the respective error of the $L^2$-best approximation (dashed). We consider the final time $T = 0.5$ (top) and $T = 0.1$ (bottom). The gray dashed lines indicate the observed convergence rates.}
+    \caption{For the approximation of \eqref{eq:1D:exact:simple} with polynomial degree $k \in \{2,3\}$ and contrast $c_1 = 2.5$ we measure the errors $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ (left) and $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$ (right) and compare to the respective error of the $L^2$-best approximation (dashed). For final time $T = 0.5 > 0.35$ (top), we observe optimal convergence rates, while for $T = 0.1 < 0.35$ (bottom) the order of convergence degrades.}
     \label{fig:jumpCoefs:contrast:2.5}
   \end{figure}
 
@@ -993,7 +959,7 @@ Still, compared to the best approximation error which grows quadratically we loo
             \addplot+[line width=1.1pt,color=orange,mark=diamond*,dashed] table [x=contrast, y=bestapprox-L-infty-L2-error-u, col sep=comma]{../dataNew/simplexExact_MultContrast_TAdap.csv};
 
             
-            \addplot[gray, dashed, domain=1:4.5] {0.00001*(1/2^(-2))^(x-0.9)};
+            \addplot[gray, dashed, domain=1:4.5] {0.00005*(1/2^(-2))^(x-0.9)};
             \addplot[gray, dashed, domain=1:4.5] {0.0003*(1/2^(-3))^(x-0.9)};
             \node [draw=none] at (axis description cs:0.70,0.27) {\color{gray}\footnotesize $\!\!\mathcal{O}(c_1^{2})$};
             \node [draw=none] at (axis description cs:0.50,0.75) {\color{gray}\footnotesize $\!\!\mathcal{O}(c_1^{3})$};
@@ -1002,7 +968,7 @@ Still, compared to the best approximation error which grows quadratically we loo
         \end{tikzpicture}
         \pgfplotslegendfromname{named}
     \end{center}
-    \caption{For $k = 3$ and $L = 3$, we consider the errors $\Vert \dt (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$ (left) and $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ (right) for increasing contrast $c_1 \in \{1.0,1.5,...,4.5\}$. We compare the case where $T = 0.5$ is fixed for all choices of $c_1$ and the case where $T$ barely fulfills $T > 0.25(1+c_1^{-1})$.}
+    \caption{For $k = 3$ and $L = 3$, we consider the errors $\Vert \dt (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$ (left) and $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ (right) and the respective $L^2$-best approximation errors (dashed) for increasing contrast $c_1 \in \{1.0,1.5,...,4.5\}$. We compare the case where $T = 0.5$ is fixed for all choices of $c_1$ and the case where $T$ adapted such that it barely fulfills $T > 0.25(1+c_1^{-1})$.}
     \label{fig:jumpCoefs:increasingcontrast}
   \end{figure}
 
@@ -1105,13 +1071,13 @@ Still, compared to the best approximation error which grows quadratically we loo
         \end{tikzpicture}
         \pgfplotslegendfromname{named}
     \end{center}
-    \caption{At $t = 0.25$, we compare the exact solution \eqref{eq:1D:exact:simple} and approximations with polynomial degree $k = 3$ on refinement levels $L \in \{1,2,3,4 \}$ for contrasts $c_1 = 2.5$ (left) and $c_1= 5.5$ (right). The scale in the right plot indicates the mesh size $h = 1/2^{L+1}$ for the different refinement levels.}
+    \caption{At time $t = 0.25$, we compare the exact solution \eqref{eq:1D:exact:simple} and approximations with polynomial degree $k = 3$ on refinement levels $L \in \{1,2,3,4 \}$ for contrasts $c_1 = 2.5$ (left) and $c_1= 5.5$ (right). The scale in the right plot indicates the mesh size $h = 1/2^{L+1}$ for the different refinement levels.}
     \label{fig:jumpCoefs:quality}
   \end{figure}
 
 
 \subsubsection{Multiple jumps}
- The exact solution \eqref{eq:1D:exact:simple} can be extended to the case where we have multiple jumps in the wave speed $c$. For two points $p_1,p_2 \in (0,1)$, we decompose $\Omega$ into three subdomains $\Omega_1 = (0,p_1)$, $\Omega_2 = (p_1,p_2)$, and $\Omega_3 = (p_2,1)$ s.t. $\bar{\Omega} = \cup_{i = 1,2,3} \overline{\Omega}_i$. Then, we consider the following ansatz for the exact solution: 
+To increase the complexityof the problem, we modify the exact solution \eqref{eq:1D:exact:simple} to allow for multiple jumps in the wave speed $c$. For two points $p_1,p_2 \in (0,1)$, we decompose $\Omega$ into three subdomains $\Omega_1 = (0,p_1)$, $\Omega_2 = (p_1,p_2)$, and $\Omega_3 = (p_2,1)$ s.t. $\bar{\Omega} = \cup_{i = 1,2,3} \overline{\Omega}_i$. Then, we consider the following ansatz for the exact solution: 
 \begin{equation}\label{eq:1D:exact:simpleMult}
     u(x,t) := \begin{cases}
         \cos(w_1 c_1 t) \cos(w_1(x-p_1)), & x \in \Omega_1, \\
@@ -1123,10 +1089,10 @@ To ensure the continuity of \eqref{eq:1D:exact:simpleMult}, we choose $p_2$ in d
 \begin{align*}
     p_2 \coloneqq \frac{2 \pi n + w_2 p_1}{w_2} \quad \Longrightarrow \quad \cos(w_2(p_2-p_1)) = 1.
 \end{align*}
+We fix $c_2 = 1.0$ and set $w_1 = 3 \pi$, $w_2 = w_1 c_1/c_2$,$c_3 = c_1$, and $w_3 = w_1$. 
 
 
-In the following, we fix $c_2 = 1.0$ and choose $w_1 = 3 \pi$, $w_2 = w_1 c_1/c_2$ as above. Furthermore, we set $c_3 = c_1$, $w_3 = w_1$. 
-As a first example, we choose $p_1 = 0.4$ and $n = 3$ such that $p_2 \approx 0.667$ and consider the data domain $\omega = [0.0,0.3] \times [0.7,1.0]$. For contrast $c_1 \in \{ 7.5,11.5 \}$, \cref{fig:jumpCoefs:multipleJumps} shows the exact solution and the approximation with $k = 3$ for fixed time step $\Delta t = 1/32$. 
+As a first example, we consider the data domain $\omega = [0.0,0.3] \times [0.7,1.0]$ and choose $p_1 = 0.4$ and $n = 3$ such that $p_2 \approx 0.667$. Thus, the interval $(p_1,p_2)$ is not contained in the data domain. For contrast $c_1 = c_3 \in \{ 7.5,11.5 \}$, \cref{fig:jumpCoefs:multipleJumps} shows the exact solution and the approximation with $k = 3$ for fixed time step $\Delta t = 1/32$ on the refinement levels $L \in \{3,4\}$. In the case of contrast $c_1 = 11.5$, the refinement level $L = 3$ does not seem to be sufficient to resolve the solution accurately, but for $L = 4$ the solution is captured reasonably well, even though we do not prescribe data in the interval $(p_1,p_2)$.  
 
 \begin{figure}[!htbp]
     \begin{center}
@@ -1195,16 +1161,17 @@ As a first example, we choose $p_1 = 0.4$ and $n = 3$ such that $p_2 \approx 0.6
         \end{tikzpicture}
         \pgfplotslegendfromname{named}
     \end{center}
-    \caption{Exact solution \eqref{eq:1D:exact:simpleMult} and approximated solution with $k = 3$ of \eqref{eq:1D:exact:simpleMult} at $t = 0.25$ with contrast $c_1 = 7.5$ (left) and $c_1 = 11.5$ (right). We compare the approximations on the refinement levels $L = 3$ and $L = 4$, where we set $\Delta t = 1/32$ for both cases.}
+    \caption{Exact solution \eqref{eq:1D:exact:simpleMult} and approximated solution with $k = 3$ of \eqref{eq:1D:exact:simpleMult} at $t = 0.25$ with contrast $c_1 = 7.5$ (left) and $c_1 = 11.5$ (right). We compare the approximations on the refinement levels $L = 3$ and $L = 4$, and set $\Delta t = 1/32$ for both cases.}
     \label{fig:jumpCoefs:multipleJumps}
   \end{figure}
 
 
- As a second example, we consider the case where the data is only given in one half of the interval, i.e. $\omega = [0,0.3]$. The GCC is fulfilled if 
+As a second example, we consider the case where the data is only given in one half of the interval, i.e. $\omega = [0,0.3]$. The requirement \eqref{eq:Tcondition} and thus the GCC is fulfilled if 
 \begin{equation}
     T > 2 \left[ (p_2 - p_1) + \frac{p_1 - 0.3 + 1 - p_2}{c_1} \right]. 
 \end{equation}
-\Cref{fig:jumpCoefs:multipleJumps:noGCC} shows once more that the approximate solution matches the exact solution well if the GCC is fulfilled, but fails to do so if the GCC is not fulfilled.
+We consider $c_1 \in \{ 2.5, 7.5\}$, for which the requirement $T > \{ 0.89,0.65 \}$ ensures the GCC. \Cref{fig:jumpCoefs:multipleJumps:noGCC} compares the results for polynomial degree $k = 3$ on the refinement level $L = 4$ with a fixed time step $\Delta t = 1/32$, for two final times $T = 0.5$ and $T = 1.0$. For both contrasts, the approximate solution matches the exact solution well if the GCC is fulfilled ($T = 1.0$), but shows significant deviations when it is not ($T = 0.5$). 
+The deviation is more extreme for contrast $c_1 = 2.5$, where the gap between the considered time $T = 0.5$ and the threshold $T > 0.89$ is larger. 
 
 
 
@@ -1223,15 +1190,15 @@ As a first example, we choose $p_1 = 0.4$ and $n = 3$ such that $p_2 \approx 0.6
             ]    
                 \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=linear, xlabel={}, ylabel={}, title={$u$ vs $u_h$ ($c_1 = 2.5$)}, %cycle list name=paulcolors, 
                 legend style={legend columns=3, draw=none,nodes={scale=.8}},legend to name=named,, %yticklabels={,,},
+                ymin=-2,ymax=1,
                 ]
                 \draw[fill=gray!40,draw=none,opacity=0.5] (0.3,-2) -- (0.3,2) -- (0,2) -- (0,-2) -- cycle;
 
                 \addplot[black,line width=3.0pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/exact_plotMJ_contrast2.5_time0.5.csv};
 
-                \addplot+[line width=1.0pt,mark=None,color=orange] table [x=x, y=y, col sep=comma] {../data/multipleJumps_approx_plot_data_WPFalse_contrast2.5_k3_uniform_noGCC.csv};
-
-                \addplot+[line width=1.0pt,mark=None,color=blue!75!white] table [x=x, y=y, col sep=comma] {../data/multipleJumps_approx_plot_data_WPFalse_contrast2.5_k3_dataLeft_T0.5.csv};
+                \addplot+[line width=1.0pt,mark=None,color=blue!75!white] table [x=x, y=y, col sep=comma] {../dataNew/plots/MultipleJumpsExact_ApproxPlot_CompareT0.5_contrast2.5.csv};
                 
+                \addplot+[line width=1.0pt,mark=None,color=orange] table [x=x, y=y, col sep=comma] {../dataNew/plots/MultipleJumpsExact_ApproxPlot_CompareT1.0_contrast2.5.csv};
 
                 \draw[dashed,gray,very thick] (0.4,-2) -- (0.4,2);
                 \draw[dashed,gray,very thick] (0.6666,-2) -- (0.6666,2);
@@ -1240,7 +1207,7 @@ As a first example, we choose $p_1 = 0.4$ and $n = 3$ such that $p_2 \approx 0.6
                 \node [draw=none] at (axis description cs:0.38,0.125) {\color{gray} $\Gamma_1$};
                 \node [draw=none] at (axis description cs:0.71,0.125) {\color{gray} $\Gamma_2$};
                 \node [draw=none] at (axis description cs:0.2,0.125) {\color{gray} $\omega$};
-                \legend{exact,$T=1.0$,$T=0.5$}
+                \legend{exact,$T=0.5$,$T=1.0$}
                 \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=linear, xlabel={}, ylabel={}, title={$u$ vs $u_h$ ($c_1 = 7.5$)}, %cycle list name=paulcolors, 
                 legend pos=north west, %yticklabels={,,},
                 ]
@@ -1250,7 +1217,7 @@ As a first example, we choose $p_1 = 0.4$ and $n = 3$ such that $p_2 \approx 0.6
 
 
 
-                \addplot+[line width=3.0pt,mark=None,color=blue!75!white] table [x=x, y=y, col sep=comma] {../dataNew/plots/MultipleJumpsExact_ApproxPlot_CompareT0.5_contrast7.5Test.csv};
+                \addplot+[line width=1.0pt,mark=None,color=blue!75!white] table [x=x, y=y, col sep=comma] {../dataNew/plots/MultipleJumpsExact_ApproxPlot_CompareT0.5_contrast7.5Test.csv};
 
      
                 
@@ -1268,16 +1235,15 @@ As a first example, we choose $p_1 = 0.4$ and $n = 3$ such that $p_2 \approx 0.6
         \end{tikzpicture}
          \pgfplotslegendfromname{named}
     \end{center}
-    \caption{Exact solution \eqref{eq:1D:exact:simpleMult} and approximated solution with $k = 3$ at $t = 0.5$ with $c_1 = c_3 = 2.5$, $n = 1$ (left) and $c_1 = c_3 = 7.5$, $n = 3$ (right) and $c_2 = 1.0$. We compare the approximations on refinement level $L = 4$ with $T = 1.0$ and $T = 0.5$ while keeping the time step fixed at $\Delta t = 1/32$.}
+    \caption{For fixed time step $\Delta t = 1/32$, refinement level $L = 4$, and polynomial degree $k = 3$, we compare the exact solution \eqref{eq:1D:exact:simpleMult} and approximated solution computed with $T = 1.0$ and $T = 0.5$ at time $t = 0.5$. We set $c_2 = 1.0$ and consider the cases $c_1 = c_3 = 2.5$, $n = 1$ (left) and $c_1 = c_3 = 7.5$, $n = 3$ (right).} 
     \label{fig:jumpCoefs:multipleJumps:noGCC}
   \end{figure}
 
 
-\subsubsection{2nd one dimensional example}
-
+\subsubsection{A more complex example}
 Let us consider a final one-dimensional example to illustrate the high resolution 
 required to simulate wave propagation in heterogeneous media. 
-We consider the same geometrical setup as in \cref{sec:numex:1D:simple} with a more intricate reference solution considered in \cite{BDE22,MEMM19}. With $u_0 (x) := \frac{1}{100} \exp(-(20(x-\frac{1}{5}))^2)$, we consider the exact solution 
+We consider the same geometrical setup as in \cref{sec:numex:1D:simple}, but choose a more intricate reference solution considered in \cite{BDE22,MEMM19}. With $u_0 (x) := \frac{1}{100} \exp(-(20(x-\frac{1}{5}))^2)$, we consider the exact solution 
 \begin{equation}\label{eq:1D:complicatedSol}
     u(x,t) = \begin{cases}
       \sum_{k \ge 0} \left( \frac{c_2-c_1}{c_2+c_1}\right)^k \left( u_0 (k + x - c_1 t) - u_0(k-x-c_1 t)\right), &x \in \Omega_1, \\
@@ -1285,6 +1251,8 @@ We consider the same geometrical setup as in \cref{sec:numex:1D:simple} with a m
     \end{cases}
 \end{equation}
 This solution describes a wave traveling towards the interface $\Gamma$. Due to the jump in the wave speed, a part of the wave is reflected from the interface into the domain $\Omega_1$, while the other part passes through the interface into $\Omega_2$ and oscillates stronger. 
+
+\todo[inline]{@JP: let's think about the interpretation of this example...}
 
 In \cref{fig:1D:complicatedSol} we consider the approximation of this function by the $L^2$-interpolation. The plot on the right shows that for $c_1 = 2.5$ the velocity is not captured well yet even for $k=3$ on the finest refinement level we considered. In terms of convergence rates, we merely observe $\mathcal{O}(h^2)$ for $k=2$. In view of the previous experiments it is clear that this poses a serious obstruction to obtaining accurate solutions to the corresponding unique continuation problem.
 
@@ -1331,7 +1299,7 @@ In \cref{fig:1D:complicatedSol} we consider the approximation of this function b
 
 
                 \legend{$c_1 = 1.0$,$c_1 = 1.5$,$c_1 = 2.0$}
-                \nextgroupplot[width=9cm,height=7cm,domain=0:4,xmode=linear,ymode=linear, xlabel={}, ylabel={}, title={$\dt u$ vs. $\dt u_h$ ($k = 3$)}, %cycle list name=paulcolors, 
+                \nextgroupplot[width=9cm,height=7cm,domain=0:4,xmode=linear,ymode=linear, xlabel={}, ylabel={}, title={$\dt u$ vs. $\dt u_h$ ($k = 3, c_1 = 2.0$)}, %cycle list name=paulcolors, 
                 legend pos=north west, %yticklabels={,,},
                 ]
                 \draw[fill=gray!40,draw=none,opacity=0.5] (0.25,-2) -- (0.25,2) -- (0,2) -- (0,-2) -- cycle;
@@ -1385,11 +1353,12 @@ In \cref{fig:1D:complicatedSol} we consider the approximation of this function b
 To conclude the numerical examples, we consider another example in two space dimensions. We partition the unit-square $\Omega \coloneqq [0,1]^2 \subset \mathbb{R}^2$ into subdomains $\Omega_1 = \{ (x,y) \in \Omega: x < 0.5 \}$ and $\Omega_2 = \{ (x,y) \in \Omega: x > 0.5 \}$, and 
 extend the exact solution defined in \eqref{eq:1D:exact:simple} to the two-dimensional case by setting $u(x,y;t) \coloneqq u(x;t)$. 
 
-We define the data domain $\omega \coloneqq \Omega \setminus [0.25,0.75]^2$ and note that $\omega$ fulfills the GCC. To ensure that the data domain and the interface $\Gamma$ are meshed exactly, we consider a quadrilateral mesh with $2^{L+1}$, $L \in \{1,2,3,4\}$, elements in each direction. We consider the final time $T = 0.75$  and set the time step size to $\Delta t = (1/2)^{L+1}$. As before, we fix the wavespeed $c_2 = 1$ and consider different values for $c_1$ to control the contrast. 
+We define the data domain $\omega \coloneqq \Omega \setminus [0.25,0.75]^2$ and note that $\omega$ fulfills the GCC. To ensure that the data domain and the interface $\Gamma$ are meshed exactly, we consider a quadrilateral mesh with $2^{L+1}$, $L \in \{1,2,3,4\}$, elements in each direction. We consider the final time $T = 0.75$  and set the time step size to $\Delta t = (1/2)^{L+1}$. As before, we fix the wave speed $c_2 = 1$ and consider different values for $c_1$ to control the contrast. 
 
 The results of the experiment are presented in \cref{fig:2DjumpCoefs}. 
-For $c_1 = 2.5$, $\Vert \dt(u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega))}$ and $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$ converge quasi-optimally with order $\mathcal{O}(h^k)$ for polynomial degrees $k \in \{2,3\}$. Similar as already observed in the one-dimensional case the right plot in \cref{fig:2DjumpCoefs} shows that these errors are more sensitive to increasing $c_1$ than the corresponding best approximation errors. 
-In particular, the ratio for $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$ with $k=2$ appears to grow as $\mathcal{O}(c_1^{3/2})$ which renders it very demanding to maintain a reasonable accuracy as the contrast increases. 
+With contrast $c_1 = 2.5$, we observe quasi-optimal convergence with order  $\mathcal{O}(h^k)$ for polynomial degrees $k \in \{2,3\}$ for the errors $\Vert \dt(u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega))}$ and $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$. 
+Similar as already observed in the one-dimensional case in \cref{fig:jumpCoefs:increasingcontrast}, we observe that these errors are more sensitive to increasing contrast $c_1$ than the corresponding best approximation errors. 
+In particular, the ratio for $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$ with $k=2$ appears to grow as $\mathcal{O}(c_1^{3/2})$, which renders it very demanding to maintain a reasonable accuracy as the contrast increases. 
 
   \begin{figure}[!htbp]
     \begin{center}
@@ -1460,14 +1429,13 @@ In particular, the ratio for $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2
         \end{tikzpicture}
         \pgfplotslegendfromname{named}
     \end{center}
-    \caption{Left: Convergence of $\Vert \dt(u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega))}$ (solid) and $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$ (dashed) for $c_1 = 2.5$. Right: Ratio between these errors and the $L^2$-bestapproximation error for increasing $c_1$.}
+    \caption{On the left: We observe quasi-optimal convergence of $\Vert \dt(u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega))}$ (solid) and $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$ (dashed) with contrast $c_1 = 2.5$ and polynomial degrees $k \in \{2,3\}$. On the right: We consider the ratio between these errors and the $L^2$-bestapproximation error for increasing contrast $c_1$.}
     \label{fig:2DjumpCoefs}
   \end{figure}
 
 
 \section{Conclusion}
-In this article we have investigated a numerical method to solve the unique continuation problem 
-for the wave equation in the presence of a jump discontinuity in the wavespeed. The main conclusion from our numerical experiments is that obtaining accurate numerical solutions in the presence of material interfaces involving large contrasts is computationally demanding. Even though the problem appears to be Lipschitz stable if the geometric control condition is fulfilled, the resolution required to capture the complex behavior of the solution is a limiting factor in numerical simulations. Note here that unique continuation problems are globally coupled in space and time which poses an obstacle for their efficient numerical solution. 
+In this article, we investigated a numerical method for solving the variational data assimilation problem for the wave equation with discontinuous wave speed. Our numerical experiments lead to two main conclusions. First, obtaining accurate numerical solutions in the presence of material interfaces involving large contrasts is computationally demanding, and the resolution required to capture the complex behavior of the solution is a limiting factor in numerical simulations. This challenge is amplified by the fact that unique continuation problems are globally coupled in space and time. Second, even in the case of a discontinuous wave speed, the geometric control condition seems to ensure Lipschitz stability, allowing the design of accurate and reliable numerical methods. 
 
 
 \bibliography{references}
