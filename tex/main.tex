@@ -210,6 +210,8 @@
 \usepackage{caption}
 \pgfplotsset{compat=1.18}
 
+%\usetikzlibrary{external}
+%\tikzexternalize[prefix=figures/]
 
 %find colors at https://colorbrewer2.org/#type=qualitative&scheme=Set1&n=5
 \pgfplotsset{
@@ -242,7 +244,8 @@ Set1-5\nextlist
 \date{\today}
 \begin{document}
 
-\title{A numerical study of variational data assimilation for the wave equation in heterogeneous media}
+\title{Variational data assimilation for the wave equation in heterogeneous media}
+\subtitle{Numerical investigation of stability}
 
 \author[1]{\fnm{Erik} \sur{Burman}}\email{e.burman@ucl.ac.uk}
 \author[2]{\fnm{Janosch} \sur{Preuss}}\email{janosch.preuss@inria.fr}
@@ -263,7 +266,7 @@ Set1-5\nextlist
 
 \section{Introduction}
 \todo[inline]{@JP: please update affiliation}
-\todo[inline]{@JP: Let's discuss the title again, I feel like we should include 'stability' somewhere, because it's our main objective...}
+
 We consider the discretization of a data assimilation problem for the wave equation in heterogeneous media. In the following, let $\Omega \subset \mathbb{R}^d$ be a bounded domain with smooth boundary $\partial \Omega$. We assume that $\Omega$ is split by a smooth $(d-1)$-dimensional interface $\Gamma$ into two disjoint components such that $\Omega \setminus \Gamma = \Omega_1 \cup 
 \Omega_2$ and $\Omega_1 \cap \Omega_2 = \emptyset$.
  
@@ -343,8 +346,6 @@ one has for any $\mu > 0$ that
     \end{equation} 
 \end{thm} 
 
-\todo[inline]{@JP: I made some minor changes to the introduction... Here, I felt that we should manage the reader's expectation a bit more and stress that we do not focus on a complete analysis. }
-
 In this article, we consider a discontinuous-in-time finite element method to solve the data assimilation problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} in the heterogeneous case. This method was originally introduced for the homogeneous case in \cite{BP24}. The focus of this article is not on the numerical analysis of the proposed discretization, but rather on investigating the numerically observed stability under the assumption of the GCC. Specifically, we want to investigate numerically whether the following assumption -- motivated by \cref{thm:Lipschitz} for the homogeneous case -- is justified. 
 
 \begin{assum}\label{assum:LipschitzStability}
@@ -356,9 +357,6 @@ In this article, we consider a discontinuous-in-time finite element method to so
 \end{assum}
 
 In summary, our goal is to understand whether the Lipschitz stability property is preserved in the presence of strong heterogeneity in the medium, provided that the GCC holds. This question is of high practical importance, as discontinuous media appear in many applications, for example, in seismology. If the corresponding data assimilation problems were indeed subject to the poor logarithmic stability property ensured by \eqref{eq:FilippasEstimateLog}, this would pose an enormous challenge for the design of accurate and reliable numerical methods. 
-
-\vspace*{1cm}
-\noindent \textbf{Struture of the article.} In \cref{sec:discretization}, we introduce the method used to discretize \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch}. 
 
 
 \section{Fully discrete discontinuous-in-time discretization}\label{sec:discretization} 
@@ -421,13 +419,12 @@ To approximate solutions of \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eq
 \end{align*}
 where $S_h$, $S_h^\ast$, and $\Sud$ are stabilization terms yet to be defined. Note that the first and the second terms of $\cL_h$ incorporate the data and the PDE constraints, respectively. To define the stabilization terms $S_h$ and $S_h^\ast$, we introduce the following terms: 
 \begin{align*}
-    J(\Uh,\Wh) &:= \sum_{n = 0}^{N -1} \int_{I_n} \sum_{F \in \mathcal{F}_i} h (\jump{c^2 \nabla \ul_1}, \jump{c^2 \nabla \wl_1})_F \ \dT, \\
+    J(\Uh,\Wh) &:= \sum_{n = 0}^{N -1} \int_{I_n} \sum_{F \in \mathcal{F}_i} h (\jump{c^2 \nabla \ul_1}  \cdot \mathbf{n}, \jump{c^2 \nabla \wl_1}  \cdot \mathbf{n})_F \ \dT, \\
     G(\Uh,\Wh) &:= \sum_{n = 0}^{N -1} \int_{I_n} \sum_{K \in \mathcal{T}_h} h^2 (\dt \ul_2 - \div (c^2 \nabla \ul_1),\dt \wl_2 -\div( c^2 \nabla \wl_1))_K \ \dT, \\
     I_0(\Uh,\Wh) &:= \sum_{n = 0}^{N -1} (\ul_2 - \dt \ul_1, \wl_2-\dt \wl_1)_{Q_n}, \qquad 
-    R(\Uh,\Wh) := \sum_{n = 0}^{N -1} h^{-1} (\ul_1,\wl_1)_{\Sigma^n}. 
+    R(\Uh,\Wh) := \sum_{n = 0}^{N -1} h^{-1} (\ul_1,\wl_1)_{\Sigma^n},
 \end{align*}
-~\jp{I think that in the CIP we have to switch from the full gradient to the normal derivative  $\jump{c^2 \nabla \ul_1} \cdot \mathbf{n}$ only. Indeed, it follows from the first condition in \eqref{eq:IF-conditions} that the tangential part of the gradient on $\Gamma$ must be continuous $\jump{\nabla_{\Gamma} u} = 0$. So stabbilizing the full gradient is not consistent, which becomes an issue in \cref{thm:bestapprox} as $S_h(\mathbf{U},\Wh) = 0$ would not hold.
-}
+where $\jump{c^2 \nabla \cdot} \cdot \mathbf{n}$  denotes the jump of the normal derivative over interior facets.
 $J(\cdot,\cdot)$ is a continuous interior penalty term in space, $G(\cdot,\cdot)$ is a Galerkin least squares term enforcing the PDE locally on each element, $I_0(\cdot,\cdot)$ enforces that $\ul_2 = \dt \ul_1$, and $R(\cdot,\cdot)$ ensures boundary stability. 
 Then we define the primal stabilizer $S_h$ as 
 \begin{equation}\label{eq:primalStab}
@@ -606,7 +603,7 @@ With \cref{cor:infsup} and \cref{lem:continuityA}, we can show that the approxim
 \end{proof}
 
 
-If the problem is Lipschitz stable, for instance in the homogeneous case (see \cref{thm:Lipschitz}), we can prove convergence in a physically relevant norm. To deal with the discontinuity in time of the discrete solution, a suitable lifting operator$L_{\Delta t} : \FullyDiscrSpace{k}{q} \rightarrow C^0(0,T;V_h^k)$ that ensures that $L_{\Delta t} \ul_1 \in H^1(Q)$ has been introduced in \cite[Sec. 4]{BP24}. Then, we state the following result.
+If the problem is Lipschitz stable, for instance in the homogeneous case (see \cref{thm:Lipschitz}), we can prove convergence in a physically relevant norm. To deal with the discontinuity in time of the discrete solution, a suitable lifting operator $L_{\Delta t} : \FullyDiscrSpace{k}{q} \rightarrow C^0(0,T;V_h^k)$ that ensures that $L_{\Delta t} \ul_1 \in H^1(Q)$ has been introduced in \cite[Sec. 4]{BP24}. Then, we state the following result.
 
 \begin{thm}\label{thm:convergence}
     Let \cref{assum:LipschitzStability} be satisfied. For $u$ being a sufficiently regular solution of \eqref{eq:waveEquation} and $(\Uh,\Zh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ being the solution to \eqref{eq:discreteProblem}, there exists a constant $C>0$ such that
@@ -665,9 +662,6 @@ In one space dimension, the requirement \eqref{eq:Tcondition} that $T > 2 \sup_{
 \begin{equation}
     d_c(x,y) \coloneqq \mathbbm{1}_{\Omega_1} c_1(x)^{-1} d(x,y) + \mathbbm{1}_{\Omega_2} d(x,y), \quad x,y \in \Omega.
 \end{equation}
-~\jp{I am confused by this formula. What is the argument of the characteristic functions $\mathbbm{1}_{\Omega_1}$? Also, a metric is required to be symmetric, so $d_c(x,y) = d_c(y,x) $ 
-needs to be ensured?
-}
 Thus, for $\omega$ as above, $c_2 = 1$ fixed and $c_1 > 1.0$, the condition \eqref{eq:Tcondition} translates to $T > 0.25(1+c_1^{-1})$. First, we consider the contrast $c_1 = 2.5$, which means that the GCC is satisfied if $T > 0.35$. 
 
 In \Cref{fig:jumpCoefs:contrast:2.5}, we observe that the errors $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ and $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$ converge with optimal order $\mathcal{O}(h^k)$ for $T = 0.5 > 0.35$. However, if $T = 0.1 < 0.35$, the order of convergence degrades, while the respective best approximation errors still converge with optimal order. This suggests that the GCC seems to imply Lipschitz stability even in the heterogeneous case, and therefore \cref{assum:LipschitzStability} is indeed justified.
@@ -1077,7 +1071,7 @@ However, this also entails that a strong refinement of the discretization is req
 
 
 \subsubsection{Multiple jumps}
-To increase the complexityof the problem, we modify the exact solution \eqref{eq:1D:exact:simple} to allow for multiple jumps in the wave speed $c$. For two points $p_1,p_2 \in (0,1)$, we decompose $\Omega$ into three subdomains $\Omega_1 = (0,p_1)$, $\Omega_2 = (p_1,p_2)$, and $\Omega_3 = (p_2,1)$ s.t. $\bar{\Omega} = \cup_{i = 1,2,3} \overline{\Omega}_i$. Then, we consider the following ansatz for the exact solution: 
+To increase the complexity of the problem, we modify the exact solution \eqref{eq:1D:exact:simple} to allow for multiple jumps in the wave speed $c$. For two points $p_1,p_2 \in (0,1)$, we decompose $\Omega$ into three subdomains $\Omega_1 = (0,p_1)$, $\Omega_2 = (p_1,p_2)$, and $\Omega_3 = (p_2,1)$ s.t. $\bar{\Omega} = \cup_{i = 1,2,3} \overline{\Omega}_i$. Then, we consider the following ansatz for the exact solution: 
 \begin{equation}\label{eq:1D:exact:simpleMult}
     u(x,t) := \begin{cases}
         \cos(w_1 c_1 t) \cos(w_1(x-p_1)), & x \in \Omega_1, \\
@@ -1092,7 +1086,9 @@ To ensure the continuity of \eqref{eq:1D:exact:simpleMult}, we choose $p_2$ in d
 We fix $c_2 = 1.0$ and set $w_1 = 3 \pi$, $w_2 = w_1 c_1/c_2$,$c_3 = c_1$, and $w_3 = w_1$. 
 
 
-As a first example, we consider the data domain $\omega = [0.0,0.3] \times [0.7,1.0]$ and choose $p_1 = 0.4$ and $n = 3$ such that $p_2 \approx 0.667$. Thus, the interval $(p_1,p_2)$ is not contained in the data domain. For contrast $c_1 = c_3 \in \{ 7.5,11.5 \}$, \cref{fig:jumpCoefs:multipleJumps} shows the exact solution and the approximation with $k = 3$ for fixed time step $\Delta t = 1/32$ on the refinement levels $L \in \{3,4\}$. In the case of contrast $c_1 = 11.5$, the refinement level $L = 3$ does not seem to be sufficient to resolve the solution accurately, but for $L = 4$ the solution is captured reasonably well, even though we do not prescribe data in the interval $(p_1,p_2)$.  
+As a first example, we consider the data domain $\omega = [0.0,0.3] \times [0.7,1.0]$ and choose $p_1 = 0.4$ and $n = 3$ such that $p_2 \approx 0.667$. Thus, the interval $(p_1,p_2)$ is not contained in the data domain. 
+
+For contrast $c_1 = c_3 \in \{ 7.5,11.5 \}$, \cref{fig:jumpCoefs:multipleJumps} shows the exact solution and the approximation with $k = 3$ for fixed time step $\Delta t = 1/32$ on the refinement levels $L \in \{3,4\}$. In the case of contrast $c_1 = 11.5$, the refinement level $L = 3$ does not seem to be sufficient to resolve the solution accurately, but for $L = 4$ the solution is captured reasonably well, even though we do not prescribe data in the interval $(p_1,p_2)$.  
 
 \begin{figure}[!htbp]
     \begin{center}
@@ -1239,7 +1235,7 @@ The deviation is more extreme for contrast $c_1 = 2.5$, where the gap between th
     \label{fig:jumpCoefs:multipleJumps:noGCC}
   \end{figure}
 
-
+\begin{comment}
 \subsubsection{A more complex example}
 Let us consider a final one-dimensional example to illustrate the high resolution 
 required to simulate wave propagation in heterogeneous media. 
@@ -1262,7 +1258,7 @@ In \cref{fig:1D:complicatedSol} we consider the approximation of this function b
         \begin{tikzpicture}[scale=0.72]
             \begin{groupplot}[%
                 group style={%
-                group size=2 by 1,
+                group size=1 by 1,
                 horizontal sep=1.5cm,
                 vertical sep=2cm,
                 },
@@ -1270,35 +1266,6 @@ In \cref{fig:1D:complicatedSol} we consider the approximation of this function b
             grid style=dashed,
             %ymin = 1e-3, ymax = 0.5e1,
             ]    
-                \nextgroupplot[width=9cm,height=7cm,domain=0:4,xmode=linear,ymode=log, xlabel={}, ylabel={}, title={$L^2$-best approximation ($k = 2$)}, %cycle list name=paulcolors, 
-                legend pos=south west, 
-                %yticklabels={,,}, 
-                xlabel={$L$}, 
-		%ylabel={$\Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$},
-                ]
-                %\addplot+[discard if not={order}{2},discard if not={contrast}{1.0},line width=1.1pt] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/weakDisc_noRestrict_1D_jumpingCoefs_k2.csv};
-
-                \addplot+[discard if not={order}{2},discard if not={contrast}{1.0},line width=1.1pt] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../dataNew/weakDisc_evenhigherDt_noRestrict_1D_jumpingCoefs_k2.csv};
-
-                \addplot+[discard if not={order}{2},discard if not={contrast}{1.5},line width=1.1pt] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../dataNew/weakDisc_evenhigherDt_noRestrict_1D_jumpingCoefs_k2.csv};
-
-                \addplot+[discard if not={order}{2},discard if not={contrast}{2.0},line width=1.1pt] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../dataNew/weakDisc_evenhigherDt_noRestrict_1D_jumpingCoefs_k2.csv};
-
-                %\addplot+[discard if not={order}{2},discard if not={contrast}{1.5},line width=1.1pt] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/weakDisc_noRestrict_1D_jumpingCoefs_k2.csv};
-                %\addplot+[discard if not={order}{2},discard if not={contrast}{2.0},line width=1.1pt] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/weakDisc_noRestrict_1D_jumpingCoefs_k2.csv};
-                %\addplot+[discard if not={order}{2},discard if not={contrast}{2.0},line width=1.1pt,dashed] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/weakDisc_noRestrict_1D_jumpingCoefs_k2.csv};
-             
-             
-                \addplot[gray, dashed, domain=1:4] {0.0005*(1/2^(2))^(x-0.9)};
-                \addplot[gray, dotted, domain=1:4] {0.0008*(1/2^(3))^(x-0.9)};
-                \addplot[gray, dashed, domain=1:4] {0.0025*(1/2^(3/2))^(x-0.9)};
-                \addplot[gray, dotted, domain=1:4] {0.0008*(1/2^(5/2))^(x-0.9)};
-
-                \node [draw=none] at (axis description cs:0.50,0.40) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-                \node [draw=none] at (axis description cs:0.90,0.60) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3/2})$};
-
-
-                \legend{$c_1 = 1.0$,$c_1 = 1.5$,$c_1 = 2.0$}
                 \nextgroupplot[width=9cm,height=7cm,domain=0:4,xmode=linear,ymode=linear, xlabel={}, ylabel={}, title={$\dt u$ vs. $\dt u_h$ ($k = 3, c_1 = 2.0$)}, %cycle list name=paulcolors, 
                 legend pos=north west, %yticklabels={,,},
                 ]
@@ -1307,9 +1274,7 @@ In \cref{fig:1D:complicatedSol} we consider the approximation of this function b
 
 
                 \addplot+[discard if not={contrast}{2.0},line width=2.5pt,mark=None,color=black] table [x=x, y=y_dt, col sep=comma] {../data/exact_plot_data_1D_complexSol.csv};
-                %\addplot+[discard if not={L}{3},line width=1.1pt,mark=none] table [x=x, y=y_dt, col sep=comma] {../data/weakDisc_higherDt_noRestrict_approx_plot_data_WPFalse_contrast2.0_k3.csv};
-                %\addplot+[discard if not={L}{3},line width=1.1pt,mark=none,dotted] table [x=x, y=y_dt, col sep=comma] {../data/weakDisc_noRestrict_approx_plot_data_WPFalse_contrast2.0_k3.csv};
-                %\addplot+[discard if not={L}{4},line width=1.1pt,mark=none] table [x=x, y=y_dt, col sep=comma] {../data/weakDisc_higherDt_noRestrict_approx_plot_data_WPFalse_contrast2.0_k3.csv};
+
 
 
                 \addplot+[discard if not={L}{3},line width=1.1pt,mark=none] table [x=x, y=y_dt, col sep=comma] {../dataNew/plots/weakDisc_evenhigherDt_noRestrict_approx_plot_data_WPFalse_contrast2.0_k3.csv};
@@ -1320,25 +1285,7 @@ In \cref{fig:1D:complicatedSol} we consider the approximation of this function b
                 \node [draw=none] at (axis description cs:0.53,0.125) {\color{gray} $\Gamma$};
                 \node [draw=none] at (axis description cs:0.175,0.125) {\color{gray} $\omega$};
                 \node [draw=none] at (axis description cs:0.83,0.125) {\color{gray} $\omega$};
-             
-                %\addplot[gray, dashed, domain=1:4] {0.01*(1/2^(2))^(x-0.9)};
-                %\addplot[gray, dashed, domain=1:4] {0.025*(1/2^(3/2))^(x-0.9)};
-
-                %L = 2
-                %\draw[color=black,thick] (0.75,-0.7) -- (1,-0.7);
-                %\draw[color=black,thick] (0.75,-0.68) -- (0.75,-0.72);
-                %\draw[color=black,thick] (0.875,-0.68) -- (0.875,-0.72);
-                %\draw[color=black,thick] (1.0,-0.68) -- (1.0,-0.72);
-                
-                %L = 3
-                %\draw[color=black,thick] (0.75,-0.6) -- (1,-0.6);
-                %\draw[color=black,thick] (0.75,-0.58) -- (0.75,-0.62);
-                %\draw[color=black,thick] (0.8125,-0.58) -- (0.8125,-0.62);
-                %\draw[color=black,thick] (0.875,-0.58) -- (0.875,-0.62);
-                %\draw[color=black,thick] (0.9375,-0.58) -- (0.9375,-0.62);
-                %\draw[color=black,thick] (1.0,-0.58) -- (1.0,-0.62);
-                %\node[draw=none] at (0.67,-0.6) {\color{black} \footnotesize $L = 3$};
-
+          
                 \legend{exact,$L=3$, $L=4$}
             \end{groupplot}
         \end{tikzpicture}
@@ -1347,7 +1294,7 @@ In \cref{fig:1D:complicatedSol} we consider the approximation of this function b
     \end{center}
   \end{figure}
 
-
+\end{comment}
 
 \subsection{Example in two space dimensions}
 To conclude the numerical examples, we consider another example in two space dimensions. We partition the unit-square $\Omega \coloneqq [0,1]^2 \subset \mathbb{R}^2$ into subdomains $\Omega_1 = \{ (x,y) \in \Omega: x < 0.5 \}$ and $\Omega_2 = \{ (x,y) \in \Omega: x > 0.5 \}$, and 
