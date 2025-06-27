@@ -252,8 +252,8 @@ Set1-5\nextlist
 \author[3]{\fnm{Tim} \sur{van Beeck}}\email{t.beeck@math.uni-goettingen.de}
 
 \affil[1]{\orgdiv{Department of Mathematics}, \orgname{University College London}, \orgaddress{\street{Gower Street}, \city{London}, \postcode{WC1E 6BT}, \country{United Kingdom}}}
-
-\affil[2]{\orgdiv{MAKUTU}, \orgname{Inria}, \orgaddress{\street{...}, \city{...}, \postcode{...}, \country{France}}}
+ 
+ \affil[2]{\orgdiv{Inria Project-Team Makutu}, \orgname{Université de Pau et des Pays de l’Adour}, \orgaddress{\street{Avenue de l'Université - BP 1155}, \city{Pau}, \postcode{64013}, \country{France}}}
 
 \affil[3]{\orgdiv{Institute for Numerical and Applied Mathematics}, \orgname{University of G\"{o}ttingen}, \orgaddress{\street{Lotzestr. 16-18}, \city{G\"{o}ttingen}, \postcode{37083}, \country{Germany}}}
 
@@ -265,7 +265,6 @@ Set1-5\nextlist
 \maketitle
 
 \section{Introduction}
-\todo[inline]{@JP: please update affiliation}
 
 We consider the discretization of a data assimilation problem for the wave equation in heterogeneous media. In the following, let $\Omega \subset \mathbb{R}^d$ be a bounded domain with smooth boundary $\partial \Omega$. We assume that $\Omega$ is split by a smooth $(d-1)$-dimensional interface $\Gamma$ into two disjoint components such that $\Omega \setminus \Gamma = \Omega_1 \cup 
 \Omega_2$ and $\Omega_1 \cap \Omega_2 = \emptyset$.
@@ -489,7 +488,7 @@ and its strengthened version
 \end{lem}
 
 \begin{proof}
-    It suffices to show that $\tnorm{(\cdot,\cdot)}$ is a norm. Since $\tnorm{(\cdot,\cdot)}$ is a semi-norm by definition, we only require that $\tnorm{(\Uh,\Zh)} = 0$ implies $\Uh=\Zh= 0$. Assume that $\tnorm{(\Uh,\Zh)} = 0$. Then, in particular, $\vert \Uh \vert_{\uparrow \downarrow} = 0$ and therefore $(\ul_1,\ul_2) \in [H^1(Q)]^2$. Furthermore, by definition of the stabilization terms $S_h$ and $S_h^{\ast}$, we have that $\Zh = 0$, $\ul_1 \vert_{\Sigma} = 0$, $\ul_1 \vert_{\omega_T} = 0$ and $\dt \ul_1 = \ul_2$. Similar to \cite[Lem. 2.1]{BP24}, partial integration yields 
+    It suffices to show that $\tnorm{(\cdot,\cdot)}$ is a norm. Since $\tnorm{(\cdot,\cdot)}$ is a semi-norm by definition, we only require that $\tnorm{(\Uh,\Zh)} = 0$ implies $\Uh=\Zh= 0$. Assume that $\tnorm{(\Uh,\Zh)} = 0$. Then, in particular, $\vert \Uh \vert_{\uparrow \downarrow} = 0$ and therefore $(\ul_1,\ul_2) \in [H^1(Q)]^2$. Furthermore, by definition of the stabilization terms $S_h$ and $S_h^{\ast}$, we have that $\Zh = 0$, $\ul_1 \vert_{\Sigma} = 0$, $\ul_1 \vert_{\omega_T} = 0$ and $\dt \ul_1 = \ul_2$. Similar to \cite[Lemma 2]{BP24}, partial integration yields 
     \begin{align*}
 	   & \Vert \wop \ul_1 \Vert^2_{H^{-1}(Q)} := \sup_{\substack{  y \in H^1_0(Q), \\ \norm{y}_{H^1(Q) } = 1  }} \int_{Q} \left\{ -(\dt \ul_1) \dt y + c^2 \nabla \ul_1 \nabla y \right\}  \\
         &= \sup_{\substack{  y \in H^1_0(Q), \\ \norm{y}_{H^1(Q) } = 1  }} \Big\{ \sum_{n = 0}^{N-1} (\ul_2 - \dt \ul_1, \dt y)_{Q_n} 
@@ -617,12 +616,12 @@ If the problem is Lipschitz stable, for instance in the homogeneous case (see \c
 \end{thm}
 
 \begin{proof}
-    The proof follows with the same arguments as the proof of \cite[Theorem 10]{BP24}.
+    The proof follows with the same arguments as the proof of \cite[Theorem 14]{BP24}.
 \end{proof}
 
 
 \begin{rmk}[Homogenous media]\label{rem:homMedia}
-    If $c_i = 1$ for $i = 1,2$, \cref{assum:LipschitzStability} holds (see \cref{thm:Lipschitz}), and we recover the result from \cite[Theorem 10]{BP24}.
+    If $c_i = 1$ for $i = 1,2$, \cref{assum:LipschitzStability} holds (see \cref{thm:Lipschitz}), and we recover the result from \cite[Theorem 14]{BP24}.
 \end{rmk}
 
 \begin{rmk}[Logarithmic stability]
@@ -631,7 +630,7 @@ If the problem is Lipschitz stable, for instance in the homogeneous case (see \c
         \item The results from \cref{thm:filippas} are formulated in terms of $\Vert \wop u \Vert_{L^2(Q)}$, but we can only control $\Vert \wop \tilde{e}_h \Vert_{H^{-1}(Q)}$ for the residual $\tilde{e}_h = u - L_{\Delta t} \ul_1$. Thus, we would have to rewrite the estimates from \cref{thm:filippas} with $\Vert \wop u \Vert_{H^{-1}(Q)}$ instead of $\Vert \wop u \Vert_{L^2(Q)}$. To this end, one might be able to shift the regularity suitably, cf. \cite[Sec. 2.6]{StolkPhD}, or use similar arguments as in \cite[Thm. A.1]{BFMO21}.
         \item We have to ensure that the constants in the estimates from \cref{thm:filippas} remain bounded when we consider the residual $\tilde{e}_h$. In particular, we have to control $C_{0,1} := \Vert (\tilde{e}_h \vert_{t = 0}, \dt \tilde{e}_h \vert_{t = 0}) \Vert_{H^1 \times L^2}$. We note that we can always ensure that $C_{0,1}$ is bounded by adding a suitable Tikhonov regularization term to \eqref{eq:primalStab}. 
     \end{enumerate}
-    Then, we can use the arguments of \cite[Theorem 10]{BP24} to show that 
+    Then, we can use the arguments of \cite[Theorem 14]{BP24} to show that 
     \begin{equation*}
         \Vert (u - \ul_1) \vert_{t = 0} \Vert_{L^2(\Omega)}  + \Vert \dt (u - \ul_1) \vert_{t = 0} \Vert_{H^{-1}(\Omega)} \le C C_{0,1} \log(1 + C_{0,1} h^{-s} \Vert u \Vert_{H^m(Q)}^{-1})^{-1}. 
     \end{equation*}
