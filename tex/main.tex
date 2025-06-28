@@ -328,7 +328,7 @@ In the heterogeneous case, where $c_1 \not =  c_2$, the problem is less studied.
 \begin{equation}\label{eq:Tcondition}
     T > 2 \sup_{x \in \Omega} \operatorname{dist}_{c}(x,\omega_T),
 \end{equation}
-where $\operatorname{dist}_c(x,\omega_T) := \inf_{y \in \omega_T} d_c(x,y)$. Here, $d_c$ is the distance function defined as the length of the shortest continuous path in $\Omega$ connecting $x$ and $y$ with respect to the metric adapted to the discontinuous wave speed $c$. While the condition \eqref{eq:Tcondition} guarantees unique solvability, the stability of problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} can be poor. However, as shown \cite[Thm. 5.19]{Filippas22}, assumption \eqref{eq:Tcondition} grants the following stability result holds. 
+where $\operatorname{dist}_c(x,\omega_T) := \inf_{y \in \omega_T} d_c(x,y)$. Here, $d_c$ is the distance function defined as the length of the shortest continuous path in $\Omega$ connecting $x$ and $y$ with respect to the metric adapted to the discontinuous wave speed $c$. While the condition \eqref{eq:Tcondition} guarantees unique solvability, the stability of problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} can be poor. However, as shown in \cite[Thm. 5.19]{Filippas22}, assumption \eqref{eq:Tcondition} grants the following stability result holds. 
 
 \begin{thm}[Thm. 5.19 of \cite{Filippas22}]\label{thm:filippas}
     Let $\omega_T \subset \Omega$ be nonempty and let $T > 0$ be s.t. \eqref{eq:Tcondition} holds. Then, there exists $C,\kappa$ such that for any initial data $(u_0,u_1) \in H^1_0(\Omega) \times L^2(\Omega)$ and $u$ solving \eqref{eq:IF-conditions}+\eqref{eq:initialData} and  
@@ -423,7 +423,7 @@ where $S_h$, $S_h^\ast$, and $\Sud$ are stabilization terms yet to be defined. N
     I_0(\Uh,\Wh) &:= \sum_{n = 0}^{N -1} (\ul_2 - \dt \ul_1, \wl_2-\dt \wl_1)_{Q_n}, \qquad 
     R(\Uh,\Wh) := \sum_{n = 0}^{N -1} h^{-1} (\ul_1,\wl_1)_{\Sigma^n},
 \end{align*}
-where $\jump{c^2 \nabla \cdot} \cdot \mathbf{n}$  denotes the jump of the normal derivative over interior facets.
+where $\jump{c^2 \nabla \cdot} \cdot \mathbf{n}$  denotes the jump of the normal derivative over interior facets $\mathcal{F}_i$.
 $J(\cdot,\cdot)$ is a continuous interior penalty term in space, $G(\cdot,\cdot)$ is a Galerkin least squares term enforcing the PDE locally on each element, $I_0(\cdot,\cdot)$ enforces that $\ul_2 = \dt \ul_1$, and $R(\cdot,\cdot)$ ensures boundary stability. 
 Then we define the primal stabilizer $S_h$ as 
 \begin{equation}\label{eq:primalStab}
@@ -439,8 +439,8 @@ The remaining stabilization term $\Sud$ imposes regularity on the discontinuitie
 \end{equation}
 where 
 \begin{align*}
-    \underline{I}_1^{\uparrow \downarrow}(\Uh,\Wh) &:= \sum_{n = 0}^{N-1} \left\{ \frac{1}{\Delta t} (\jump{\ul_1^n},\jump{\wl_1^n})_{\Omega} + \Delta t (c^2 \jump{\nabla \ul_1^n},c^2 \jump{\nabla \wl_1^n})_{\Omega}\right\}, \\
-    \underline{I}_2^{\uparrow \downarrow}(\Uh,\Wh) &:= \sum_{n = 0}^{N-1} \frac{1}{\Delta t} (\jump{\ul_2^n},\jump{\wl_2^n})_{\Omega}.
+    \underline{I}_1^{\uparrow \downarrow}(\Uh,\Wh) &:= \sum_{n = 1}^{N-1} \left\{ \frac{1}{\Delta t} (\jump{\ul_1^n},\jump{\wl_1^n})_{\Omega} + \Delta t (c^2 \jump{\nabla \ul_1^n},c^2 \jump{\nabla \wl_1^n})_{\Omega}\right\}, \\
+    \underline{I}_2^{\uparrow \downarrow}(\Uh,\Wh) &:= \sum_{n = 1}^{N-1} \frac{1}{\Delta t} (\jump{\ul_2^n},\jump{\wl_2^n})_{\Omega}.
 \end{align*}
 
  With the definition of $\cL_h$, the first order optimality conditions take the form: Find $(\Uh,\Zh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ such that 
@@ -462,8 +462,7 @@ where
 
 \section{Error analysis}
 This section outlines how the steps from \cite{BP24} can be adapted to the heterogeneous setting to analyze the approximation of \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} through \eqref{eq:discreteProblem}. In \cref{sec:analysis:infsup}, we establish inf-sup stability and continuity of the discrete problem with respect to suitable discrete norms.
-In \cref{sec:analysis:approx}, we show that the error between the first component $\ul_1$ of the discrete solution and the continuous solution $u$ is bounded by the best approximation error in these norms. Finally, we argue that \cref{assum:LipschitzStability} allows recovering convergence rates in a physically relevant norm.
-
+In \cref{sec:analysis:approx}, we show that the error between the first component $\ul_1$ of the discrete solution and the continuous solution $u$ is bounded by the best approximation error in these norms. Finally, we argue that \cref{assum:LipschitzStability} allows to recover convergence rates in a physically relevant norm. 
 
 \subsection{Inf-sup stability and continuity}\label{sec:analysis:infsup}
 Let $\vert \cdot \vert_{S_h}, \vert \cdot \vert_{\uparrow \downarrow}$, and $\Vert \cdot \Vert_{S_h^{\ast}}$ be the (semi-)norms induced by the stabilizers $S_h$, $\Sud$, and $S_h^{\ast}$:
@@ -495,7 +494,7 @@ and its strengthened version
         + \sum_{n = 0}^{N-1} \int_{I_n} \sum_{K \in \mathcal{T}_h} (\dt \ul_2 - \div(c^2 \nabla \ul_1),y)_{K} \ \dT \\
 	    & \hspace{6em} + \sum_{n = 0}^{N-1} \int_{I_n} \sum_{F \in \mathcal{F}_i} (\jump{c^2 \nabla \ul_1} \cdot \mathbf{n}, y)_F \ \dT + \sum_{n = 0}^{N-1} (\jump{\ul_1^n},y)_{\Sigma^n} \Big\},
     \end{align*}
-where $\jump{c^2 \nabla \ul_1} \cdot \mathbf{n}$  denotes the jump of the normal derivative over interior facets. It follows by definition of the stabilizers and $\tnorm{(\Uh,\Zh)} = 0$ that $\Vert \wop \ul_1 \Vert_{H^{-1}(Q)} = 0$ and that the interface conditions \eqref{eq:IF-conditions} are fulfilled. Thus, by taking $\mu \rightarrow \infty$ in \cref{thm:filippas}, we conclude that $u_0 = u_1 = 0$. As solutions to \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:initialData} depend continuously on the data \cite{StolkPhD}, it follows that $\Uh = 0$. 
+It follows by definition of the stabilizers and $\tnorm{(\Uh,\Zh)} = 0$ that $\Vert \wop \ul_1 \Vert_{H^{-1}(Q)} = 0$ and that the interface conditions \eqref{eq:IF-conditions} are fulfilled. Thus, by taking $\mu \rightarrow \infty$ in \cref{thm:filippas}, we conclude that $u_0 = u_1 = 0$. As solutions to \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:initialData} depend continuously on the data \cite{StolkPhD}, it follows that $\Uh = 0$. 
 \end{proof}
 
  From this result and the identity
@@ -585,12 +584,12 @@ With \cref{cor:infsup} and \cref{lem:continuityA}, we can show that the approxim
 \end{proof}
 
 
-\begin{cor}\label{cor:tnormConvRates}
-    Under the assumption of \cref{thm:bestapprox}, we have that
+\begin{cor}\label{cor:tnormConvRates }
+    Under the assumption of \cref{thm:bestapprox} and assuming additionally that $\Delta t = C' h$ for some $C'>0$ we have that
     \begin{equation*}
-        \tnorm{(\mathbf{U} - \Uh,\Zh)} \le C h^s \Vert u \Vert_{H^m(Q)},
+	    \tnorm{(\mathbf{U} - \Uh,\Zh)} \le C h^s \Vert u \Vert_{H^{s+2}(Q)},
     \end{equation*}
-    where $(s,m) := (\min\{ k,q \}, \max\{k,q\}+3)$. 
+    where $s := \min\{ k,q \}$.
 \end{cor}
 
 \begin{proof}
@@ -598,20 +597,20 @@ With \cref{cor:infsup} and \cref{lem:continuityA}, we can show that the approxim
     \begin{equation*}
         \tnorm{(\Uh - \Vh, 0)}_{\wop} \le C \tnorm{(\Uh - \Vh, 0)}_{\square_1},
     \end{equation*}
-    where $\tnorm{(\cdot, \cdot)}_{\square_1}$ is defined by \eqref{eq:tnormwop} with $c_i = 1$, $i = 1,2$. Thus, we can apply the interpolation results derived in \cite[Lemma 5]{BP24} to obtain the claim. 
+where $\tnorm{(\cdot, \cdot)}_{\square_1}$ is defined by \eqref{eq:tnormwop} with $c_i = 1$, $i = 1,2$. Thus, we can apply the interpolation results derived in \cite[Lemma 5 \& 11]{BP24} to obtain the claim. 
 \end{proof}
 
 
 If the problem is Lipschitz stable, for instance in the homogeneous case (see \cref{thm:Lipschitz}), we can prove convergence in a physically relevant norm. To deal with the discontinuity in time of the discrete solution, a suitable lifting operator $L_{\Delta t} : \FullyDiscrSpace{k}{q} \rightarrow C^0(0,T;V_h^k)$ that ensures that $L_{\Delta t} \ul_1 \in H^1(Q)$ has been introduced in \cite[Sec. 4]{BP24}. Then, we state the following result.
 
 \begin{thm}\label{thm:convergence}
-    Let \cref{assum:LipschitzStability} be satisfied. For $u$ being a sufficiently regular solution of \eqref{eq:waveEquation} and $(\Uh,\Zh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ being the solution to \eqref{eq:discreteProblem}, there exists a constant $C>0$ such that
+    Let \cref{assum:LipschitzStability} be satisfied and assume that $\Delta t = C' h$. For $u$ being a sufficiently regular solution of \eqref{eq:waveEquation} and $(\Uh,\Zh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ being the solution to \eqref{eq:discreteProblem}, there exists a constant $C>0$ such that
     \begin{equation}
-        \Vert u - L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))} + \Vert \dt (u - L_{\Delta t} \ul_1) \Vert_{L^2(0,T;H^{-1}(\Omega))} \le C h^s \Vert u \Vert_{H^m(Q)}. 
+	    \Vert u - L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))} + \Vert \dt (u - L_{\Delta t} \ul_1) \Vert_{L^2(0,T;H^{-1}(\Omega))} \le C h^s \Vert u \Vert_{H^{s+2}(Q)}, 
     \end{equation}
-    In particular, we have that 
+    where $s := \min\{ k,q \}$. In particular, we have that 
     \begin{equation}
-        \Vert u_0 - \ul_1 \vert_{t = 0} \Vert_{L^2(\Omega)} + \Vert u_1 - (\dt \ul_1) \vert_{t = 0} \Vert_{H^{-1}(\Omega)} \le C h^s \Vert u \Vert_{H^m(Q)}.
+	    \Vert u_0 - \ul_1 \vert_{t = 0} \Vert_{L^2(\Omega)} + \Vert u_1 - (\dt \ul_1) \vert_{t = 0} \Vert_{H^{-1}(\Omega)} \le C h^s \Vert u \Vert_{H^{s+2}(Q)}.
     \end{equation}
 \end{thm}
 
@@ -632,7 +631,7 @@ If the problem is Lipschitz stable, for instance in the homogeneous case (see \c
     \end{enumerate}
     Then, we can use the arguments of \cite[Theorem 14]{BP24} to show that 
     \begin{equation*}
-        \Vert (u - \ul_1) \vert_{t = 0} \Vert_{L^2(\Omega)}  + \Vert \dt (u - \ul_1) \vert_{t = 0} \Vert_{H^{-1}(\Omega)} \le C C_{0,1} \log(1 + C_{0,1} h^{-s} \Vert u \Vert_{H^m(Q)}^{-1})^{-1}. 
+	    \Vert (u - \ul_1) \vert_{t = 0} \Vert_{L^2(\Omega)}  + \Vert \dt (u - \ul_1) \vert_{t = 0} \Vert_{H^{-1}(\Omega)} \le C C_{0,1} \log(1 + C_{0,1} h^{-s} \Vert u \Vert_{H^{s+2}(Q)}^{-1})^{-1}. 
     \end{equation*}
 \end{rmk}
 
