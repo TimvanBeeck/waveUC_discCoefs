@@ -669,133 +669,6 @@ To investigate the dependence of the errors on the contrast, we fix the polynomi
 
 However, this also entails that a strong refinement of the discretization is required to maintain the accuracy of the numerical solution as the contrast increases. We illustrate this problem in \cref{fig:jumpCoefs:quality}. For $c_1 = 2.5$, the exact solution is already well-captured by the numerical solution on refinement level $L=2$. However, for higher contrast $c_1 = 5.5$ this refinement level is clearly insufficient. 
 
-%should come from: 1D-jump-convergence_Ex2.py
-\begin{comment}
-\begin{figure}[!htbp]
-    \begin{center}
-        \begin{tikzpicture}[scale=0.72]
-            \begin{groupplot}[%
-                group style={%
-                group size=2 by 2,
-                horizontal sep=1.25cm,
-                vertical sep=2cm,
-                },
-            ymajorgrids=true,
-            grid style=dashed,
-            %ymin = 1e-3, ymax = 0.5e1,
-            ]    
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$T=0.5$, $\Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega_R))}$}, %cycle list name=, 
-            legend pos=south west, %yticklabels={,,},
-            ]
-           
-            %L-infty-L2-u (k = 2)
-            %\addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,color=orange,mark=square*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/newexact_1D_jumpingCoefs_k3_WPFalse.csv};
-            %\addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange,mark=square*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/newexact_1D_jumpingCoefs_k3_WPFalse.csv};
-            
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,color=orange,mark=square*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/simpleExact_T0.5_1D_jumpingCoefs_k3.csv};
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange,mark=square*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/simpleExact_T0.5_1D_jumpingCoefs_k3.csv};
-            %\addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=2.1pt,dashed,color=orange,mark=square*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../dataNew/simpleExact_T0.5_multipleContrasts_1D_jumpingCoefs_k2.csv};
-            
- 
-           
-            %L-infty-L2-u (k = 3)
-            %\addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,color=cyan!60!black,mark=diamond*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/newexact_1D_jumpingCoefs_k3_WPFalse.csv};
-            %\addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=cyan!60!black,mark=diamond*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/newexact_1D_jumpingCoefs_k3_WPFalse.csv};
-
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,color=cyan!60!black,mark=diamond*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/simpleExact_T0.5_1D_jumpingCoefs_k3.csv};
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=cyan!60!black,mark=diamond*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/simpleExact_T0.5_1D_jumpingCoefs_k3.csv};
-        
-            %\addplot[gray, dashed, domain=1:4] {15*(1/2^(2))^(x-0.9)};
-            \addplot[gray, dashed, domain=1:4] {0.3*(1/2^(2))^(x-0.9)};
-            %\addplot[gray, dashed, domain=1:4] {7.5*(1/2^(3))^(x-0.9)};
-            \addplot[gray, dashed, domain=1:4] {0.03*(1/2^(3))^(x-0.9)};
-            \node [draw=none] at (axis description cs:0.80,0.55) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-            \node [draw=none] at (axis description cs:0.45,0.35) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
-            \legend{$k=2 $,, $k = 3$,}
-
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$T = 0.5$, $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$}, %cycle list name=, 
-            legend pos=south west, %yticklabels={,,},
-            ]
-
-            %L2-L2-u_t (k = 2)
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,color=orange,mark=square*] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../data/simpleExact_T0.5_1D_jumpingCoefs_k3.csv};
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange,mark=square*] table [x=L, y=bestapprox-L2-L2-error-u_t, col sep=comma] {../data/simpleExact_T0.5_1D_jumpingCoefs_k3.csv};
-
-
-            %L2-L2-u_t (k = 3)
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,color=cyan!60!black,mark=diamond*] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../data/simpleExact_T0.5_1D_jumpingCoefs_k3.csv};
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=cyan!60!black,mark=diamond*] table [x=L, y=bestapprox-L2-L2-error-u_t, col sep=comma] {../data/simpleExact_T0.5_1D_jumpingCoefs_k3.csv};
-            
-            \addplot[gray, dashed, domain=1:4] {4.5*(1/2^(2))^(x-0.9)};
-            %\addplot[gray, dashed, domain=1:4] {1.0*(1/2^(2))^(x-0.9)};
-            \addplot[gray, dashed, domain=1:4] {1.0*(1/2^(3))^(x-0.9)};
-            %\addplot[gray, dashed, domain=1:4] {0.5*(1/2^(3))^(x-0.9)};
-            \node [draw=none] at (axis description cs:0.30,0.87) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-            \node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
-            \legend{$k=2 $,, $k = 3$,}
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$T = 0.1$, $\Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega))}$}, %cycle list name=, 
-            legend pos=south west, %yticklabels={,,},
-            ]
-           
-            %L-infty-L2-u (k = 2)
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,color=orange,mark=square*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/simpleExact_T0.1_1D_jumpingCoefs_k3.csv};
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange,mark=square*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/simpleExact_T0.1_1D_jumpingCoefs_k3.csv};
-
-           
-            %L-infty-L2-u (k = 3)
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,color=cyan!60!black,mark=diamond*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/simpleExact_T0.1_1D_jumpingCoefs_k3.csv};
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=cyan!60!black,mark=diamond*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/simpleExact_T0.1_1D_jumpingCoefs_k3.csv};
-        
-            %\addplot[gray, dashed, domain=1:4] {15*(1/2^(2))^(x-0.9)};
-            \addplot[gray, dashed, domain=1:4] {0.005*(1/2^(2))^(x-0.9)};
-            %\addplot[gray, dashed, domain=1:4] {7.5*(1/2^(3))^(x-0.9)};
-            \addplot[gray, dashed, domain=1:4] {0.001*(1/2^(3))^(x-0.9)};
-            \addplot[gray,dashed] table {
-                1 0.009999968541169805
-                2 0.006666645694113204
-                3 0.004999984270584902
-                4 0.003999987416467922
-
-            };
-            \node [draw=none] at (axis description cs:0.75,0.45) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-            \node [draw=none] at (axis description cs:0.45,0.35) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
-            \node [draw=none] at (axis description cs:0.7,0.75) {\color{gray}\footnotesize $\!\!\mathcal{O}(\vert \log(h) \vert^{-1})$};
-            \legend{$k=2 $,, $k = 3$,}
-
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={$L$}, title={$T = 0.1$, $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega))}$}, %cycle list name=, 
-            legend pos=south west, %yticklabels={,,},
-            ]
-            %L2-L2-u_t (k = 2)
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,color=orange,mark=square*] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../data/simpleExact_T0.1_1D_jumpingCoefs_k3.csv};
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange,mark=square*] table [x=L, y=bestapprox-L2-L2-error-u_t, col sep=comma] {../data/simpleExact_T0.1_1D_jumpingCoefs_k3.csv};
-            
-
-            %L2-L2-u_t (k = 3)
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,color=cyan!60!black,mark=diamond*] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../data/simpleExact_T0.1_1D_jumpingCoefs_k3.csv};
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=cyan!60!black,mark=diamond*] table [x=L, y=bestapprox-L2-L2-error-u_t, col sep=comma] {../data/simpleExact_T0.1_1D_jumpingCoefs_k3.csv};
-            
-            \addplot[gray, dashed, domain=1:4] {0.1*(1/2^(2))^(x-0.9)};
-            %\addplot[gray, dashed, domain=1:4] {1.0*(1/2^(2))^(x-0.9)};
-            \addplot[gray, dashed, domain=1:4] {0.02*(1/2^(3))^(x-0.9)};
-            %\addplot[gray, dashed, domain=1:4] {0.5*(1/2^(3))^(x-0.9)};
-            \addplot[gray,dashed] table {
-                1 0.09999968541169805
-                2 0.06666645694113204
-                3 0.04999984270584902
-                4 0.03999987416467922
-
-            };
-            \node [draw=none] at (axis description cs:0.80,0.40) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-            \node [draw=none] at (axis description cs:0.65,0.2) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
-            \node [draw=none] at (axis description cs:0.7,0.75) {\color{gray}\footnotesize $\!\!\mathcal{O}(\vert \log(h) \vert^{-1})$};
-            \legend{$k=2 $,, $k = 3$,}
-            \end{groupplot}
-        \end{tikzpicture}
-    \end{center}
-    \caption{For the approximation of \eqref{eq:1D:exact:simple} with polynomial degree $k \in \{2,3\}$ and contrast $c_1 = 2.5$ we measure the errors $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ (left) and $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$ (right) and compare to the respective error of the $L^2$-bestapproximation (dashed). We consider the final time $T = 0.5$ (top) and $T = 0.1$ (bottom). The gray dashed lines indicate the observed convergence rates.}
-    \label{fig:jumpCoefs:contrast:2.5}
-  \end{figure}
-\end{comment}
 
 \begin{figure}[!htbp]
     \begin{center}
@@ -816,12 +689,12 @@ However, this also entails that a strong refinement of the discretization is req
             ]
            
             
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,color=orange,mark=square*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../dataNew/simplexExact_singleContrast_T0.5.csv};
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange,mark=square*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../dataNew/simplexExact_singleContrast_T0.5.csv};
+            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,color=orange,mark=square*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/simplexExact_singleContrast_T0.5.csv};
+            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange,mark=square*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/simplexExact_singleContrast_T0.5.csv};
         
 
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,color=cyan!60!black,mark=diamond*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../dataNew/simplexExact_singleContrast_T0.5.csv};
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=cyan!60!black,mark=diamond*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../dataNew/simplexExact_singleContrast_T0.5.csv};
+            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,color=cyan!60!black,mark=diamond*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/simplexExact_singleContrast_T0.5.csv};
+            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=cyan!60!black,mark=diamond*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/simplexExact_singleContrast_T0.5.csv};
         
             \addplot[gray, dotted, domain=1:4] {0.1*(1/2^(3))^(x-0.9)};
             \addplot[gray, dashed, domain=1:4] {1.45*(1/2^(2))^(x-0.9)};
@@ -835,13 +708,13 @@ However, this also entails that a strong refinement of the discretization is req
             ]
 
             %L2-L2-u_t (k = 2)
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,color=orange,mark=square*] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../dataNew/simplexExact_singleContrast_T0.5.csv};
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange,mark=square*] table [x=L, y=bestapprox-L2-L2-error-u_t, col sep=comma] {../dataNew/simplexExact_singleContrast_T0.5.csv};
+            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,color=orange,mark=square*] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../data/simplexExact_singleContrast_T0.5.csv};
+            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange,mark=square*] table [x=L, y=bestapprox-L2-L2-error-u_t, col sep=comma] {../data/simplexExact_singleContrast_T0.5.csv};
 
 
             %L2-L2-u_t (k = 3)
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,color=cyan!60!black,mark=diamond*] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../dataNew/simplexExact_singleContrast_T0.5.csv};
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=cyan!60!black,mark=diamond*] table [x=L, y=bestapprox-L2-L2-error-u_t, col sep=comma] {../dataNew/simplexExact_singleContrast_T0.5.csv};
+            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,color=cyan!60!black,mark=diamond*] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../data/simplexExact_singleContrast_T0.5.csv};
+            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=cyan!60!black,mark=diamond*] table [x=L, y=bestapprox-L2-L2-error-u_t, col sep=comma] {../data/simplexExact_singleContrast_T0.5.csv};
             
             \addplot[gray, dashed, domain=1:4] {4.5*(1/2^(2))^(x-0.9)};
             \addplot[gray, dotted, domain=1:4] {1.0*(1/2^(3))^(x-0.9)};
@@ -852,13 +725,13 @@ However, this also entails that a strong refinement of the discretization is req
             ]
            
             %L-infty-L2-u (k = 2)
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,color=orange,mark=square*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../dataNew/simplexExact_singleContrast_T0.1.csv};
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange,mark=square*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../dataNew/simplexExact_singleContrast_T0.1.csv};
+            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,color=orange,mark=square*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/simplexExact_singleContrast_T0.1.csv};
+            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange,mark=square*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/simplexExact_singleContrast_T0.1.csv};
 
            
             %L-infty-L2-u (k = 3)
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,color=cyan!60!black,mark=diamond*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../dataNew/simplexExact_singleContrast_T0.1.csv};
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=cyan!60!black,mark=diamond*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../dataNew/simplexExact_singleContrast_T0.1.csv};
+            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,color=cyan!60!black,mark=diamond*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/simplexExact_singleContrast_T0.1.csv};
+            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=cyan!60!black,mark=diamond*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/simplexExact_singleContrast_T0.1.csv};
         
             \addplot[gray, dashed, domain=1:4] {0.09*(1/2^(2))^(x-0.9)};
             \addplot[gray, dotted, domain=1:4] {0.05*(1/2^(3))^(x-0.9)};
@@ -878,13 +751,13 @@ However, this also entails that a strong refinement of the discretization is req
             legend pos=south west, %yticklabels={,,},
             ]
             %L2-L2-u_t (k = 2)
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,color=orange,mark=square*] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../dataNew/simplexExact_singleContrast_T0.1.csv};
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange,mark=square*] table [x=L, y=bestapprox-L2-L2-error-u_t, col sep=comma] {../dataNew/simplexExact_singleContrast_T0.1.csv};
+            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,color=orange,mark=square*] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../data/simplexExact_singleContrast_T0.1.csv};
+            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange,mark=square*] table [x=L, y=bestapprox-L2-L2-error-u_t, col sep=comma] {../data/simplexExact_singleContrast_T0.1.csv};
             
 
             %L2-L2-u_t (k = 3)
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,color=cyan!60!black,mark=diamond*] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../dataNew/simplexExact_singleContrast_T0.1.csv};
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=cyan!60!black,mark=diamond*] table [x=L, y=bestapprox-L2-L2-error-u_t, col sep=comma] {../dataNew/simplexExact_singleContrast_T0.1.csv};
+            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,color=cyan!60!black,mark=diamond*] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../data/simplexExact_singleContrast_T0.1.csv};
+            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=cyan!60!black,mark=diamond*] table [x=L, y=bestapprox-L2-L2-error-u_t, col sep=comma] {../data/simplexExact_singleContrast_T0.1.csv};
             
             \addplot[gray, dashed, domain=1:4] {0.5*(1/2^(2))^(x-0.9)};
             \addplot[gray, dotted, domain=1:4] {0.2*(1/2^(3))^(x-0.9)};
@@ -925,11 +798,11 @@ However, this also entails that a strong refinement of the discretization is req
             xtick={1,1.5,2,2.5,3,3.5,4,4.5},
             %ymin=1e-7,ymax=1e1,
             ]
-            %\addplot+[line width=1.1pt,color=teal,mark=*] table [x=contrast, y=L2-L2-error-u_t, col sep=comma]{../data/simpleExact_1D_jumpingCoefs_k3.csv};
-            \addplot+[line width=1.1pt,color=teal,mark=*] table [x=contrast, y=L2-L2-error-u_t, col sep=comma]{../dataNew/simplexExact_MultContrast_T0.5.csv};
-            \addplot+[line width=1.1pt,color=teal,mark=*,dashed] table [x=contrast, y=bestapprox-L2-L2-error-u_t, col sep=comma]{../dataNew/simplexExact_MultContrast_T0.5.csv};
-            \addplot+[line width=1.1pt,color=orange,mark=diamond*] table [x=contrast, y=L2-L2-error-u_t, col sep=comma]{../dataNew/simplexExact_MultContrast_TAdap.csv};
-            \addplot+[line width=1.1pt,color=orange,mark=diamond*,dashed] table [x=contrast, y=bestapprox-L2-L2-error-u_t, col sep=comma]{../dataNew/simplexExact_MultContrast_TAdap.csv};
+  
+            \addplot+[line width=1.1pt,color=teal,mark=*] table [x=contrast, y=L2-L2-error-u_t, col sep=comma]{../data/simplexExact_MultContrast_T0.5.csv};
+            \addplot+[line width=1.1pt,color=teal,mark=*,dashed] table [x=contrast, y=bestapprox-L2-L2-error-u_t, col sep=comma]{../data/simplexExact_MultContrast_T0.5.csv};
+            \addplot+[line width=1.1pt,color=orange,mark=diamond*] table [x=contrast, y=L2-L2-error-u_t, col sep=comma]{../data/simplexExact_MultContrast_TAdap.csv};
+            \addplot+[line width=1.1pt,color=orange,mark=diamond*,dashed] table [x=contrast, y=bestapprox-L2-L2-error-u_t, col sep=comma]{../data/simplexExact_MultContrast_TAdap.csv};
 
 
             \addplot[gray, dashed, domain=1:4.5] {0.001*(1/2^(-2))^(x-0.9)};
@@ -944,12 +817,12 @@ However, this also entails that a strong refinement of the discretization is req
             %ymin=1e-7,ymax=1e1,
             xtick={1,1.5,2,2.5,3,3.5,4,4.5},
             ]
-            \addplot+[line width=1.1pt,color=teal,mark=*] table [x=contrast, y=L-infty-L2-error-u, col sep=comma]{../dataNew/simplexExact_MultContrast_T0.5.csv};
-            \addplot+[line width=1.1pt,color=teal,mark=*,dashed] table [x=contrast, y=bestapprox-L-infty-L2-error-u, col sep=comma]{../dataNew/simplexExact_MultContrast_T0.5.csv};
+            \addplot+[line width=1.1pt,color=teal,mark=*] table [x=contrast, y=L-infty-L2-error-u, col sep=comma]{../data/simplexExact_MultContrast_T0.5.csv};
+            \addplot+[line width=1.1pt,color=teal,mark=*,dashed] table [x=contrast, y=bestapprox-L-infty-L2-error-u, col sep=comma]{../data/simplexExact_MultContrast_T0.5.csv};
 
         
-            \addplot+[line width=1.1pt,color=orange,mark=diamond*] table [x=contrast, y=L-infty-L2-error-u, col sep=comma]{../dataNew/simplexExact_MultContrast_TAdap.csv};
-            \addplot+[line width=1.1pt,color=orange,mark=diamond*,dashed] table [x=contrast, y=bestapprox-L-infty-L2-error-u, col sep=comma]{../dataNew/simplexExact_MultContrast_TAdap.csv};
+            \addplot+[line width=1.1pt,color=orange,mark=diamond*] table [x=contrast, y=L-infty-L2-error-u, col sep=comma]{../data/simplexExact_MultContrast_TAdap.csv};
+            \addplot+[line width=1.1pt,color=orange,mark=diamond*,dashed] table [x=contrast, y=bestapprox-L-infty-L2-error-u, col sep=comma]{../data/simplexExact_MultContrast_TAdap.csv};
 
             
             \addplot[gray, dashed, domain=1:4.5] {0.00005*(1/2^(-2))^(x-0.9)};
@@ -987,15 +860,15 @@ However, this also entails that a strong refinement of the discretization is req
                 ]
   
 
-                \addplot[black,line width=3pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/exact_plotSJ_contrast2.5_time0.25.csv};
+                \addplot[black,line width=3pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/exact_plotSJ_contrast2.5_time0.25.csv};
 
-                \addplot+[discard if not={L}{1},discard if not={contrast}{2.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/simpleExact_ApproxPlot_T0.5.csv};
+                \addplot+[discard if not={L}{1},discard if not={contrast}{2.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/simpleExact_ApproxPlot_T0.5.csv};
                 %
-                \addplot+[discard if not={L}{2},discard if not={contrast}{2.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/simpleExact_ApproxPlot_T0.5.csv};
+                \addplot+[discard if not={L}{2},discard if not={contrast}{2.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/simpleExact_ApproxPlot_T0.5.csv};
                 %
-                \addplot+[discard if not={L}{3},discard if not={contrast}{2.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/simpleExact_ApproxPlot_T0.5.csv};
+                \addplot+[discard if not={L}{3},discard if not={contrast}{2.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/simpleExact_ApproxPlot_T0.5.csv};
                 %
-                \addplot+[discard if not={L}{4},discard if not={contrast}{2.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/simpleExact_ApproxPlot_T0.5.csv};
+                \addplot+[discard if not={L}{4},discard if not={contrast}{2.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/simpleExact_ApproxPlot_T0.5.csv};
                 
 
                 \draw[dashed,gray,very thick] (0.5,-2) -- (0.5,2);
@@ -1007,15 +880,15 @@ However, this also entails that a strong refinement of the discretization is req
                 ymin = -2.25, ymax = 2.25,
                 ]
                
-                \addplot[black,line width=3pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/exact_plotSJ_contrast5.5_time0.25.csv};
+                \addplot[black,line width=3pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/exact_plotSJ_contrast5.5_time0.25.csv};
 
-                \addplot+[discard if not={L}{1},discard if not={contrast}{5.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/simpleExact_ApproxPlot_T0.5.csv};
+                \addplot+[discard if not={L}{1},discard if not={contrast}{5.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/simpleExact_ApproxPlot_T0.5.csv};
                 %
-                \addplot+[discard if not={L}{2},discard if not={contrast}{5.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/simpleExact_ApproxPlot_T0.5.csv};
+                \addplot+[discard if not={L}{2},discard if not={contrast}{5.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/simpleExact_ApproxPlot_T0.5.csv};
                 %
-                \addplot+[discard if not={L}{3},discard if not={contrast}{5.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/simpleExact_ApproxPlot_T0.5.csv};
+                \addplot+[discard if not={L}{3},discard if not={contrast}{5.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/simpleExact_ApproxPlot_T0.5.csv};
                 %
-                \addplot+[discard if not={L}{4},discard if not={contrast}{5.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/simpleExact_ApproxPlot_T0.5.csv};
+                \addplot+[discard if not={L}{4},discard if not={contrast}{5.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/simpleExact_ApproxPlot_T0.5.csv};
             
 
                 \draw[dashed,gray,very thick] (0.5,-3) -- (0.5,3);
@@ -1109,11 +982,11 @@ For contrast $c_1 = c_3 \in \{ 7.5,11.5 \}$, \cref{fig:jumpCoefs:multipleJumps} 
                 \draw[fill=gray!40,draw=none,opacity=0.5] (0.7,-2) -- (0.7,2) -- (1.0,2) -- (1.0,-2) -- cycle;
    
 
-                \addplot[black,line width=3pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/exact_plotMJ_contrast7.5_time0.25.csv};
+                \addplot[black,line width=3pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/exact_plotMJ_contrast7.5_time0.25.csv};
                 %
-                \addplot+[discard if not={L}{3},discard if not={contrast}{7.5},line width=1.0pt,mark=None,color=orange] table [x=x, y=y, col sep=comma] {../dataNew/plots/MultipleJumpsExact_ApproxPlot_T0.5_L3_contrast7.5.csv};
+                \addplot+[discard if not={L}{3},discard if not={contrast}{7.5},line width=1.0pt,mark=None,color=orange] table [x=x, y=y, col sep=comma] {../data/plots/MultipleJumpsExact_ApproxPlot_T0.5_L3_contrast7.5.csv};
                 %
-                \addplot+[discard if not={L}{4},discard if not={contrast}{7.5},line width=1.0pt,mark=None,color=blue!75!white] table [x=x, y=y, col sep=comma] {../dataNew/plots/MultipleJumpsExact_ApproxPlot_T0.5_L4_contrast7.5.csv};
+                \addplot+[discard if not={L}{4},discard if not={contrast}{7.5},line width=1.0pt,mark=None,color=blue!75!white] table [x=x, y=y, col sep=comma] {../data/plots/MultipleJumpsExact_ApproxPlot_T0.5_L4_contrast7.5.csv};
 
                 
                 \draw[dashed,gray,very thick] (0.4,-2) -- (0.4,2);
@@ -1133,11 +1006,11 @@ For contrast $c_1 = c_3 \in \{ 7.5,11.5 \}$, \cref{fig:jumpCoefs:multipleJumps} 
                 \draw[fill=gray!40,draw=none,opacity=0.5] (0.3,-2) -- (0.3,2) -- (0,2) -- (0,-2) -- cycle;
                 \draw[fill=gray!40,draw=none,opacity=0.5] (0.7,-2) -- (0.7,2) -- (1.0,2) -- (1.0,-2) -- cycle;
 
-                \addplot[black,line width=3pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/exact_plotMJ_contrast11.5_time0.25.csv};
+                \addplot[black,line width=3pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/exact_plotMJ_contrast11.5_time0.25.csv};
                 %
-                \addplot+[discard if not={L}{3},discard if not={contrast}{11.5},line width=1.0pt,mark=None,color=orange] table [x=x, y=y, col sep=comma] {../dataNew/plots/MultipleJumpsExact_ApproxPlot_T0.5_L3_contrast11.5.csv};
+                \addplot+[discard if not={L}{3},discard if not={contrast}{11.5},line width=1.0pt,mark=None,color=orange] table [x=x, y=y, col sep=comma] {../data/plots/MultipleJumpsExact_ApproxPlot_T0.5_L3_contrast11.5.csv};
                 %
-                \addplot+[discard if not={L}{4},discard if not={contrast}{11.5},line width=1.0pt,mark=None,color=blue!75!white] table [x=x, y=y, col sep=comma] {../dataNew/plots/MultipleJumpsExact_ApproxPlot_T0.5_L4_contrast11.5.csv};
+                \addplot+[discard if not={L}{4},discard if not={contrast}{11.5},line width=1.0pt,mark=None,color=blue!75!white] table [x=x, y=y, col sep=comma] {../data/plots/MultipleJumpsExact_ApproxPlot_T0.5_L4_contrast11.5.csv};
                
 
                 
@@ -1189,11 +1062,11 @@ The deviation is more extreme for contrast $c_1 = 2.5$, where the gap between th
                 ]
                 \draw[fill=gray!40,draw=none,opacity=0.5] (0.3,-2) -- (0.3,2) -- (0,2) -- (0,-2) -- cycle;
 
-                \addplot[black,line width=3.0pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/exact_plotMJ_contrast2.5_time0.5.csv};
+                \addplot[black,line width=3.0pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/exact_plotMJ_contrast2.5_time0.5.csv};
 
-                \addplot+[line width=1.0pt,mark=None,color=blue!75!white] table [x=x, y=y, col sep=comma] {../dataNew/plots/MultipleJumpsExact_ApproxPlot_CompareT0.5_contrast2.5.csv};
+                \addplot+[line width=1.0pt,mark=None,color=blue!75!white] table [x=x, y=y, col sep=comma] {../data/plots/MultipleJumpsExact_ApproxPlot_CompareT0.5_contrast2.5.csv};
                 
-                \addplot+[line width=1.0pt,mark=None,color=orange] table [x=x, y=y, col sep=comma] {../dataNew/plots/MultipleJumpsExact_ApproxPlot_CompareT1.0_contrast2.5.csv};
+                \addplot+[line width=1.0pt,mark=None,color=orange] table [x=x, y=y, col sep=comma] {../data/plots/MultipleJumpsExact_ApproxPlot_CompareT1.0_contrast2.5.csv};
 
                 \draw[dashed,gray,very thick] (0.4,-2) -- (0.4,2);
                 \draw[dashed,gray,very thick] (0.6666,-2) -- (0.6666,2);
@@ -1208,15 +1081,15 @@ The deviation is more extreme for contrast $c_1 = 2.5$, where the gap between th
                 ]
                 \draw[fill=gray!40,draw=none,opacity=0.5] (0.3,-2) -- (0.3,2) -- (0,2) -- (0,-2) -- cycle;
 
-                \addplot[black,line width=3.0pt,mark=None] table [x=x, y=y, col sep=comma] {../dataNew/plots/exact_plotMJ_contrast7.5_time0.5.csv};
+                \addplot[black,line width=3.0pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/exact_plotMJ_contrast7.5_time0.5.csv};
 
 
 
-                \addplot+[line width=1.0pt,mark=None,color=blue!75!white] table [x=x, y=y, col sep=comma] {../dataNew/plots/MultipleJumpsExact_ApproxPlot_CompareT0.5_contrast7.5Test.csv};
+                \addplot+[line width=1.0pt,mark=None,color=blue!75!white] table [x=x, y=y, col sep=comma] {../data/plots/MultipleJumpsExact_ApproxPlot_CompareT0.5_contrast7.5Test.csv};
 
      
                 
-                \addplot+[line width=1.0pt,mark=None,color=orange] table [x=x, y=y, col sep=comma] {../dataNew/plots/MultipleJumpsExact_ApproxPlot_CompareT1.0_contrast7.5.csv};
+                \addplot+[line width=1.0pt,mark=None,color=orange] table [x=x, y=y, col sep=comma] {../data/plots/MultipleJumpsExact_ApproxPlot_CompareT1.0_contrast7.5.csv};
     
 
                 \draw[dashed,gray,very thick] (0.4,-2) -- (0.4,2);
@@ -1272,13 +1145,9 @@ In \cref{fig:1D:complicatedSol} we consider the approximation of this function b
                 \draw[fill=gray!40,draw=none,opacity=0.5] (0.75,-2) -- (0.75,2) -- (1.0,2) -- (1.0,-2) -- cycle;
 
 
-                \addplot+[discard if not={contrast}{2.0},line width=2.5pt,mark=None,color=black] table [x=x, y=y_dt, col sep=comma] {../data/exact_plot_data_1D_complexSol.csv};
+                \addplot+[discard if not={L}{3},line width=1.1pt,mark=none] table [x=x, y=y_dt, col sep=comma] {../data/plots/weakDisc_evenhigherDt_noRestrict_approx_plot_data_WPFalse_contrast2.0_k3.csv};
 
-
-
-                \addplot+[discard if not={L}{3},line width=1.1pt,mark=none] table [x=x, y=y_dt, col sep=comma] {../dataNew/plots/weakDisc_evenhigherDt_noRestrict_approx_plot_data_WPFalse_contrast2.0_k3.csv};
-
-                \addplot+[discard if not={L}{4},line width=1.1pt,mark=none] table [x=x, y=y_dt, col sep=comma] {../dataNew/plots/weakDisc_evenhigherDt_noRestrict_approx_plot_data_WPFalse_contrast2.0_k3.csv};
+                \addplot+[discard if not={L}{4},line width=1.1pt,mark=none] table [x=x, y=y_dt, col sep=comma] {../data/plots/weakDisc_evenhigherDt_noRestrict_approx_plot_data_WPFalse_contrast2.0_k3.csv};
                 
                 \draw[dashed,gray,very thick] (0.5,-2) -- (0.5,2);
                 \node [draw=none] at (axis description cs:0.53,0.125) {\color{gray} $\Gamma$};
@@ -1326,13 +1195,13 @@ In particular, the ratio for $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2
                 legend to name=named,
                 ]
                 %
-                \addplot+[discard if not={order}{2},discard if not={contrast}{2.5},line width=1.1pt,color=orange] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../dataNew/2D_errors_simpleRefsolFull.csv};
+                \addplot+[discard if not={order}{2},discard if not={contrast}{2.5},line width=1.1pt,color=orange] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../data/2D_errors_simpleRefsolFull.csv};
                 %
-                \addplot+[discard if not={order}{3},discard if not={contrast}{2.5},line width=1.1pt,color=teal] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../dataNew/2D_errors_simpleRefsolFull.csv};
+                \addplot+[discard if not={order}{3},discard if not={contrast}{2.5},line width=1.1pt,color=teal] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../data/2D_errors_simpleRefsolFull.csv};
                 %
-                \addplot+[discard if not={order}{2},discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../dataNew/2D_errors_simpleRefsolFull.csv};
+                \addplot+[discard if not={order}{2},discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/2D_errors_simpleRefsolFull.csv};
                 %
-                \addplot+[discard if not={order}{3},discard if not={contrast}{2.5},line width=1.1pt,dashed,color=teal] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../dataNew/2D_errors_simpleRefsolFull.csv};
+                \addplot+[discard if not={order}{3},discard if not={contrast}{2.5},line width=1.1pt,dashed,color=teal] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/2D_errors_simpleRefsolFull.csv};
 
                 \addplot[gray, dashed, domain=1:4] {9*(1/2^(2))^(x-0.9)};
                 \addplot[gray, dashed, domain=1:4] {0.65*(1/2^(2))^(x-0.9)};
@@ -1353,14 +1222,14 @@ In particular, the ratio for $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2
 
                
 
-                \addplot+[discard if not={order}{2},discard if not={L}{4},line width=1.1pt,color=orange] table [x=contrast, y expr= abs(\thisrow{L2-L2-error-u_t}/\thisrow{bestapprox-L2-L2-error-u_t}), col sep=comma]  {../dataNew/2D_errors_simpleRefsolFull.csv};
+                \addplot+[discard if not={order}{2},discard if not={L}{4},line width=1.1pt,color=orange] table [x=contrast, y expr= abs(\thisrow{L2-L2-error-u_t}/\thisrow{bestapprox-L2-L2-error-u_t}), col sep=comma]  {../data/2D_errors_simpleRefsolFull.csv};
                 %
-                \addplot+[discard if not={order}{3},discard if not={L}{4},line width=1.1pt,color=teal] table [x=contrast, y expr= abs(\thisrow{L2-L2-error-u_t}/\thisrow{bestapprox-L2-L2-error-u_t}), col sep=comma] {../dataNew/2D_errors_simpleRefsolFull.csv};
+                \addplot+[discard if not={order}{3},discard if not={L}{4},line width=1.1pt,color=teal] table [x=contrast, y expr= abs(\thisrow{L2-L2-error-u_t}/\thisrow{bestapprox-L2-L2-error-u_t}), col sep=comma] {../data/2D_errors_simpleRefsolFull.csv};
 
                
                 %L-infty-L2-u error
-                \addplot+[discard if not={order}{2},discard if not={L}{4},line width=1.1pt,dashed,color=orange] table [x=contrast, y expr= abs(\thisrow{L-infty-L2-error-u}/\thisrow{bestapprox-L-infty-L2-error-u}), col sep=comma] {../dataNew/2D_errors_simpleRefsolFull.csv};
-                \addplot+[discard if not={order}{3},discard if not={L}{4},line width=1.1pt,dashed,color=teal] table [x=contrast, y expr= abs(\thisrow{L-infty-L2-error-u}/\thisrow{bestapprox-L-infty-L2-error-u}), col sep=comma] {../dataNew/2D_errors_simpleRefsolFull.csv};
+                \addplot+[discard if not={order}{2},discard if not={L}{4},line width=1.1pt,dashed,color=orange] table [x=contrast, y expr= abs(\thisrow{L-infty-L2-error-u}/\thisrow{bestapprox-L-infty-L2-error-u}), col sep=comma] {../data/2D_errors_simpleRefsolFull.csv};
+                \addplot+[discard if not={order}{3},discard if not={L}{4},line width=1.1pt,dashed,color=teal] table [x=contrast, y expr= abs(\thisrow{L-infty-L2-error-u}/\thisrow{bestapprox-L-infty-L2-error-u}), col sep=comma] {../data/2D_errors_simpleRefsolFull.csv};
                
     
                 \addplot[gray, dashed, domain=1:2.5] {2*(1/2^(-3/2))^(x-0.9)};
