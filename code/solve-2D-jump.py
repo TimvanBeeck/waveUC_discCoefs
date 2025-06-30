@@ -310,4 +310,4 @@ for order in orders:
             ba_errors = {'bestapprox-'+k:v for k,v in ba_errors.items()}
             new_data = {'L':ref_lvl,'order':order,'contrast':contrast} | errors | ba_errors
             df = pd.concat([df,pd.DataFrame(new_data,index=[0])],ignore_index=True)
-            df.to_csv('../dataNew/2D_errors_simpleRefsol_contrast{}.csv'.format(contrast),index=False)
+            df.to_csv('../data/2D_errors_simpleRefsol_contrast{}.csv'.format(contrast),index=False)

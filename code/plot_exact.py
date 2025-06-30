@@ -95,7 +95,7 @@ def plot(t,save_data=False,plot=False):
     if save_data: 
         data = {'x':x_pts,'y':y_pts}
         df = pd.DataFrame(data)
-        df.to_csv('../dataNew/plots/exact_plot{}_contrast{}_time{}.csv'.format(rf,c1,t),index=False)
+        df.to_csv('../data/plots/exact_plot{}_contrast{}_time{}.csv'.format(rf,c1,t),index=False)
         
     if plot: 
         plt.plot(x_pts,y_pts)

@@ -308,7 +308,7 @@ for order in orders:
             ba_errors = {'bestapprox-'+k:v for k,v in ba_errors.items()}
             new_data = {'L':ref_lvl,'order':order,'contrast':contrast,'condest':condest} | errors | ba_errors
             df = pd.concat([df,pd.DataFrame(new_data,index=[0])],ignore_index=True)
-            df.to_csv('../dataNew/weakDisc_evenhigherDt_noRestrict_1D_jumpingCoefs_k{0}.csv'.format(order,well_posed,contrast),index=False)
+            df.to_csv('../data/weakDisc_evenhigherDt_noRestrict_1D_jumpingCoefs_k{0}.csv'.format(order,well_posed,contrast),index=False)
             #df.to_csv('../data/jumpCoefs/test_differentstabs.csv'.format(order,well_posed),index=False)
 
             #Generate Data for plots (approximate solution)
@@ -319,13 +319,13 @@ for order in orders:
             new_plot_data = {'x':x_pts,'y':fun_y_pts,'y_dt':dt_y_pts,'L':np.repeat(ref_lvl,len(x_pts)),'k':np.repeat(order,len(x_pts))}
             #import pdb; pdb.set_trace()
             plot_df = pd.concat([plot_df,pd.DataFrame.from_dict(new_plot_data)],ignore_index=True)
-            #plot_df.to_csv('../dataNew/plots/weakDisc_evenhigherDt_noRestrict_approx_plot_data_WP{0}_contrast{1}_k{2}.csv'.format(well_posed,contrast,order),index=False)
+            #plot_df.to_csv('../data/plots/weakDisc_evenhigherDt_noRestrict_approx_plot_data_WP{0}_contrast{1}_k{2}.csv'.format(well_posed,contrast,order),index=False)
 
             #Save data for error plots (use np.genfromtxt("... .csv", delimiter=",")
-            #np.savetxt('../dataNew/plots/weakDisc_evenhigherDt_noRestrict_error_plot_xpts_WP{0}_k{1}_contrast{2}_ref{3}.csv'.format(well_posed,order,contrast,ref_lvl),plot_data_errors[0],delimiter=',')
-            #np.savetxt('../dataNew/plots/weakDisc_evenhigherDt_noRestrict_error_plot_ts_WP{0}_k{1}_contrast{2}_ref{3}.csv'.format(well_posed,order,contrast,ref_lvl),plot_data_errors[1],delimiter=',')
-            #np.savetxt('../dataNew/plots/weakDisc_evenhigherDt_noRestrict_error_plot_vals_WP{0}_k{1}_contrast{2}_ref{3}.csv'.format(well_posed,order,contrast,ref_lvl),plot_data_errors[2],delimiter=',')
-            #np.savetxt('../dataNew/plots/weakDisc_evenhigherDt_noRestrict_error_plot_dtvals_WP{0}_k{1}_contrast{2}_ref{3}.csv'.format(well_posed,order,contrast,ref_lvl),plot_data_errors[3],delimiter=',')
+            #np.savetxt('../data/plots/weakDisc_evenhigherDt_noRestrict_error_plot_xpts_WP{0}_k{1}_contrast{2}_ref{3}.csv'.format(well_posed,order,contrast,ref_lvl),plot_data_errors[0],delimiter=',')
+            #np.savetxt('../data/plots/weakDisc_evenhigherDt_noRestrict_error_plot_ts_WP{0}_k{1}_contrast{2}_ref{3}.csv'.format(well_posed,order,contrast,ref_lvl),plot_data_errors[1],delimiter=',')
+            #np.savetxt('../data/plots/weakDisc_evenhigherDt_noRestrict_error_plot_vals_WP{0}_k{1}_contrast{2}_ref{3}.csv'.format(well_posed,order,contrast,ref_lvl),plot_data_errors[2],delimiter=',')
+            #np.savetxt('../data/plots/weakDisc_evenhigherDt_noRestrict_error_plot_dtvals_WP{0}_k{1}_contrast{2}_ref{3}.csv'.format(well_posed,order,contrast,ref_lvl),plot_data_errors[3],delimiter=',')
 
         
 

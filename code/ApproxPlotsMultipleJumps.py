@@ -371,7 +371,7 @@ fun_y_pts = np.array(plot_data_sol[2][ int(len(ts)/2) ,: ])
 dt_y_pts = np.array(plot_data_sol[3][ int(len(ts)/2) ,: ])
 new_plot_data = {'x':x_pts,'y':fun_y_pts,'y_dt':dt_y_pts,'L':np.repeat(ref_lvl,len(x_pts)),'k':np.repeat(order,len(x_pts)),'contrast':np.repeat(contrast,len(x_pts))}
 plot_df = pd.concat([plot_df,pd.DataFrame.from_dict(new_plot_data)],ignore_index=True)
-plot_df.to_csv('../dataNew/plots/MultipleJumpsExact_ApproxPlot_T{}_L{}_contrast{}.csv'.format(T,ref_lvl,contrast),index=False)
+plot_df.to_csv('../data/plots/MultipleJumpsExact_ApproxPlot_T{}_L{}_contrast{}.csv'.format(T,ref_lvl,contrast),index=False)
 
             
             
