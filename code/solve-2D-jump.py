@@ -292,12 +292,8 @@ def set_stabs(c1,c2=1.0):
 df = pd.DataFrame()
 
 
-ref_lvls = [1,2,3,4]
-orders = [2,3]
-contrasts = [1.0,1.5,2.0,2.5]
 
-#for testing 
-ref_lvls = lambda order: [1,2,3] if order < 3 else [1,2] 
+ref_lvls = lambda order: [1,2,3,4] if order < 3 else [1,2,3,4] 
 orders = [2,3]
 contrasts = [1.0,1.5,2.0,2.5]
 

@@ -268,7 +268,6 @@ Set1-5\nextlist
 
 We consider the discretization of a data assimilation problem for the wave equation in heterogeneous media. In the following, let $\Omega \subset \mathbb{R}^d$, $d \in \{1,2,3\}$, be a bounded domain with smooth boundary $\partial \Omega$. We assume that $\Omega$ is split by a smooth $(d-1)$-dimensional interface $\Gamma$ into two disjoint components such that $\Omega \setminus \Gamma = \Omega_1 \cup 
 \Omega_2$ and $\Omega_1 \cap \Omega_2 = \emptyset$.
-~\jp{We should specify the range of $d$. Is there any restriction in Filippas? TvB: does not seem, I included 1,2,3?}
  
 We consider a scalar wave speed
 \[
@@ -638,8 +637,8 @@ If the problem is Lipschitz stable, for instance in the homogeneous case (see \c
 
 
 \section{Numerical experiments}
- In this section, we present numerical experiments carried out with the proposed method. The examples are implemented using the \texttt{FEniCSx} library \cite{BarattaEtal2023,BasixJoss,ScroggsEtal2022,AlnaesEtal2014}. 
-~\jp{We need to prepare some reproduction material ...}
+In this section, we present numerical experiments carried out with the proposed method. The examples are implemented using the \texttt{FEniCSx} library \cite{BarattaEtal2023,BasixJoss,ScroggsEtal2022,AlnaesEtal2014}. Reproduction material is available at \url{https://github.com/TimvanBeeck/waveUC_discCoefs}.
+
 \subsection{Examples in one space dimension}
  We consider the unit interval $\Omega \coloneqq (0,1) \subset \mathbb{R}$ partitioned into $2^{L+1}$, $L \in \mathbb{N}$, uniform elements of size $h = 1/2^{L+1}$. Unless specified otherwise, we choose the time step as $\Delta t = h$. 
 
