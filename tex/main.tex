@@ -443,10 +443,10 @@ where
     \underline{I}_2^{\uparrow \downarrow}(\Uh,\Wh) &:= \sum_{n = 1}^{N-1} \frac{1}{\Delta t} (\jump{\ul_2^n},\jump{\wl_2^n})_{\Omega}.
 \end{align*}
 
- With the definition of $\cL_h$, the first order optimality conditions take the form: Find $(\Uh,\Zh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ such that 
+With the definition of $\cL_h$, the first order optimality conditions take the form: Find $(\Uh,\Zh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ such that 
 \begin{alignat*}{2}
-    (\ul_1,\wl_1)_{\omega_T} \! + \! A[\Wh,\Zh] + S_h(\Uh,\Wh) + \Sud(\Uh,\Wh) &= (u_{\omega},\wl_1)_{\omega_T} \ &&\forall \Wh \in \ProdFullyDiscrSpace{k}{q} \\
-    A[\Uh,\Yh] -  S_h^\ast(\Yh,\Zh) &= 0 \ &&\forall \Yh \in \ProdFullyDiscrSpace{k^\ast}{q^\ast} 
+    (\ul_1,\wl_1)_{\omega_T} \! + \! A[\Wh,\Zh] + S_h(\Uh,\Wh) + \Sud(\Uh,\Wh) &= (u_{\omega},\wl_1)_{\omega_T} \ &&\forall \Wh \in \ProdFullyDiscrSpace{k}{q}, \\
+    A[\Uh,\Yh] -  S_h^\ast(\Yh,\Zh) &= 0 \ &&\forall \Yh \in \ProdFullyDiscrSpace{k^\ast}{q^\ast}.
 \end{alignat*}
 In a more compact form, we can write these conditions as: Find $(\Uh,\Zh) \in \ProdFullyDiscrSpace{k}{q} \times \ProdFullyDiscrSpace{k^\ast}{q^\ast}$ such that
 \begin{equation}\label{eq:discreteProblem}
@@ -626,7 +626,7 @@ If the problem is Lipschitz stable, for instance in the homogeneous case (see \c
 \begin{rmk}[Logarithmic stability]
     If \cref{assum:LipschitzStability} is not satisfied, we could still hope to utilize the results from \cref{thm:filippas}, provided that $T$ is large enough such that \eqref{eq:Tcondition} holds. To this end, we would have to deal with the following technicalities:  
     \begin{enumerate}
-        \item The results from \cref{thm:filippas} are formulated in terms of $\Vert \wop u \Vert_{L^2(Q)}$, but we can only control $\Vert \wop \tilde{e}_h \Vert_{H^{-1}(Q)}$ for the residual $\tilde{e}_h = u - L_{\Delta t} \ul_1$. Thus, we would have to rewrite the estimates from \cref{thm:filippas} with $\Vert \wop u \Vert_{H^{-1}(Q)}$ instead of $\Vert \wop u \Vert_{L^2(Q)}$. To this end, one might be able to shift the regularity suitably, cf. \cite[Sec. 2.6]{StolkPhD}, or use similar arguments as in \cite[Thm. A.1]{BFMO21}.
+        \item The results from \cref{thm:filippas} are formulated in terms of $\Vert \wop u \Vert_{L^2(Q)}$, but we can only control $\Vert \wop \tilde{e}_h \Vert_{H^{-1}(Q)}$ for the residual $\tilde{e}_h = u - L_{\Delta t} \ul_1$ to the right order. Thus, we would have to rewrite the estimates from \cref{thm:filippas} with $\Vert \wop u \Vert_{H^{-1}(Q)}$ instead of $\Vert \wop u \Vert_{L^2(Q)}$. To this end, one might be able to shift the regularity suitably, cf. \cite[Sec. 2.6]{StolkPhD}, or use similar arguments as in \cite[Thm. A.1]{BFMO21}.
         \item We have to ensure that the constants in the estimates from \cref{thm:filippas} remain bounded when we consider the residual $\tilde{e}_h$. In particular, we have to control $C_{0,1} := \Vert (\tilde{e}_h \vert_{t = 0}, \dt \tilde{e}_h \vert_{t = 0}) \Vert_{H^1 \times L^2}$. We note that we can always ensure that $C_{0,1}$ is bounded by adding a suitable Tikhonov regularization term to \eqref{eq:primalStab}. 
     \end{enumerate}
     Then, we can use the arguments of \cite[Theorem 14]{BP24} to show that 
