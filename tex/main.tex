@@ -200,6 +200,9 @@
 \newcommand{\dt}{\partial_t}
 \newcommand{\dtt}{\partial_t^2}
 
+
+\newcommand{\changed}[1]{{\color{blue!70!black} #1}}
+
 %%% TvB: Added for plots, some might be redundant ##
 
 %------------------------- Added for Plots ----
@@ -416,7 +419,7 @@ To approximate solutions of \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eq
     \cL_h (\Uh, \Zh) := &\frac{1}{2} \Vert \ul_1 - u_{\omega} \Vert^2_{\omega_T} + A[\Uh,\Zh] + \frac{1}{2}  S_h(\Uh,\Uh) \\
     &- \frac{1}{2}  S_h^\ast(\Zh,\Zh) + \frac{1}{2} \Sud(\Uh,\Uh),
 \end{align*}
-where $S_h$, $S_h^\ast$, and $\Sud$ are stabilization terms yet to be defined. Note that the first and the second terms of $\cL_h$ incorporate the data and the PDE constraints, respectively. To define the stabilization terms $S_h$ and $S_h^\ast$, we introduce the following terms: 
+\changed{for $\Uh \in \ProdFullyDiscrSpace{k}{q}, \Zh \in \ProdFullyDiscrSpace{k^\ast}{q^\ast}$}, where $S_h$, $S_h^\ast$, and $\Sud$ are stabilization terms yet to be defined. Note that the first and the second terms of $\cL_h$ incorporate the data and the PDE constraints, respectively. To define the stabilization terms $S_h$ and $S_h^\ast$, we introduce the following terms: 
 \begin{align*}
     J(\Uh,\Wh) &:= \sum_{n = 0}^{N -1} \int_{I_n} \sum_{F \in \mathcal{F}_i} h (\jump{c^2 \nabla \ul_1}  \cdot \mathbf{n}, \jump{c^2 \nabla \wl_1}  \cdot \mathbf{n})_F \ \dT, \\
     G(\Uh,\Wh) &:= \sum_{n = 0}^{N -1} \int_{I_n} \sum_{K \in \mathcal{T}_h} h^2 (\dt \ul_2 - \div (c^2 \nabla \ul_1),\dt \wl_2 -\div( c^2 \nabla \wl_1))_K \ \dT, \\
@@ -465,6 +468,7 @@ This section outlines how the steps from \cite{BP24} can be adapted to the heter
 In \cref{sec:analysis:approx}, we show that the error between the first component $\ul_1$ of the discrete solution and the continuous solution $u$ is bounded by the best approximation error in these norms. Finally, we argue that \cref{assum:LipschitzStability} allows to recover convergence rates in a physically relevant norm. 
 
 \subsection{Inf-sup stability and continuity}\label{sec:analysis:infsup}
+\changed{In the following, we assume that \eqref{eq:Tcondition} is satisfied.}
 Let $\vert \cdot \vert_{S_h}, \vert \cdot \vert_{\uparrow \downarrow}$, and $\Vert \cdot \Vert_{S_h^{\ast}}$ be the (semi-)norms induced by the stabilizers $S_h$, $\Sud$, and $S_h^{\ast}$:
 \begin{equation}
     \vert \Uh \vert^2_{S_h} := S_h(\Uh,\Uh), \quad \vert \Uh \vert^2_{\uparrow \downarrow} := \Sud(\Uh,\Uh), \quad \Vert \Zh \Vert^2_{S_h^{\ast}} := S_h^{\ast}(\Zh,\Zh).
@@ -531,6 +535,7 @@ If $\mathbf{U}|_{Q^n} \in [H^1(Q^n) \cap L^2(0,T;H^2(\mathcal{T}_h))] \times H^1
 
 \begin{proof}
     \todo[inline]{TvB: Check if notation, etc., is still up-to-date}
+    \changed{
     First, note that $\tnorm{(0,\Yh)} = \Vert \Yh \Vert_{S_h^\ast}$. With the Cauchy-Schwarz inequality, we obtain
     \begin{equation*}
         \sum_{n = 0}^{N-1} \left\{ (\dt u_2, \underline{y}_1)_{Q^n} + a(u_1,\underline{y}_1)_{Q^n} \right\} \le C \left( \sum_{n = 0}^{N-1} \Vert \dt u_2 \Vert^2_{Q^n} + \Vert c^2 \nabla u_1 \Vert^2_{Q^n} \right)^{1/2} \! \! \! \Vert \Yh \Vert_{S_h^{\ast}},
@@ -545,7 +550,7 @@ If $\mathbf{U}|_{Q^n} \in [H^1(Q^n) \cap L^2(0,T;H^2(\mathcal{T}_h))] \times H^1
         &\le \left( \sum_{n = 0}^{N-1} \int_{I_n} \sum_{K \in \mathcal{T}_h} h \Vert c^2 \nabla v \Vert_{\partial \Omega \cap \partial K}^2 \dT \right)^{1/2} \left( \sum_{n = 0}^{N-1} \int_{I_n} \sum_{K \in \mathcal{T}_h} h^{-1} \Vert \underline{y}_1 \Vert_{\partial \Omega \cap \partial K}^2 \dT \right)^{1/2} \\
         &\le C \left( \sum_{n = 0}^{N-1} \left\{ \Vert c^2 \nabla u_1 \Vert^2_{Q^n} + \int_{I_n} \sum_{K \in \mathcal{T}_h} h^2 \Vert c^2 u_1 \Vert_{H^2(K)} \dT \right\} \right)^{1/2} \Vert \Yh \Vert_{S_h^{\ast}}.
     \end{align*}
-    The claim follows from putting all estimates together.
+    The claim follows from putting all estimates together.}
 \end{proof}
 
 
