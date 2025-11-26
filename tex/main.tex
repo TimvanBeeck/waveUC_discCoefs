@@ -528,9 +528,10 @@ If $\mathbf{U}|_{Q^n} \in [H^1(Q^n) \cap L^2(0,T;H^2(\mathcal{T}_h))] \times H^1
         A[\mathbf{U},\Yh] \le C \tnorm{(\mathbf{U}, 0)}_{\wop} \tnorm{(0,\Yh)}. 
     \end{equation*} 
 \end{lem}
-\begin{comment}
+
 \begin{proof}
-    First, note that $\tnorm{(0,\Yh)} = \Vert \Yh \Vert_{S_h^\ast}$. Using the Cauchy-Schwarz inequality, we obtain
+    \todo[inline]{TvB: Check if notation, etc., is still up-to-date}
+    First, note that $\tnorm{(0,\Yh)} = \Vert \Yh \Vert_{S_h^\ast}$. With the Cauchy-Schwarz inequality, we obtain
     \begin{equation*}
         \sum_{n = 0}^{N-1} \left\{ (\dt u_2, \underline{y}_1)_{Q^n} + a(u_1,\underline{y}_1)_{Q^n} \right\} \le C \left( \sum_{n = 0}^{N-1} \Vert \dt u_2 \Vert^2_{Q^n} + \Vert c^2 \nabla u_1 \Vert^2_{Q^n} \right)^{1/2} \! \! \! \Vert \Yh \Vert_{S_h^{\ast}},
     \end{equation*}
@@ -544,9 +545,9 @@ If $\mathbf{U}|_{Q^n} \in [H^1(Q^n) \cap L^2(0,T;H^2(\mathcal{T}_h))] \times H^1
         &\le \left( \sum_{n = 0}^{N-1} \int_{I_n} \sum_{K \in \mathcal{T}_h} h \Vert c^2 \nabla v \Vert_{\partial \Omega \cap \partial K}^2 \dT \right)^{1/2} \left( \sum_{n = 0}^{N-1} \int_{I_n} \sum_{K \in \mathcal{T}_h} h^{-1} \Vert \underline{y}_1 \Vert_{\partial \Omega \cap \partial K}^2 \dT \right)^{1/2} \\
         &\le C \left( \sum_{n = 0}^{N-1} \left\{ \Vert c^2 \nabla u_1 \Vert^2_{Q^n} + \int_{I_n} \sum_{K \in \mathcal{T}_h} h^2 \Vert c^2 u_1 \Vert_{H^2(K)} \dT \right\} \right)^{1/2} \Vert \Yh \Vert_{S_h^{\ast}}.
     \end{align*}
-    Putting all estimates together, the claim follows. 
+    The claim follows from putting all estimates together.
 \end{proof}
-\end{comment}
+
 
 \subsection{Approximation results}\label{sec:analysis:approx}
 With \cref{cor:infsup} and \cref{lem:continuityA}, we can show that the approximation error in the $\tnorm{(\cdot,\cdot)}$-norm is bounded by the best approximation error in the $\tnorm{(\cdot,\cdot)}_{\wop}$-norm.
@@ -1243,7 +1244,7 @@ In particular, the ratio for $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2
         \end{tikzpicture}
         \pgfplotslegendfromname{named}
     \end{center}
-    \caption{On the left: We observe quasi-optimal convergence of $\Vert \dt(u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega))}$ (solid) and $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$ (dashed) with contrast $c_1 = 2.5$ and polynomial degrees $k \in \{2,3\}$. On the right: We consider the ratio between these errors and the $L^2$-bestapproximation error for increasing contrast $c_1$.}
+    \caption{On the left: We observe quasi-optimal convergence of $\Vert \dt(u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega))}$ (solid) and $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$ (dashed) with contrast $c_1 = 2.5$ and polynomial degrees $k \in \{2,3\}$. On the right: We consider the ratio between these errors and the $L^2$-best approximation error for increasing contrast $c_1$.}
     \label{fig:2DjumpCoefs}
   \end{figure}
 
