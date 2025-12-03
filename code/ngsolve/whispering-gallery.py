@@ -34,10 +34,11 @@ order_ODE = 1
 
 c_minus = 1 
 c_pos = 2.5 
-maxh = 0.05
+maxh = 0.0625
+print("maxh = ", maxh) 
 bonus_intorder = 8
 order = 1 
-
+well_posed = True 
 
 def get_order(order_global):
     
@@ -221,7 +222,8 @@ rho_cleanB = BSpline(spline_order,rs, c_clean )(r)
 #eval_c[-1] = cBB(rS[::-1][-1]-1e-11)
 #eval_rho = [rhoBB(pp) for pp in rS[::-1]]
 
-mesh = CreateAnnulusMesh(maxh=maxh, extra_refinement=True ) 
+#mesh = CreateAnnulusMesh(maxh=maxh, extra_refinement=True ) 
+mesh = CreateAnnulusMesh(maxh=maxh, extra_refinement=False ) 
 Draw(mesh)
 Draw(rho_cleanB, mesh, 'cr')  
 
@@ -296,7 +298,7 @@ def SolveProblem( order_global, lami, wp_mode_space ):
     q,k,qstar,kstar = get_order(order_global)
     time_order = 2*max(q,qstar)
 
-    N = 15
+    N = 32
     tstart = 0.0
     tend = 2.0
     delta_t = tend / N
@@ -317,7 +319,8 @@ def SolveProblem( order_global, lami, wp_mode_space ):
     
 
     st = space_time(q=q,qstar=qstar,k=k,kstar=kstar,N=N,T=tend,delta_t=delta_t,mesh=mesh,stabs=stabs,
-                    t_slice=t_slice, u_exact_slice=u_exact_slice, ut_exact_slice=ut_exact_slice, tstart=tstart, told=told) 
+                    t_slice=t_slice, u_exact_slice=u_exact_slice, ut_exact_slice=ut_exact_slice, tstart=tstart, 
+                    told=told, well_posed = well_posed ) 
 
     st.SetupSpaceTimeFEs()
     st.SetupRightHandSide()
@@ -396,4 +399,11 @@ if True:
  
         result = SolveProblem(order_global, lami, wp_mode_space )
         
+
+# smooth sol as data, no jump
+# N = [8,16,32, 64 ] 
+# maxh = [0.25,0.125, 0.0625, 0.03125  ]
+# l2_errors = [0.4750260066626608, 0.09060563861975547, 0.014688240968942253 ] 
+# with well_posed = True 
+# l2_errors = [ 0.3400832328035614 ,0.06398742850314416, 0.014509269239931124 ]  
 

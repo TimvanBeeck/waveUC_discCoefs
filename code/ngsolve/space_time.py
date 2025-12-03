@@ -68,7 +68,8 @@ class SpaceTimeMat(BaseMatrix):
 
 
 class space_time:
-    def __init__(self,q,qstar,k,kstar,N,T,delta_t,mesh,stabs,t_slice,u_exact_slice,ut_exact_slice,tstart=None,told=None,perturbations=None, bonus_intorder_error = 5, shift=None):
+    def __init__(self,q,qstar,k,kstar,N,T,delta_t,mesh,stabs,t_slice,u_exact_slice,ut_exact_slice,tstart=None,told=None,perturbations=None, bonus_intorder_error = 5, shift=None, 
+            well_posed=False ):
         self.q = q 
         self.qstar = qstar
         self.k = k 
@@ -77,6 +78,7 @@ class space_time:
         self.time_order = 2*max(q,qstar)
         self.tstart = tstart
         self.tend = T 
+        self.well_posed = well_posed
         #if not tstart:
         #    self.tstart = -self.tend 
         self.mesh = mesh
@@ -190,16 +192,16 @@ class space_time:
         a += self.stabs["primal"] * self.h**2 * InnerProduct(  self.dt(u2) - LaplacianProxy(u1,self.mesh.dim) , self.dt(w2) - LaplacianProxy(w1,self.mesh.dim) ) * self.dxt
         a += self.stabs["primal"] * InnerProduct( u2 - self.dt(u1) , w2 - self.dt(w1) ) * self.dxt
         a += self.stabs["Tikh"] * self.h**(2*min(self.q,self.k)) *  u1 *  w1 * self.dxt
-
+        # boundary term
         a +=  (40/self.h) * u1 * w1 * self.dst
-
 
         # A[U_h,Y_h]
         a += self.dt(u2) * y1 * self.dxt  
         a += grad(u1) * grad(y1) * self.dxt
         a += (self.dt(u1) - u2) * y2 * self.dxt
         a += (-1) * grad(u1) * self.nF * y1 * self.dst_outer
-        a +=  grad(u1) * self.nF * y1 * self.dst_inner
+        a +=  grad(u1) * self.nF * y1 * self.dst_inner 
+           
 
         # S*(Y_h,Z_h)
         a += self.stabs["dual"] *  (-1)* y1 * z1 * self.dxt  
@@ -262,6 +264,11 @@ class space_time:
         for n in range(self.N):
             f +=  self.stabs["data"] * self.u_exact_slice[n] * w1[n] * self.dxt_omega
             f +=  (40/self.h) *  self.u_exact_slice[n]  * w1[n] * self.dst
+            
+            if self.well_posed and n == 0:  
+                f +=  self.u_exact_slice[n]  * w1[n]  * dmesh(self.mesh, tref=0) 
+                f +=  self.ut_exact_slice[n] * w2[n]  * dmesh(self.mesh, tref=0) 
+
             if self.perturbations:
                 print("Adding noise to rhs")
                 print("factor = ", self.stabs["data"] * self.perturbations["scal"] ) 
@@ -279,7 +286,10 @@ class space_time:
             # Multiplication with Slab Matrix (No DG jumps between slices)
             for j in range(len(self.gfuS_in.components)):
                 self.gfuS_in.components[j].vec.data = self.gfuX_in.components[j].components[n].vec
-            self.gfuS_out.vec.data = self.a_slab_nojumps.mat * self.gfuS_in.vec
+            if self.well_posed and n == 0:
+                self.gfuS_out.vec.data = self.a_first_slab.mat * self.gfuS_in.vec
+            else: 
+                self.gfuS_out.vec.data = self.a_slab_nojumps.mat * self.gfuS_in.vec
             for j in range(len(self.gfuS_in.components)):
                 self.gfuX_out.components[j].components[n].vec.data += self.gfuS_out.components[j].vec  
             # Multiplication with DG jump Matrix between slices
@@ -316,13 +326,30 @@ class space_time:
     def PreparePrecondGMRes(self):
         # Setup local matrices on time slab
         # first slab does not have dg jump terms
-        a_first_slab = BilinearForm(self.X_slab, symmetric=False)
-        self.SetupSlabMatrix(a_first_slab)
-        a_first_slab.Assemble() 
-        self.a_first_slab = a_first_slab
-        self.a_slab_nojumps = self.a_first_slab 
+        
+        a_slab_nojumps  = BilinearForm(self.X_slab, symmetric=False)
+        self.SetupSlabMatrix(a_slab_nojumps)
+        a_slab_nojumps.Assemble() 
+        self.a_slab_nojumps = a_slab_nojumps 
+
+        if not self.well_posed:  
+            self.a_first_slab = self.a_slab_nojumps 
+        else: 
+            a_first_slab = BilinearForm(self.X_slab, symmetric=False)
+            self.SetupSlabMatrix(a_first_slab)
+            u1s,u2s,z1s,z2s = self.X_slab.TrialFunction()
+            w1s,w2s,y1s,y2s = self.X_slab.TestFunction()
+            a_first_slab +=   u1s * w1s * dmesh(self.mesh, tref=0)  
+            a_first_slab +=   u2s * w2s * dmesh(self.mesh, tref=0) 
+            #a_first_slab += self.stabs["primal-jump"] * (1/self.delta_t)  * u1s * w1s * dmesh(self.mesh, tref=0)  
+            #a_firs_slab += self.stabs["primal-jump"] * (1/self.delta_t)  * u2s * w2s * dmesh(self.mesh, tref=0)  
+
+            a_first_slab.Assemble() 
+            self.a_first_slab = a_first_slab
+        
+        #self.a_slab_nojumps = self.a_first_slab 
         self.a_first_slab_inv = self.a_first_slab.mat.Inverse(self.X_slab.FreeDofs(), inverse=solver) 
- 
+        
         # general slab has them 
         a_general_slab = BilinearForm(self.X_slab, symmetric=False)
         self.SetupSlabMatrix(a_general_slab)
