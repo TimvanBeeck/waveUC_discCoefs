@@ -249,8 +249,14 @@ Draw(wp_mode_space , mesh, 'wp-mode')
 
 domain_values = {'B': c_minus,  'IF-inner': c_minus,  'IF-outer': c_pos, 'void' : c_pos,  'omega-outer' : c_pos  }
 #domain_values = {'inner': 3.7,  'outer': 1}
+
+
 c_disc = mesh.MaterialCF(domain_values)
+#help(c_disc)
 Draw(c_disc, mesh, 'cdisk')
+
+domain_values_2 = { 'B': 1.0,  'IF-inner': 1.0,  'IF-outer': 1.0, 'void' : 1.0,  'omega-outer' : 1.0 }
+c_squared = mesh.MaterialCF(domain_values_2)
 
 
 def CheckSpatial(c_disc,lami, wp_mode_space,mesh): 
@@ -290,7 +296,7 @@ stabs = {"data": 1e4,
          "primal": 1e-4,
          "primal-jump":1e1,
          "primal-jump-displ-grad":1e1,
-         "Tikh": 1e-5
+         "Tikh": 1e-18
         }
 
 def SolveProblem( order_global, lami, wp_mode_space ):
@@ -320,7 +326,7 @@ def SolveProblem( order_global, lami, wp_mode_space ):
 
     st = space_time(q=q,qstar=qstar,k=k,kstar=kstar,N=N,T=tend,delta_t=delta_t,mesh=mesh,stabs=stabs,
                     t_slice=t_slice, u_exact_slice=u_exact_slice, ut_exact_slice=ut_exact_slice, tstart=tstart, 
-                    told=told, well_posed = well_posed ) 
+                    told=told, well_posed = well_posed, c_squared = c_squared) 
 
     st.SetupSpaceTimeFEs()
     st.SetupRightHandSide()

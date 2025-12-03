@@ -69,7 +69,7 @@ class SpaceTimeMat(BaseMatrix):
 
 class space_time:
     def __init__(self,q,qstar,k,kstar,N,T,delta_t,mesh,stabs,t_slice,u_exact_slice,ut_exact_slice,tstart=None,told=None,perturbations=None, bonus_intorder_error = 5, shift=None, 
-            well_posed=False ):
+            well_posed=False, c_squared =  1.0 ):
         self.q = q 
         self.qstar = qstar
         self.k = k 
@@ -79,6 +79,7 @@ class space_time:
         self.tstart = tstart
         self.tend = T 
         self.well_posed = well_posed
+        self.c_squared = c_squared 
         #if not tstart:
         #    self.tstart = -self.tend 
         self.mesh = mesh
@@ -178,18 +179,20 @@ class space_time:
         w1,w2,y1,y2 = self.X_slab.TestFunction()
     
         a += self.dt(w2) * z1 * self.dxt  
-        a += grad(w1) * grad(z1) * self.dxt
+        a += self.c_squared * grad(w1) * grad(z1) * self.dxt
         a += (self.dt(w1) - w2) * z2 * self.dxt
-        a += (-1) * grad(w1) * self.nF * z1 * self.dst_outer
-        a +=  grad(w1) * self.nF * z1 * self.dst_inner
-
+        a += (-1) * self.c_squared *  grad(w1) * self.nF * z1 * self.dst_outer
+        a += self.c_squared * grad(w1) * self.nF * z1 * self.dst_inner
+        
 
         # (u_1,w_1)_omega
         a += self.stabs["data"] * u1 * w1 * self.dxt_omega 
 
         # S(U_h,W_h) 
-        a += self.stabs["primal"] * self.h * InnerProduct( ( grad(u1) - grad(u1).Other()) * self.nF , ( grad(w1) - grad(w1).Other()) * self.nF ) * self.dxtF
-        a += self.stabs["primal"] * self.h**2 * InnerProduct(  self.dt(u2) - LaplacianProxy(u1,self.mesh.dim) , self.dt(w2) - LaplacianProxy(w1,self.mesh.dim) ) * self.dxt
+        a += self.stabs["primal"] * self.h * InnerProduct( ( self.c_squared * grad(u1) -  self.c_squared.Other() * grad(u1).Other()) * self.nF ,
+             ( self.c_squared * grad(w1) - self.c_squared.Other() * grad(w1).Other()) * self.nF ) * self.dxtF
+        a += self.stabs["primal"] * self.h**2 * InnerProduct(  self.dt(u2) -self.c_squared * LaplacianProxy(u1,self.mesh.dim),
+              self.dt(w2) - self.c_squared * LaplacianProxy(w1,self.mesh.dim) ) * self.dxt
         a += self.stabs["primal"] * InnerProduct( u2 - self.dt(u1) , w2 - self.dt(w1) ) * self.dxt
         a += self.stabs["Tikh"] * self.h**(2*min(self.q,self.k)) *  u1 *  w1 * self.dxt
         # boundary term
@@ -197,15 +200,15 @@ class space_time:
 
         # A[U_h,Y_h]
         a += self.dt(u2) * y1 * self.dxt  
-        a += grad(u1) * grad(y1) * self.dxt
+        a += self.c_squared * grad(u1) * grad(y1) * self.dxt
         a += (self.dt(u1) - u2) * y2 * self.dxt
-        a += (-1) * grad(u1) * self.nF * y1 * self.dst_outer
-        a +=  grad(u1) * self.nF * y1 * self.dst_inner 
+        a += (-1) * self.c_squared * grad(u1) * self.nF * y1 * self.dst_outer
+        a += self.c_squared *  grad(u1) * self.nF * y1 * self.dst_inner 
            
 
         # S*(Y_h,Z_h)
         a += self.stabs["dual"] *  (-1)* y1 * z1 * self.dxt  
-        a += self.stabs["dual"] * (-1)* grad(y1) * grad(z1) * self.dxt  
+        a += self.stabs["dual"] * (-1) * self.c_squared * grad(y1) * grad(z1) * self.dxt  
         a += self.stabs["dual"] *  (-1)* y2 * z2 * self.dxt 
         # boundary term
         a += self.stabs["dual"] *  (-1) * (40/self.h) * y1 * z1 * self.dst
@@ -247,14 +250,15 @@ class space_time:
         w1,w2 = self.W_coupling.TestFunction()  
         m += self.stabs["primal-jump"] * (1/self.delta_t) * InnerProduct( u1[1] - u1[0], w1[1] - w1[0]) * self.dmesh
         m += self.stabs["primal-jump"] * (1/self.delta_t) * InnerProduct( u2[1] - u2[0], w2[1] - w2[0]) * self.dmesh
-        m += self.stabs["primal-jump-displ-grad"] * self.delta_t * InnerProduct(grad(u1[1]) - grad(u1[0]), grad(w1[1]) - grad(w1[0])) * self.dmesh
+        m += self.stabs["primal-jump-displ-grad"] * self.delta_t * InnerProduct( self.c_squared * (grad(u1[1]) - grad(u1[0]) )
+                ,  self.c_squared * ( grad(w1[1]) - grad(w1[0]) ) ) * self.dmesh
 
     def SetupScaledMassMatrixBetweenSlices(self,m): 
         u1,u2 = self.V_space2.TrialFunction() 
         w1,w2 = self.V_space2.TestFunction() 
         m += self.stabs["primal-jump"] * (1/self.delta_t) * InnerProduct( u1, w1 ) * self.dmesh
         m += self.stabs["primal-jump"] * (1/self.delta_t) * InnerProduct( u2, w2 ) * self.dmesh
-        m += self.stabs["primal-jump-displ-grad"] * self.delta_t * InnerProduct(grad(u1) , grad(w1)) * self.dmesh
+        m += self.stabs["primal-jump-displ-grad"] * self.delta_t * InnerProduct( self.c_squared * grad(u1) , self.c_squared * grad(w1)) * self.dmesh
      
     def SetupRightHandSide(self):
         u1,u2,z1,z2 = self.X.TrialFunction()
@@ -356,7 +360,7 @@ class space_time:
         u1s,u2s,z1s,z2s = self.X_slab.TrialFunction()
         w1s,w2s,y1s,y2s = self.X_slab.TestFunction()
         a_general_slab += self.stabs["primal-jump"] * (1/self.delta_t)  * u1s * w1s * dmesh(self.mesh, tref=0)  
-        a_general_slab += self.stabs["primal-jump-displ-grad"] * self.delta_t * grad(u1s) * grad(w1s) * dmesh(self.mesh, tref=0)  
+        a_general_slab += self.stabs["primal-jump-displ-grad"] * self.delta_t * self.c_squared * grad(u1s) * grad(w1s) * dmesh(self.mesh, tref=0)  
         a_general_slab += self.stabs["primal-jump"] * (1/self.delta_t)  * u2s * w2s * dmesh(self.mesh, tref=0)  
         a_general_slab.Assemble() 
         self.a_general_slab = a_general_slab
