@@ -185,9 +185,7 @@ class space_time:
         a += (self.dt(w1) - w2) * z2 * self.dxt
         a += (-1) * self.c_squared *  grad(w1) * self.nF * z1 * self.dst_outer
         a +=  self.c_squared * grad(w1) * self.nF * z1 * self.dst_inner
-
         a += (40/self.h) * w1 * z1 * self.dst
-    
         
 
         # (u_1,w_1)_omega
@@ -209,7 +207,6 @@ class space_time:
         a += (self.dt(u1) - u2) * y2 * self.dxt
         a += (-1) * self.c_squared * grad(u1) * self.nF * y1 * self.dst_outer
         a +=  self.c_squared *  grad(u1) * self.nF * y1 * self.dst_inner 
-
         a += (40/self.h) * u1 * y1 * self.dst
 
 
@@ -259,6 +256,8 @@ class space_time:
         m += self.stabs["primal-jump"] * (1/self.delta_t) * InnerProduct( u2[1] - u2[0], w2[1] - w2[0]) * self.dmesh
         m += self.stabs["primal-jump-displ-grad"] * self.delta_t * InnerProduct( self.c_squared * (grad(u1[1]) - grad(u1[0]) )
                 ,  self.c_squared * ( grad(w1[1]) - grad(w1[0]) ) ) * self.dmesh
+
+
 
     def SetupScaledMassMatrixBetweenSlices(self,m): 
         u1,u2 = self.V_space2.TrialFunction() 
@@ -370,7 +369,7 @@ class space_time:
         u1s,u2s,z1s,z2s = self.X_slab.TrialFunction()
         w1s,w2s,y1s,y2s = self.X_slab.TestFunction()
         a_general_slab += self.stabs["primal-jump"] * (1/self.delta_t)  * u1s * w1s * dmesh(self.mesh, tref=0)  
-        a_general_slab += self.stabs["primal-jump-displ-grad"] * self.delta_t * self.c_squared * grad(u1s) * grad(w1s) * dmesh(self.mesh, tref=0)  
+        a_general_slab += self.stabs["primal-jump-displ-grad"] * self.delta_t * self.c_squared * grad(u1s) * self.c_squared * grad(w1s) * dmesh(self.mesh, tref=0)  
         a_general_slab += self.stabs["primal-jump"] * (1/self.delta_t)  * u2s * w2s * dmesh(self.mesh, tref=0)  
         a_general_slab.Assemble() 
         self.a_general_slab = a_general_slab
