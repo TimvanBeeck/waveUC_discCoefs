@@ -646,7 +646,7 @@ If the problem is Lipschitz stable, for instance in the homogeneous case (see \c
 In this section, we present numerical experiments carried out with the proposed method. The examples are implemented using the \texttt{FEniCSx} library \cite{BarattaEtal2023,BasixJoss,ScroggsEtal2022,AlnaesEtal2014}. Reproduction material is available at \url{https://github.com/TimvanBeeck/waveUC_discCoefs}.
 
 \subsection{Examples in one space dimension}
- We consider the unit interval $\Omega \coloneqq (0,1) \subset \mathbb{R}$ partitioned into $2^{L+1}$, $L \in \mathbb{N}$, uniform elements of size $h = 1/2^{L+1}$. Unless specified otherwise, we choose the time step as $\Delta t = h$. 
+ We consider the unit interval $\Omega \coloneqq (0,1) \subset \mathbb{R}$ partitioned into $2^{L+1}$, $L \in \mathbb{N}$, uniform elements of size $h = 1/2^{L+1}$. Unless specified otherwise, we choose the time step as $\Delta t = h$. \changed{Further, we set $q = k$ and choose $k^{\ast} = 1$, $q^{\ast} = 1$ if $k = 1$ and $q^{\ast} = 0$ if $k > 1$.}
 
 \subsubsection{A first example}\label{sec:numex:1D:simple}
  We define two subdomains $\Omega_1 = (0,0.5)$ and $\Omega_2 = (0.5,1.0)$ such that $\bar{\Omega} = \overline{\Omega}_1 \cup \overline{\Omega}_2$ and fix the wavespeed $c_2 := c \vert_{\Omega_2} = 1$ in $\Omega_2$. For variable $c_1 := c \vert_{\Omega_1}$, we consider the exact solution \cite{MHI08}
@@ -666,9 +666,9 @@ In one space dimension, the requirement \eqref{eq:Tcondition} that $T > 2 \sup_{
 \begin{equation}
     d_c(x,y) \coloneqq \mathbbm{1}_{\Omega_1} c_1(x)^{-1} d(x,y) + \mathbbm{1}_{\Omega_2} d(x,y), \quad x,y \in \Omega.
 \end{equation}
-Thus, for $\omega$ as above, $c_2 = 1$ fixed and $c_1 > 1.0$, the condition \eqref{eq:Tcondition} translates to $T > 0.25(1+c_1^{-1})$. First, we consider the contrast $c_1 = 2.5$, which means that the GCC is satisfied if $T > 0.35$. 
+Thus, for $\omega$ as above, $c_2 = 1$ fixed and $c_1 > 1.0$, the condition \eqref{eq:Tcondition} translates to $T > 0.25(1+c_1^{-1})$. First, we consider the contrast $c_1 = 2.5$, which means that the GCC is satisfied if $T > 0.35$.  
 
-In \Cref{fig:jumpCoefs:contrast:2.5}, we observe that the errors $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ and $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$ converge with optimal order $\mathcal{O}(h^k)$ for $T = 0.5 > 0.35$. However, if $T = 0.1 < 0.35$, the order of convergence degrades, while the respective best approximation errors still converge with optimal order. This suggests that the GCC seems to imply Lipschitz stability even in the heterogeneous case, and therefore \cref{assum:LipschitzStability} is indeed justified.
+In \Cref{fig:jumpCoefs:contrast:2.5}, we observe that the errors $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ and $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$ converge with optimal order $\mathcal{O}(h^k)$ for $T = 0.5 > 0.35$. However, if $T = 0.1 < 0.35$, the order of convergence degrades, while the respective $L^2$-best approximation\textsuperscript{3}\footnotemark \footnotetext{\textsuperscript{3}\changed{We compare with the $L^2$-best approximation error, where we solve for the $L^2$-orthogonal projection of the exact solution onto the discrete space, as a measure of the approximation quality of the discrete space.}} errors still converge with optimal order. This suggests that the GCC seems to imply Lipschitz stability even in the heterogeneous case, and therefore \cref{assum:LipschitzStability} is indeed justified.
 
 To investigate the dependence of the errors on the contrast, we fix the polynomial degree $k = 3$, refinement level $L = 3$, and $c_2 = 1$, and consider increasing values of $c_1 \in \{1.0,1.5,\dots,4.5\}$. In \cref{fig:jumpCoefs:increasingcontrast}, we observe that the approximation errors increase polynomially with $\mathcal{O}(c_1^3)$, while the $L^2$-best approximation errors grow quadratically with $\mathcal{O}(c_1^2)$. This is an important observation since an exponential growth in the contrast would have rendered the corresponding problems nearly impossible to resolve numerically.
 
@@ -1043,7 +1043,8 @@ As a second example, we consider the case where the data is only given in one ha
 \begin{equation}
     T > 2 \left[ (p_2 - p_1) + \frac{p_1 - 0.3 + 1 - p_2}{c_1} \right]. 
 \end{equation}
-We consider $c_1 \in \{ 2.5, 7.5\}$, for which the requirement $T > \{ 0.89,0.65 \}$ ensures the GCC. \Cref{fig:jumpCoefs:multipleJumps:noGCC} compares the results for polynomial degree $k = 3$ on the refinement level $L = 4$ with a fixed time step $\Delta t = 1/32$, for two final times $T = 0.5$ and $T = 1.0$. For both contrasts, the approximate solution matches the exact solution well if the GCC is fulfilled ($T = 1.0$), but shows significant deviations when it is not ($T = 0.5$). 
+We consider $c_1 \in \{ 2.5, 7.5\}$, for which the requirement $T > \{ 0.89,0.65 \}$ ensures the GCC. \Cref{fig:jumpCoefs:multipleJumps:noGCC} compares the results for polynomial degree $k = 3$ on the refinement level $L = 4$ with a fixed time step $\Delta t = 1/32$, for two final times $T = 0.5$ and $T = 1.0$. \changed{We compare the approximation of the exact solution for both final times at time $t = 0.5$}.
+For both contrasts, the approximate solution matches the exact solution well if the GCC is fulfilled ($T = 1.0$), but shows significant deviations when it is not ($T = 0.5$). 
 The deviation is more extreme for contrast $c_1 = 2.5$, where the gap between the considered time $T = 0.5$ and the threshold $T > 0.89$ is larger. 
 
 
@@ -1108,7 +1109,7 @@ The deviation is more extreme for contrast $c_1 = 2.5$, where the gap between th
         \end{tikzpicture}
          \pgfplotslegendfromname{named}
     \end{center}
-    \caption{For fixed time step $\Delta t = 1/32$, refinement level $L = 4$, and polynomial degree $k = 3$, we compare the exact solution \eqref{eq:1D:exact:simpleMult} and approximated solution computed with $T = 1.0$ and $T = 0.5$ at time $t = 0.5$. We set $c_2 = 1.0$ and consider the cases $c_1 = c_3 = 2.5$, $n = 1$ (left) and $c_1 = c_3 = 7.5$, $n = 3$ (right).} 
+    \caption{For fixed time step $\Delta t = 1/32$, refinement level $L = 4$, and polynomial degree $k = 3$, we compare the exact solution \eqref{eq:1D:exact:simpleMult} and approximated solution computed with \changed{final time} $T = 1.0$ and $T = 0.5$ at time $t = 0.5$. We set $c_2 = 1.0$ and consider the cases $c_1 = c_3 = 2.5$, $n = 1$ (left) and $c_1 = c_3 = 7.5$, $n = 3$ (right).} 
     \label{fig:jumpCoefs:multipleJumps:noGCC}
   \end{figure}
 
@@ -1173,11 +1174,11 @@ In \cref{fig:1D:complicatedSol} we consider the approximation of this function b
 To conclude the numerical examples, we consider another example in two space dimensions. We partition the unit-square $\Omega \coloneqq [0,1]^2 \subset \mathbb{R}^2$ into subdomains $\Omega_1 = \{ (x,y) \in \Omega: x < 0.5 \}$ and $\Omega_2 = \{ (x,y) \in \Omega: x > 0.5 \}$, and 
 extend the exact solution defined in \eqref{eq:1D:exact:simple} to the two-dimensional case by setting $u(x,y;t) \coloneqq u(x;t)$. 
 
-We define the data domain $\omega \coloneqq \Omega \setminus [0.25,0.75]^2$ and note that $\omega$ fulfills the GCC. To ensure that the data domain and the interface $\Gamma$ are meshed exactly, we consider a quadrilateral mesh with $2^{L+1}$, $L \in \{1,2,3,4\}$, elements in each direction. We consider the final time $T = 0.75$  and set the time step size to $\Delta t = (1/2)^{L+1}$. As before, we fix the wave speed $c_2 = 1$ and consider different values for $c_1$ to control the contrast. 
+We define the data domain $\omega \coloneqq \Omega \setminus [0.25,0.75]^2$ and note that $\omega$ fulfills the GCC. To ensure that the data domain and the interface $\Gamma$ are meshed exactly, we consider a quadrilateral mesh with $2^{L+1}$, $L \in \{1,2,3,4\}$, elements in each direction. We consider the final time $T = 0.75$  and set the time step size to $\Delta t = (1/2)^{L+1}$. As before, we fix the wave speed $c_2 = 1$ and consider different values for $c_1$ to control the contrast. \changed{Further, we choose the parameters $q = k^{\ast} = q^{\ast} = k$.}
 
 The results of the experiment are presented in \cref{fig:2DjumpCoefs}. 
 With contrast $c_1 = 2.5$, we observe quasi-optimal convergence with order  $\mathcal{O}(h^k)$ for polynomial degrees $k \in \{2,3\}$ for the errors $\Vert \dt(u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega))}$ and $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$. 
-Similar as already observed in the one-dimensional case in \cref{fig:jumpCoefs:increasingcontrast}, we observe that these errors are more sensitive to increasing contrast $c_1$ than the corresponding best approximation errors. 
+Similar as already observed in the one-dimensional case in \cref{fig:jumpCoefs:increasingcontrast}, we observe that these errors are more sensitive to increasing contrast $c_1$ than the corresponding $L^2$-best approximation errors. 
 In particular, the ratio for $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$ with $k=2$ appears to grow as $\mathcal{O}(c_1^{3/2})$, which renders it very demanding to maintain a reasonable accuracy as the contrast increases. 
 
   \begin{figure}[!htbp]
