@@ -108,7 +108,9 @@ class space_time:
         
         self.dmesh = dmesh(self.mesh)
         #self.dst = self.delta_t * dxtref(self.mesh, time_order=self.time_order,skeleton=True, vb=BND)
+        #self.dst_outer  = self.dst 
         self.dst = self.delta_t * dxtref(self.mesh, time_order=self.time_order,skeleton=True, definedon=mesh.Boundaries("R0|R2"))
+        #self.dst = self.delta_t * dxtref(self.mesh, time_order=self.time_order,skeleton=True, definedon=mesh.Boundaries("R2"))
         self.dst_inner = self.delta_t * dxtref(self.mesh, time_order=self.time_order,skeleton=True, definedon=mesh.Boundaries("R0"))
         self.dst_outer = self.delta_t * dxtref(self.mesh, time_order=self.time_order,skeleton=True, definedon=mesh.Boundaries("R2"))
 
@@ -182,7 +184,10 @@ class space_time:
         a += self.c_squared * grad(w1) * grad(z1) * self.dxt
         a += (self.dt(w1) - w2) * z2 * self.dxt
         a += (-1) * self.c_squared *  grad(w1) * self.nF * z1 * self.dst_outer
-        a += self.c_squared * grad(w1) * self.nF * z1 * self.dst_inner
+        a +=  self.c_squared * grad(w1) * self.nF * z1 * self.dst_inner
+
+        a += (40/self.h) * w1 * z1 * self.dst
+    
         
 
         # (u_1,w_1)_omega
@@ -203,8 +208,10 @@ class space_time:
         a += self.c_squared * grad(u1) * grad(y1) * self.dxt
         a += (self.dt(u1) - u2) * y2 * self.dxt
         a += (-1) * self.c_squared * grad(u1) * self.nF * y1 * self.dst_outer
-        a += self.c_squared *  grad(u1) * self.nF * y1 * self.dst_inner 
-           
+        a +=  self.c_squared *  grad(u1) * self.nF * y1 * self.dst_inner 
+
+        a += (40/self.h) * u1 * y1 * self.dst
+
 
         # S*(Y_h,Z_h)
         a += self.stabs["dual"] *  (-1)* y1 * z1 * self.dxt  
@@ -267,11 +274,14 @@ class space_time:
         f = LinearForm(self.X)
         for n in range(self.N):
             f +=  self.stabs["data"] * self.u_exact_slice[n] * w1[n] * self.dxt_omega
-            f +=  (40/self.h) *  self.u_exact_slice[n]  * w1[n] * self.dst
-            
+            f +=    (40/self.h) *  self.u_exact_slice[n]  * w1[n] * self.dst
+           
+            f += (40/self.h) * self.u_exact_slice[n] * y1[n] * self.dst
+
+
             if self.well_posed and n == 0:  
-                f +=  self.u_exact_slice[n]  * w1[n]  * dmesh(self.mesh, tref=0) 
-                f +=  self.ut_exact_slice[n] * w2[n]  * dmesh(self.mesh, tref=0) 
+                f += self.stabs["primal-jump"] * (1/self.delta_t) * self.u_exact_slice[n]  * w1[n]  * dmesh(self.mesh, tref=0) 
+                f += self.stabs["primal-jump"] * (1/self.delta_t) * self.ut_exact_slice[n] * w2[n]  * dmesh(self.mesh, tref=0) 
 
             if self.perturbations:
                 print("Adding noise to rhs")
@@ -343,10 +353,10 @@ class space_time:
             self.SetupSlabMatrix(a_first_slab)
             u1s,u2s,z1s,z2s = self.X_slab.TrialFunction()
             w1s,w2s,y1s,y2s = self.X_slab.TestFunction()
-            a_first_slab +=   u1s * w1s * dmesh(self.mesh, tref=0)  
-            a_first_slab +=   u2s * w2s * dmesh(self.mesh, tref=0) 
-            #a_first_slab += self.stabs["primal-jump"] * (1/self.delta_t)  * u1s * w1s * dmesh(self.mesh, tref=0)  
-            #a_firs_slab += self.stabs["primal-jump"] * (1/self.delta_t)  * u2s * w2s * dmesh(self.mesh, tref=0)  
+            #a_first_slab +=   u1s * w1s * dmesh(self.mesh, tref=0)  
+            #a_first_slab +=   u2s * w2s * dmesh(self.mesh, tref=0) 
+            a_first_slab += self.stabs["primal-jump"] * (1/self.delta_t)  * u1s * w1s * dmesh(self.mesh, tref=0)  
+            a_first_slab += self.stabs["primal-jump"] * (1/self.delta_t)  * u2s * w2s * dmesh(self.mesh, tref=0)  
 
             a_first_slab.Assemble() 
             self.a_first_slab = a_first_slab
@@ -472,10 +482,11 @@ class space_time:
         self.told.Set(self.tstart)
         n = 0 
         while self.tend - self.told.Get() > self.delta_t / 2:
-                
             print("n = ", n)
             l2_errors.append(Integrate( (self.u_exact_slice[n]  - gfuh.components[0].components[n])**2 * dB, self.mesh))
 
+            #if n ==  0: 
+            #    Draw(  sqrt( (self.u_exact_slice[n]  - gfuh.components[0].components[n])**2 ), self.mesh, 'err')
             tmp +=  self.delta_t
             print("tmp = ", tmp)
             self.told.Set(self.told.Get() + self.delta_t)

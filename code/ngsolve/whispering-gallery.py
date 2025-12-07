@@ -34,7 +34,7 @@ order_ODE = 1
 
 c_minus = 1 
 c_pos = 2.5 
-maxh = 0.0625
+maxh = 0.25 
 print("maxh = ", maxh) 
 bonus_intorder = 8
 order = 1 
@@ -99,6 +99,29 @@ def CreateAnnulusMesh(maxh=0.4,order_geom=5,domain_maxh=0.03,extra_refinement=Fa
     mesh = NGSMesh(geo.GenerateMesh (maxh=maxh,quad_dominated=False))
     mesh.Curve(order_geom)
     return mesh
+
+
+
+def CreateAnnulusMesh2(maxh=0.4,order_geom=1,domain_maxh=0.03,extra_refinement=False):
+    
+    geo = SplineGeometry()
+    geo.AddCircle( (0,0), R0, leftdomain=0, rightdomain=1,bc="R0")
+
+    #geo.AddCircle( (0,0), 1.0, leftdomain=1, rightdomain=2,bc="R1")
+    
+    #geo.AddCircle( (0,0), R2, leftdomain=2, rightdomain=0,bc="R2")
+
+    #geo.SetMaterial(1, "B")
+    #geo.SetMaterial(2, "IF-inner")
+    #geo.SetMaterial(3, "omega-outer")
+  
+    geo.AddCircle( (0,0), R2, leftdomain=1, rightdomain=0,bc="R2")
+   
+    mesh = NGSMesh(geo.GenerateMesh (maxh=maxh,quad_dominated=False))
+    mesh.Curve(order_geom)
+    return mesh
+
+
 
 
 
@@ -223,7 +246,8 @@ rho_cleanB = BSpline(spline_order,rs, c_clean )(r)
 #eval_rho = [rhoBB(pp) for pp in rS[::-1]]
 
 #mesh = CreateAnnulusMesh(maxh=maxh, extra_refinement=True ) 
-mesh = CreateAnnulusMesh(maxh=maxh, extra_refinement=False ) 
+mesh = CreateAnnulusMesh(maxh=maxh, extra_refinement=True ) 
+
 Draw(mesh)
 Draw(rho_cleanB, mesh, 'cr')  
 
@@ -291,7 +315,8 @@ def CheckSpatial(c_disc,lami, wp_mode_space,mesh):
 
 #l2_errors = [ 0.23088207463877092, 0.06298057321067921]
 
-stabs = {"data": 1e4,
+stabs = {#"data": 1e4,
+        "data": 1e-9,
          "dual": 1,
          "primal": 1e-4,
          "primal-jump":1e1,
@@ -299,12 +324,17 @@ stabs = {"data": 1e4,
          "Tikh": 1e-18
         }
 
+
+#mesh = CreateAnnulusMesh2(maxh=maxh, extra_refinement=False ) 
+print("mesh.GetBoundaries()  = " , mesh.GetBoundaries() )
+
+
 def SolveProblem( order_global, lami, wp_mode_space ):
 
     q,k,qstar,kstar = get_order(order_global)
     time_order = 2*max(q,qstar)
 
-    N = 32
+    N = 8
     tstart = 0.0
     tend = 2.0
     delta_t = tend / N
@@ -339,6 +369,21 @@ def SolveProblem( order_global, lami, wp_mode_space ):
                   callback=None, restart=None, startiteration=0, printrates=True)
 
     l2_errors_Q = st.MeasureErrors(st.gfuX )
+    
+    diff = GridFunction(st.V_space)
+    u_slab_node = GridFunction(st.V_space)
+    u_gfu_node = GridFunction(st.V_space)
+    #told.Set(st.tend)
+    u_slab_node.Set(fix_tref(st.u_exact_slice[st.N-1],st.tend))
+    u_gfu_node.vec.FV().NumPy()[:]  =  st.gfuX.components[0].components[st.N-1].vec.FV().NumPy()[ st.q*st.V_space.ndof : (st.q+1)*st.V_space.ndof] 
+    diff.vec.FV().NumPy()[:] = np.abs( st.gfuX.components[0].components[st.N-1].vec.FV().NumPy()[ st.q*st.V_space.ndof : (st.q+1)*st.V_space.ndof] 
+    -  u_slab_node.vec.FV().NumPy() ) 
+    Draw(diff, mesh, 'diff') 
+    Draw( u_slab_node, mesh, 'exact') 
+    Draw( u_gfu_node , mesh, 'gfu') 
+    input("")
+
+
     print("Errors in Q (all) = ", l2_errors_Q)
 
     '''
@@ -406,10 +451,9 @@ if True:
         result = SolveProblem(order_global, lami, wp_mode_space )
         
 
+
 # smooth sol as data, no jump
 # N = [8,16,32, 64 ] 
 # maxh = [0.25,0.125, 0.0625, 0.03125  ]
-# l2_errors = [0.4750260066626608, 0.09060563861975547, 0.014688240968942253 ] 
 # with well_posed = True 
-# l2_errors = [ 0.3400832328035614 ,0.06398742850314416, 0.014509269239931124 ]  
-
+#  l2_errors [0.43226258260766476, 0.1265427463635003, 0.028338817815329518, 0.007244529603458823 ]
