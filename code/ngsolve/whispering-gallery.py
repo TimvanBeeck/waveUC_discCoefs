@@ -13,6 +13,7 @@ from scipy.sparse import csr_matrix
 import scipy.sparse.linalg
 import matplotlib.pyplot as plt
 from math import pi 
+import scipy.interpolate as si
 import sys
 sys.path.append("/home/janosch/projects/waveUC_discCoefs/code/ngsolve")
 from space_time import space_time, SpaceTimeMat
@@ -27,31 +28,30 @@ R2 = sqrt(2)
 R1_neg = 0.8
 R1_pos = 1.1*R1 
 Rmid = R1 + 0.5*(R2-R1) 
-n_mode = 50
-#n_mode = 40
+#n_mode = 50
+n_mode = 1
 order_ODE = 1
 #order_ODE = 4
 
 c_minus = 1 
 c_pos = 2.5 
-maxh = 0.25 
+maxh =  0.25
 print("maxh = ", maxh) 
 bonus_intorder = 8
-order = 1 
+order = 2 
 well_posed = True 
 
 def get_order(order_global):
     
     k = order_global
-    kstar = 1
+    kstar = k
     q = order_global
     if order_global == 1:
         qstar = 1
     else:
-        qstar = 0
+        qstar = q
 
     return q,k,qstar,kstar
-
 
 
 def Make1DMesh_givenpts(mesh_r_pts):
@@ -70,7 +70,7 @@ def Make1DMesh_givenpts(mesh_r_pts):
     mesh_1D = NGSMesh(mesh_1D)
     return mesh_1D
 
-def CreateAnnulusMesh(maxh=0.4,order_geom=5,domain_maxh=0.03,extra_refinement=False):
+def CreateAnnulusMesh(maxh=0.4,order_geom=1,domain_maxh=0.03,extra_refinement=False):
     
     geo = SplineGeometry()
     geo.AddCircle( (0,0), R0, leftdomain=0, rightdomain=1,bc="R0")
@@ -92,6 +92,8 @@ def CreateAnnulusMesh(maxh=0.4,order_geom=5,domain_maxh=0.03,extra_refinement=Fa
     geo.SetMaterial(5, "omega-outer")
   
     if extra_refinement:
+        #geo.SetDomainMaxH(2, maxh/2)
+        #geo.SetDomainMaxH(3, maxh/2)
         geo.SetDomainMaxH(2, maxh/2)
         geo.SetDomainMaxH(3, maxh/2)
 
@@ -106,6 +108,7 @@ def CreateAnnulusMesh2(maxh=0.4,order_geom=1,domain_maxh=0.03,extra_refinement=F
     
     geo = SplineGeometry()
     geo.AddCircle( (0,0), R0, leftdomain=0, rightdomain=1,bc="R0")
+    #geo.AddCircle( (0,0), R0, leftdomain=1, rightdomain=0,bc="R0")
 
     #geo.AddCircle( (0,0), 1.0, leftdomain=1, rightdomain=2,bc="R1")
     
@@ -202,14 +205,14 @@ def SolveModesRadial():
     lam_vec = lam_vec[:,idx_sorted]
 
     print("lam_disc = ", lam_disc)
-    input("")
+    #input("")
 
     lam_diag = np.diag(lam_disc)
     lam_vec = lam_vec @ np.diag(  1/np.sqrt(np.diag( lam_vec.conj().T @ (M_mat @ lam_vec))) )
 
     idx_modes = 1 
         
-    '''     
+    '''  
     for i in range(10):
         print("mode nr = {0} ".format(i))
         gfu.vec.data.FV().NumPy()[:] = 0.0
@@ -220,6 +223,7 @@ def SolveModesRadial():
         #plt.plot(range(len(lam_vec[:,0])), lam_vec[:,0] ) 
         plt.show()
     '''
+
     gfu.vec.data.FV().NumPy()[:] = 0.0
     gfu.vec.data.FV().NumPy()[freedofs]  = lam_vec[:,idx_modes] 
     eval_vals = np.real( np.array( [   gfu( mesh_1D(xpt) )  for xpt in  eval_r_pts  ] )  )
@@ -234,11 +238,27 @@ print(" eval_vals  = ", eval_vals )
 
 spline_order = 1 # order of Spline approx. for coefficients
 
-rs = [ eval_r_pts[0] for i in range(spline_order)] + eval_r_pts + [ eval_r_pts[-1] for i in range(spline_order)]
-c_clean = [ eval_vals[0] for i in range(spline_order)] + eval_vals  + [ eval_vals[-1] for i in range(spline_order)]
+#rs = [ eval_r_pts[0] for i in range(spline_order)] + eval_r_pts + [ eval_r_pts[-1] for i in range(spline_order)]
+#c_clean = [ eval_vals[0] for i in range(spline_order)] + eval_vals  + [ eval_vals[-1] for i in range(spline_order)]
 
 r = sqrt(x*x + y*y) 
-rho_cleanB = BSpline(spline_order,rs, c_clean )(r)
+
+tck = si.splrep(eval_r_pts,  eval_vals  , k=spline_order )  # Get knots, coefficients, and degree
+
+# Let scipy generate the BSpline 
+# see https://forum.ngsolve.org/t/b-spline-use/3007
+knots = tck[0]  # Knot vector
+vals = tck[1]   # Control points (called "vals" in NGSolve)
+order = tck[2] + 1 # Spline order corrected by 1
+
+# Pass the extracted parameters to an NGSolve BSpline
+ngspline = BSpline(order, list(knots), list(vals))
+
+rho_cleanB = BSpline(order, list(knots), list(vals) )(r)
+
+
+
+
 #cBB = BSpline(spline_order,r,c_clean)
 #rhoBB =BSpline(spline_order,r,rho_clean)
 #eval_c = [cBB(pp) for pp in rS[::-1]]
@@ -246,7 +266,12 @@ rho_cleanB = BSpline(spline_order,rs, c_clean )(r)
 #eval_rho = [rhoBB(pp) for pp in rS[::-1]]
 
 #mesh = CreateAnnulusMesh(maxh=maxh, extra_refinement=True ) 
-mesh = CreateAnnulusMesh(maxh=maxh, extra_refinement=True ) 
+mesh = CreateAnnulusMesh(maxh=maxh, order_geom = order, extra_refinement=False ) 
+#mesh = CreateAnnulusMesh2(maxh=maxh, order_geom = order , extra_refinement=False ) 
+n_refs = 2
+for i in range(n_refs):
+    mesh.Refine()
+
 
 Draw(mesh)
 Draw(rho_cleanB, mesh, 'cr')  
@@ -277,15 +302,17 @@ domain_values = {'B': c_minus,  'IF-inner': c_minus,  'IF-outer': c_pos, 'void' 
 
 c_disc = mesh.MaterialCF(domain_values)
 #help(c_disc)
-Draw(c_disc, mesh, 'cdisk')
+#Draw(c_disc, mesh, 'cdisk')
 
 domain_values_2 = { 'B': 1.0,  'IF-inner': 1.0,  'IF-outer': 1.0, 'void' : 1.0,  'omega-outer' : 1.0 }
-c_squared = mesh.MaterialCF(domain_values_2)
+
+c_squared = mesh.MaterialCF(domain_values)
+#c_squared = mesh.MaterialCF(domain_values_2)
 
 
 def CheckSpatial(c_disc,lami, wp_mode_space,mesh): 
 
-    fes = H1(mesh, order=order, dirichlet="R2")
+    fes = H1(mesh, order=order, dirichlet="R0|R2")
 
     # define trial- and test-functions
     u = fes.TrialFunction()
@@ -304,25 +331,46 @@ def CheckSpatial(c_disc,lami, wp_mode_space,mesh):
 
     # the solution field
     gfu = GridFunction(fes)
-    gfu.vec.data = a.mat.Inverse(fes.FreeDofs(), inverse="sparsecholesky") * f.vec
+    gfu.Set(wp_mode_space, BND)
+    res = f.vec - a.mat * gfu.vec
+    gfu.vec.data = a.mat.Inverse(fes.FreeDofs(), inverse="sparsecholesky") * res
     Draw(gfu,mesh,'gfu')
     Draw(sqrt( (gfu- wp_mode_space)*(gfu-wp_mode_space)), mesh, 'err')
     l2_abserr =  sqrt (Integrate ( (gfu- wp_mode_space)*(gfu-wp_mode_space), mesh, order =  2*max(order,4) +  bonus_intorder ))
     l2_norm = sqrt (Integrate (  wp_mode_space*wp_mode_space , mesh, order =  2*max(order,4) +  bonus_intorder  ))
     print ("relative L2-error:",  l2_abserr /  l2_norm   )
-
+    input("weiter")
 #CheckSpatial(c_disc,lami, wp_mode_space,mesh) 
+#input("")
 
-#l2_errors = [ 0.23088207463877092, 0.06298057321067921]
+# n_mode = 50, idx_modes = 1 
+# maxh = [0.25,0.125, 0.0625, 0.03125  ]
+# l2_errors = [1.0305410569695492, 0.8679211957652415,  0.29888068988052646, 0.08401867140778053.  ] 
+#eoc = [0.24776602126978425, 1.5379943666968958, 1.830787812517182
 
-stabs = {#"data": 1e4,
-        "data": 1e-9,
+# n_mode = 1, idx_modes = 1 
+# l2_errors = [ 0.013408593840390995,  0.0028639279199148327 , 0.0003881278513351652,  0.00012117646049045326  ]
+
+
+#stabs = {"data": 1e4,
+#         #"data": 1e-9,
+#         "dual": 1,
+#         "primal": 1e-4,
+#         "primal-jump":1e1,
+#         "primal-jump-displ-grad":1e1,
+#         "Tikh": 1e-18
+#        }
+
+
+stabs = {"data": 1e4,
+         #"data": 1e-9,
          "dual": 1,
          "primal": 1e-4,
          "primal-jump":1e1,
          "primal-jump-displ-grad":1e1,
          "Tikh": 1e-18
         }
+
 
 
 #mesh = CreateAnnulusMesh2(maxh=maxh, extra_refinement=False ) 
@@ -334,29 +382,33 @@ def SolveProblem( order_global, lami, wp_mode_space ):
     q,k,qstar,kstar = get_order(order_global)
     time_order = 2*max(q,qstar)
 
-    N = 8
+    N = 32
     tstart = 0.0
-    tend = 2.0
+    tend = 1.0
     delta_t = tend / N
     # Level-set functions specifying the geoemtry
     told = Parameter(tstart)
     t = told + delta_t * tref
 
     # define exact solution
-    qpi = pi/4 
+    #qpi = pi/4 
     t_slice = [ tstart  + n*delta_t + delta_t*tref for n in range(N)]
     #u_exact_slice = [ cos(  sqrt(lami) * t_slice[n] ) * wp_mode_space  for n in range(N)]
     #ut_exact_slice = [ sqrt(lami) * (-1) * sin(  sqrt(lami) * t_slice[n] ) * wp_mode_space for n in range(N)]
 
-    qpi = pi/4 
-    m_sol = 2
+    qpi = pi/2 
+    m_sol = 6 
     u_exact_slice = [  5*cos( sqrt(2) * m_sol * qpi * t_slice[n] ) * cos(m_sol  * qpi * x) * cos(m_sol  * qpi * y) for n in range(N)]
     ut_exact_slice = [ -5 * sqrt(2) * m_sol * qpi * sin( sqrt(2) * m_sol * qpi * t_slice[n] ) * cos(m_sol * qpi * x) * cos(m_sol  * qpi * y) for n in range(N)]
     
 
+    #st = space_time(q=q,qstar=qstar,k=k,kstar=kstar,N=N,T=tend,delta_t=delta_t,mesh=mesh,stabs=stabs,
+    #                t_slice=t_slice, u_exact_slice=u_exact_slice, ut_exact_slice=ut_exact_slice, tstart=tstart, 
+    #                told=told, well_posed = well_posed, c_squared = c_squared) 
+
     st = space_time(q=q,qstar=qstar,k=k,kstar=kstar,N=N,T=tend,delta_t=delta_t,mesh=mesh,stabs=stabs,
                     t_slice=t_slice, u_exact_slice=u_exact_slice, ut_exact_slice=ut_exact_slice, tstart=tstart, 
-                    told=told, well_posed = well_posed, c_squared = c_squared) 
+                    told=told, well_posed = well_posed, c_squared = 1.0)
 
     st.SetupSpaceTimeFEs()
     st.SetupRightHandSide()
@@ -368,13 +420,14 @@ def SolveProblem( order_global, lami, wp_mode_space ):
     st.gfuX.vec.data = GMRes(A_linop, st.f.vec, pre=PreTM, maxsteps = 10000, tol = tol,
                   callback=None, restart=None, startiteration=0, printrates=True)
 
-    l2_errors_Q = st.MeasureErrors(st.gfuX )
+    l2_errors_Q = st.MeasureErrors(st.gfuX, domain_B="IF-inner|B")
     
     diff = GridFunction(st.V_space)
     u_slab_node = GridFunction(st.V_space)
     u_gfu_node = GridFunction(st.V_space)
     #told.Set(st.tend)
-    u_slab_node.Set(fix_tref(st.u_exact_slice[st.N-1],st.tend))
+    u_slab_node.Set(fix_tref(st.u_exact_slice[st.N-1],1.0))
+    #u_slab_node.Set(fix_tref(st.u_exact_slice[st.N-1],st.tend))
     u_gfu_node.vec.FV().NumPy()[:]  =  st.gfuX.components[0].components[st.N-1].vec.FV().NumPy()[ st.q*st.V_space.ndof : (st.q+1)*st.V_space.ndof] 
     diff.vec.FV().NumPy()[:] = np.abs( st.gfuX.components[0].components[st.N-1].vec.FV().NumPy()[ st.q*st.V_space.ndof : (st.q+1)*st.V_space.ndof] 
     -  u_slab_node.vec.FV().NumPy() ) 
@@ -439,7 +492,7 @@ def SolveProblem( order_global, lami, wp_mode_space ):
 
 if True:
 
-    for order_global in [1]:
+    for order_global in [order]:
         
         errors = { "delta-t": [], 
                    "B" : [ ],
@@ -448,7 +501,7 @@ if True:
                   "Q_all" : [ ] 
                   } 
  
-        result = SolveProblem(order_global, lami, wp_mode_space )
+        result = SolveProblem(order_global, lami.real, wp_mode_space )
         
 
 
@@ -456,4 +509,19 @@ if True:
 # N = [8,16,32, 64 ] 
 # maxh = [0.25,0.125, 0.0625, 0.03125  ]
 # with well_posed = True 
-#  l2_errors [0.43226258260766476, 0.1265427463635003, 0.028338817815329518, 0.007244529603458823 ]
+#  l2_errors  = [0.43226258260766476, 0.1265427463635003, 0.028338817815329518, 0.007244529603458823 ]
+# eoc = [1.772283147288164, 2.158773331159316, 1.9678156540071743]
+
+
+# very simple mode as data, 
+# n_mode = 1, tend = 1.5, well_posed=True
+# l2_errors = [ 1.380871525094359 , 1.119055495021096 , 0.7260492375925277,  0.33252621180461883  ]
+
+
+# n_mode = 1, tend = 1.5, well_posed=True
+# l2_errors = [ 0.5887660811893812  , 0.30755923540321245 , 0.13630787493326782  ,0.05772586604780256]
+
+# n_mode = 1, tend = 1.0, well_posed=True
+# l2_errors = [0.375392218545288,  0.1830556634001312, 0.08028046432675222, 0.037034055120565734    ]
+
+

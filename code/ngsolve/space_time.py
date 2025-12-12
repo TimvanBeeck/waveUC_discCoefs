@@ -101,7 +101,10 @@ class space_time:
         self.dxtF =  self.delta_t * dxtref(self.mesh, time_order=self.time_order, skeleton=True)
         #self.dxt_omega = self.delta_t * dxtref(self.mesh, time_order=self.time_order,definedon=self.mesh.Materials("omega"))
         
-        self.dxt_omega = self.delta_t * dxtref(self.mesh, time_order=self.time_order,definedon=self.mesh.Materials("omega-outer"))
+        #self.dxt_omega = self.delta_t * dxtref(self.mesh, time_order=self.time_order,definedon=self.mesh.Materials("IF-outer|void|omega-outer"))
+        #self.dxt_omega = self.delta_t * dxtref(self.mesh, time_order=self.time_order,definedon=self.mesh.Materials("omega-outer"))
+        self.dxt_omega = self.delta_t * dxtref(self.mesh, time_order=self.time_order,definedon=self.mesh.Materials("IF-outer"))
+        #self.dxt_omega = self.delta_t * dxtref(self.mesh, time_order=self.time_order,definedon=self.mesh.Materials("omega-outer"))
         #self.dxt_omega = self.delta_t * dxtref(self.mesh, time_order=self.time_order)
         
         #self.dxt_omega = self.dxt # only for testing 
@@ -111,8 +114,9 @@ class space_time:
         #self.dst_outer  = self.dst 
         self.dst = self.delta_t * dxtref(self.mesh, time_order=self.time_order,skeleton=True, definedon=mesh.Boundaries("R0|R2"))
         #self.dst = self.delta_t * dxtref(self.mesh, time_order=self.time_order,skeleton=True, definedon=mesh.Boundaries("R2"))
-        self.dst_inner = self.delta_t * dxtref(self.mesh, time_order=self.time_order,skeleton=True, definedon=mesh.Boundaries("R0"))
-        self.dst_outer = self.delta_t * dxtref(self.mesh, time_order=self.time_order,skeleton=True, definedon=mesh.Boundaries("R2"))
+        
+        #self.dst_inner = self.delta_t * dxtref(self.mesh, time_order=self.time_order,skeleton=True, definedon=mesh.Boundaries("R0"))
+        #self.dst_outer = self.delta_t * dxtref(self.mesh, time_order=self.time_order,skeleton=True, definedon=mesh.Boundaries("R2"))
 
         self.W_slice_primal = None 
         self.W_slice_dual = None
@@ -183,17 +187,24 @@ class space_time:
         a += self.dt(w2) * z1 * self.dxt  
         a += self.c_squared * grad(w1) * grad(z1) * self.dxt
         a += (self.dt(w1) - w2) * z2 * self.dxt
-        a += (-1) * self.c_squared *  grad(w1) * self.nF * z1 * self.dst_outer
-        a +=  self.c_squared * grad(w1) * self.nF * z1 * self.dst_inner
+        a += (-1) * self.c_squared *  grad(w1) * self.nF * z1 * self.dst
+        #a +=  (-1) * self.c_squared *  grad(w1) * self.nF * z1 * self.dst_outer
+        #a +=  (-1) * self.c_squared * grad(w1) * self.nF * z1 * self.dst_inner
         a += (40/self.h) * w1 * z1 * self.dst
+        #a += (40/self.h) * w1 * z1 * self.dst_inner
+        #a += (40/self.h) * w1 * z1 * self.dst_outer
         
 
         # (u_1,w_1)_omega
         a += self.stabs["data"] * u1 * w1 * self.dxt_omega 
 
         # S(U_h,W_h) 
-        a += self.stabs["primal"] * self.h * InnerProduct( ( self.c_squared * grad(u1) -  self.c_squared.Other() * grad(u1).Other()) * self.nF ,
-             ( self.c_squared * grad(w1) - self.c_squared.Other() * grad(w1).Other()) * self.nF ) * self.dxtF
+        #a += self.stabs["primal"] * self.h * InnerProduct( ( self.c_squared * grad(u1) -  self.c_squared.Other() * grad(u1).Other()) * self.nF ,
+        #     ( self.c_squared * grad(w1) - self.c_squared.Other() * grad(w1).Other()) * self.nF ) * self.dxtF
+
+        a += self.stabs["primal"] * self.h * InnerProduct( ( self.c_squared * grad(u1) - grad(u1).Other()) * self.nF ,
+             ( self.c_squared * grad(w1) -  grad(w1).Other()) * self.nF ) * self.dxtF
+
         a += self.stabs["primal"] * self.h**2 * InnerProduct(  self.dt(u2) -self.c_squared * LaplacianProxy(u1,self.mesh.dim),
               self.dt(w2) - self.c_squared * LaplacianProxy(w1,self.mesh.dim) ) * self.dxt
         a += self.stabs["primal"] * InnerProduct( u2 - self.dt(u1) , w2 - self.dt(w1) ) * self.dxt
@@ -205,9 +216,13 @@ class space_time:
         a += self.dt(u2) * y1 * self.dxt  
         a += self.c_squared * grad(u1) * grad(y1) * self.dxt
         a += (self.dt(u1) - u2) * y2 * self.dxt
-        a += (-1) * self.c_squared * grad(u1) * self.nF * y1 * self.dst_outer
-        a +=  self.c_squared *  grad(u1) * self.nF * y1 * self.dst_inner 
+        a += (-1) * self.c_squared * grad(u1) * self.nF * y1 * self.dst
+        #a += (-1) * self.c_squared * grad(u1) * self.nF * y1 * self.dst_outer
+        #a += (-1) * self.c_squared *  grad(u1) * self.nF * y1 * self.dst_inner 
         a += (40/self.h) * u1 * y1 * self.dst
+        #a += (40/self.h) * u1 * y1 * self.dst_inner
+        #a += (40/self.h) * u1 * y1 * self.dst_outer
+
 
 
         # S*(Y_h,Z_h)
@@ -216,6 +231,8 @@ class space_time:
         a += self.stabs["dual"] *  (-1)* y2 * z2 * self.dxt 
         # boundary term
         a += self.stabs["dual"] *  (-1) * (40/self.h) * y1 * z1 * self.dst
+        #a += self.stabs["dual"] *  (-1) * (40/self.h) * y1 * z1 * self.dst_inner
+        #a += self.stabs["dual"] *  (-1) * (40/self.h) * y1 * z1 * self.dst_outer
         
         #a += self.stabs["dual"] *  (-1)* y1 * z1 * self.delta_t * dxtref(self.mesh, time_order=self.time_order, definedon=self.mesh.Boundaries("bc_Omega"))
         #a += self.stabs["dual"] *  (-1)* y1 * z1 * self.delta_t * dxtref(self.mesh, time_order=self.time_order,element_vb=BND)
@@ -474,16 +491,24 @@ class space_time:
         return sqrt( sum( l2_error_B_slab)  )
     '''
 
-    def MeasureErrors(self,gfuh): 
+    def MeasureErrors(self,gfuh,domain_B=None): 
         dB = self.dxt_ho
+
+        if domain_B: 
+            print("Computing error on ", domain_B)
+            #dB  = self.delta_t * dxtref(self.mesh, time_order=self.time_order + self.bonus_intorder_error,order= 2*self.k + self.bonus_intorder_error, 
+            #                           definedon=self.mesh.Materials(domain_B))
+            dB  = self.delta_t * dxtref(self.mesh, time_order=self.time_order + self.bonus_intorder_error,order= 2*self.k + self.bonus_intorder_error)
+
         l2_errors = [ ]
+        l2_norms = [ ] 
         tmp = self.tstart
         self.told.Set(self.tstart)
         n = 0 
         while self.tend - self.told.Get() > self.delta_t / 2:
             print("n = ", n)
             l2_errors.append(Integrate( (self.u_exact_slice[n]  - gfuh.components[0].components[n])**2 * dB, self.mesh))
-
+            l2_norms.append( Integrate( (self.u_exact_slice[n])**2 * dB, self.mesh) )
             #if n ==  0: 
             #    Draw(  sqrt( (self.u_exact_slice[n]  - gfuh.components[0].components[n])**2 ), self.mesh, 'err')
             tmp +=  self.delta_t
@@ -491,7 +516,7 @@ class space_time:
             self.told.Set(self.told.Get() + self.delta_t)
             n += 1 
         
-        return sqrt( sum( l2_errors  )  )
+        return sqrt( sum( l2_errors  )  ) / sqrt( sum(  l2_norms ) )
 
 
      
