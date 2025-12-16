@@ -21,25 +21,32 @@ from space_time import space_time, SpaceTimeMat
 
 
 tol = 1e-7 #GMRes
+
 R0 = 0.25
+#R0 = 0.6
+
 R1 = 1.0 
+#R2 = 1.75
 R2 = sqrt(2)  
 #R1_neg = 0.8
 R1_neg = 0.8
 R1_pos = 1.1*R1 
 Rmid = R1 + 0.5*(R2-R1) 
-#n_mode = 50
-n_mode = 1
-order_ODE = 1
-#order_ODE = 4
+print("Rmid = ", Rmid)
+n_mode = 10
+#n_mode = 20 # see later if that can be resolved
+#order_ODE = 1
+order_ODE = 4
 
 c_minus = 1 
-c_pos = 2.5 
+#c_pos = 2.5 
+c_pos = 20.0 
 maxh =  0.25
+#maxh =  0.4
 print("maxh = ", maxh) 
 bonus_intorder = 8
 order = 2 
-well_posed = True 
+well_posed = False 
 
 def get_order(order_global):
     
@@ -198,13 +205,13 @@ def SolveModesRadial():
 
     lam_disc,lam_vec =  scipy.linalg.eig(K_mat, b=M_mat, left=False, right=True, overwrite_a=False, overwrite_b=False, check_finite=True)
 
-
     # sorting eigenpairs
     idx_sorted = np.argsort(lam_disc)
     lam_disc = lam_disc[idx_sorted]
     lam_vec = lam_vec[:,idx_sorted]
 
     print("lam_disc = ", lam_disc)
+    print("sqrt(lam_disc) = ", np.sqrt(lam_disc.real)) 
     #input("")
 
     lam_diag = np.diag(lam_disc)
@@ -212,7 +219,7 @@ def SolveModesRadial():
 
     idx_modes = 1 
         
-    '''  
+    ''' 
     for i in range(10):
         print("mode nr = {0} ".format(i))
         gfu.vec.data.FV().NumPy()[:] = 0.0
@@ -221,6 +228,13 @@ def SolveModesRadial():
 
         plt.plot(eval_r_pts  , eval_pts) 
         #plt.plot(range(len(lam_vec[:,0])), lam_vec[:,0] ) 
+        plt.show()
+         
+        ax = plt.gca()
+        ymin = 1e-4
+        ymax = 1e3
+        ax.set_ylim([ymin, ymax])
+        plt.semilogy(eval_r_pts  , np.abs( eval_pts) ) 
         plt.show()
     '''
 
@@ -266,9 +280,9 @@ rho_cleanB = BSpline(order, list(knots), list(vals) )(r)
 #eval_rho = [rhoBB(pp) for pp in rS[::-1]]
 
 #mesh = CreateAnnulusMesh(maxh=maxh, extra_refinement=True ) 
-mesh = CreateAnnulusMesh(maxh=maxh, order_geom = order, extra_refinement=False ) 
+mesh = CreateAnnulusMesh(maxh=maxh, order_geom = order, extra_refinement=True) 
 #mesh = CreateAnnulusMesh2(maxh=maxh, order_geom = order , extra_refinement=False ) 
-n_refs = 2
+n_refs = 1
 for i in range(n_refs):
     mesh.Refine()
 
@@ -381,8 +395,9 @@ def SolveProblem( order_global, lami, wp_mode_space ):
 
     q,k,qstar,kstar = get_order(order_global)
     time_order = 2*max(q,qstar)
-
-    N = 32
+    print("lami = ", lami)
+    #N = 8
+    N = 16
     tstart = 0.0
     tend = 1.0
     delta_t = tend / N
@@ -393,22 +408,22 @@ def SolveProblem( order_global, lami, wp_mode_space ):
     # define exact solution
     #qpi = pi/4 
     t_slice = [ tstart  + n*delta_t + delta_t*tref for n in range(N)]
-    #u_exact_slice = [ cos(  sqrt(lami) * t_slice[n] ) * wp_mode_space  for n in range(N)]
-    #ut_exact_slice = [ sqrt(lami) * (-1) * sin(  sqrt(lami) * t_slice[n] ) * wp_mode_space for n in range(N)]
+    u_exact_slice = [ cos(  sqrt(lami) * t_slice[n] ) * wp_mode_space  for n in range(N)]
+    ut_exact_slice = [ sqrt(lami) * (-1) * sin(  sqrt(lami) * t_slice[n] ) * wp_mode_space for n in range(N)]
 
     qpi = pi/2 
     m_sol = 6 
-    u_exact_slice = [  5*cos( sqrt(2) * m_sol * qpi * t_slice[n] ) * cos(m_sol  * qpi * x) * cos(m_sol  * qpi * y) for n in range(N)]
-    ut_exact_slice = [ -5 * sqrt(2) * m_sol * qpi * sin( sqrt(2) * m_sol * qpi * t_slice[n] ) * cos(m_sol * qpi * x) * cos(m_sol  * qpi * y) for n in range(N)]
+    #u_exact_slice = [  5*cos( sqrt(2) * m_sol * qpi * t_slice[n] ) * cos(m_sol  * qpi * x) * cos(m_sol  * qpi * y) for n in range(N)]
+    #ut_exact_slice = [ -5 * sqrt(2) * m_sol * qpi * sin( sqrt(2) * m_sol * qpi * t_slice[n] ) * cos(m_sol * qpi * x) * cos(m_sol  * qpi * y) for n in range(N)]
     
-
-    #st = space_time(q=q,qstar=qstar,k=k,kstar=kstar,N=N,T=tend,delta_t=delta_t,mesh=mesh,stabs=stabs,
-    #                t_slice=t_slice, u_exact_slice=u_exact_slice, ut_exact_slice=ut_exact_slice, tstart=tstart, 
-    #                told=told, well_posed = well_posed, c_squared = c_squared) 
 
     st = space_time(q=q,qstar=qstar,k=k,kstar=kstar,N=N,T=tend,delta_t=delta_t,mesh=mesh,stabs=stabs,
                     t_slice=t_slice, u_exact_slice=u_exact_slice, ut_exact_slice=ut_exact_slice, tstart=tstart, 
-                    told=told, well_posed = well_posed, c_squared = 1.0)
+                    told=told, well_posed = well_posed, c_squared = c_squared) 
+
+    #st = space_time(q=q,qstar=qstar,k=k,kstar=kstar,N=N,T=tend,delta_t=delta_t,mesh=mesh,stabs=stabs,
+    #                t_slice=t_slice, u_exact_slice=u_exact_slice, ut_exact_slice=ut_exact_slice, tstart=tstart, 
+    #                told=told, well_posed = well_posed, c_squared = 1.0)
 
     st.SetupSpaceTimeFEs()
     st.SetupRightHandSide()
