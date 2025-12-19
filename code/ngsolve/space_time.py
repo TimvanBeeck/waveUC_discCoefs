@@ -103,7 +103,8 @@ class space_time:
         
         #self.dxt_omega = self.delta_t * dxtref(self.mesh, time_order=self.time_order,definedon=self.mesh.Materials("IF-outer|void|omega-outer"))
         #self.dxt_omega = self.delta_t * dxtref(self.mesh, time_order=self.time_order,definedon=self.mesh.Materials("omega-outer"))
-        self.dxt_omega = self.delta_t * dxtref(self.mesh, time_order=self.time_order,definedon=self.mesh.Materials("IF-outer"))
+        #self.dxt_omega = self.delta_t * dxtref(self.mesh, time_order=self.time_order,definedon=self.mesh.Materials("IF-outer"))
+        self.dxt_omega = self.delta_t * dxtref(self.mesh, time_order=self.time_order,definedon=self.mesh.Materials("IF-inner"))
         #self.dxt_omega = self.delta_t * dxtref(self.mesh, time_order=self.time_order,definedon=self.mesh.Materials("omega-outer"))
         #self.dxt_omega = self.delta_t * dxtref(self.mesh, time_order=self.time_order)
         

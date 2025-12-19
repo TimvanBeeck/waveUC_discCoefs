@@ -22,12 +22,13 @@ from space_time import space_time, SpaceTimeMat
 
 tol = 1e-7 #GMRes
 
-R0 = 0.25
-#R0 = 0.6
+#R0 = 0.25
+R0 = 0.6
 
 R1 = 1.0 
 #R2 = 1.75
-R2 = sqrt(2)  
+#R2 = sqrt(2)  
+R2 = 1.5 
 #R1_neg = 0.8
 R1_neg = 0.8
 R1_pos = 1.1*R1 
@@ -46,7 +47,7 @@ maxh =  0.25
 print("maxh = ", maxh) 
 bonus_intorder = 8
 order = 2 
-well_posed = False 
+well_posed = False
 
 def get_order(order_global):
     
@@ -132,6 +133,32 @@ def CreateAnnulusMesh2(maxh=0.4,order_geom=1,domain_maxh=0.03,extra_refinement=F
     return mesh
 
 
+def CreateAnnulusMesh3(maxh=0.4,order_geom=1,domain_maxh=0.03,extra_refinement=False):
+    
+    Rb = 0.85
+    Rsep = 1.3
+
+    geo = SplineGeometry()
+    geo.AddCircle( (0,0), R0, leftdomain=0, rightdomain=1,bc="R0")
+    geo.AddCircle( (0,0), Rb, leftdomain=1, rightdomain=2,bc="Rb")
+    geo.AddCircle( (0,0), R1, leftdomain=2, rightdomain=3,bc="R1")
+    geo.AddCircle( (0,0), Rsep, leftdomain=3, rightdomain=4,bc="Rsep")
+    geo.AddCircle( (0,0), R2, leftdomain=4, rightdomain=0,bc="R2")
+
+    geo.SetMaterial(1, "B")
+    geo.SetMaterial(2, "IF-inner")
+    geo.SetMaterial(3, "void")
+    geo.SetMaterial(4, "omega-outer")
+  
+    if extra_refinement:
+        #geo.SetDomainMaxH(2, maxh/2)
+        #geo.SetDomainMaxH(3, maxh/2)
+        geo.SetDomainMaxH(1, maxh/2)
+
+   
+    mesh = NGSMesh(geo.GenerateMesh (maxh=maxh,quad_dominated=False))
+    mesh.Curve(order_geom)
+    return mesh
 
 
 
@@ -219,7 +246,7 @@ def SolveModesRadial():
 
     idx_modes = 1 
         
-    ''' 
+    '''       
     for i in range(10):
         print("mode nr = {0} ".format(i))
         gfu.vec.data.FV().NumPy()[:] = 0.0
@@ -280,7 +307,8 @@ rho_cleanB = BSpline(order, list(knots), list(vals) )(r)
 #eval_rho = [rhoBB(pp) for pp in rS[::-1]]
 
 #mesh = CreateAnnulusMesh(maxh=maxh, extra_refinement=True ) 
-mesh = CreateAnnulusMesh(maxh=maxh, order_geom = order, extra_refinement=True) 
+#mesh = CreateAnnulusMesh(maxh=maxh, order_geom = order, extra_refinement=False) 
+mesh = CreateAnnulusMesh3(maxh=maxh, order_geom = order, extra_refinement=False) 
 #mesh = CreateAnnulusMesh2(maxh=maxh, order_geom = order , extra_refinement=False ) 
 n_refs = 1
 for i in range(n_refs):
@@ -307,10 +335,12 @@ angular_mode = cos( n_mode *  theta)
 Draw(angular_mode, mesh, 'angular')
 wp_mode_space = rho_cleanB *  angular_mode 
 Draw(wp_mode_space , mesh, 'wp-mode')
+input("")
 
 
-
-domain_values = {'B': c_minus,  'IF-inner': c_minus,  'IF-outer': c_pos, 'void' : c_pos,  'omega-outer' : c_pos  }
+#domain_values = {'B': c_minus,  'IF-inner': c_minus,  'IF-outer': c_pos, 'void' : c_pos,  'omega-outer' : c_pos  }
+#domain_values = {'B': c_minus,  'IF-inner': c_minus,  'IF-outer': c_pos, 'void' : c_pos,  'omega-outer' : c_pos  }
+domain_values = {'B': c_minus,  'IF-inner': c_minus,   'void' : c_pos,  'omega-outer' : c_pos  }
 #domain_values = {'inner': 3.7,  'outer': 1}
 
 
@@ -396,10 +426,11 @@ def SolveProblem( order_global, lami, wp_mode_space ):
     q,k,qstar,kstar = get_order(order_global)
     time_order = 2*max(q,qstar)
     print("lami = ", lami)
-    #N = 8
-    N = 16
+    N = 20
+    #N = 32
     tstart = 0.0
-    tend = 1.0
+    #tend = 1.0
+    tend = 1.5
     delta_t = tend / N
     # Level-set functions specifying the geoemtry
     told = Parameter(tstart)
