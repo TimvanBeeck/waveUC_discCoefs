@@ -34,7 +34,9 @@ R1_neg = 0.8
 R1_pos = 1.1*R1 
 Rmid = R1 + 0.5*(R2-R1) 
 print("Rmid = ", Rmid)
-n_mode = 10
+n_mode = 10 # ref
+
+#n_mode = 1
 #n_mode = 20 # see later if that can be resolved
 #order_ODE = 1
 order_ODE = 4
@@ -47,7 +49,7 @@ maxh =  0.25
 print("maxh = ", maxh) 
 bonus_intorder = 8
 order = 2 
-well_posed = False
+well_posed = True
 
 def get_order(order_global):
     
@@ -310,7 +312,7 @@ rho_cleanB = BSpline(order, list(knots), list(vals) )(r)
 #mesh = CreateAnnulusMesh(maxh=maxh, order_geom = order, extra_refinement=False) 
 mesh = CreateAnnulusMesh3(maxh=maxh, order_geom = order, extra_refinement=False) 
 #mesh = CreateAnnulusMesh2(maxh=maxh, order_geom = order , extra_refinement=False ) 
-n_refs = 1
+n_refs = 2
 for i in range(n_refs):
     mesh.Refine()
 
@@ -327,7 +329,7 @@ rho_B_vals = [  rho_cleanB( mesh(xr,0.0) )  for xr in  eval_r_pts ]
 diff = [ abs( eval_vals[i] -  rho_B_vals[i] )  for i in range(len(rho_B_vals))  ] 
 #plt.loglog( eval_r_pts[1:-2], diff[1:-2])
 #plt.show()
-print("diff = ", diff)
+#print("diff = ", diff)
 
 theta = atan2(y,x)
 #angular_mode = exp(1j*theta) 
@@ -335,7 +337,7 @@ angular_mode = cos( n_mode *  theta)
 Draw(angular_mode, mesh, 'angular')
 wp_mode_space = rho_cleanB *  angular_mode 
 Draw(wp_mode_space , mesh, 'wp-mode')
-input("")
+#input("")
 
 
 #domain_values = {'B': c_minus,  'IF-inner': c_minus,  'IF-outer': c_pos, 'void' : c_pos,  'omega-outer' : c_pos  }
@@ -406,8 +408,8 @@ def CheckSpatial(c_disc,lami, wp_mode_space,mesh):
 #        }
 
 
-stabs = {"data": 1e4,
-         #"data": 1e-9,
+stabs = {#"data": 1e4,
+         "data": 1e-9,
          "dual": 1,
          "primal": 1e-4,
          "primal-jump":1e1,
@@ -426,11 +428,11 @@ def SolveProblem( order_global, lami, wp_mode_space ):
     q,k,qstar,kstar = get_order(order_global)
     time_order = 2*max(q,qstar)
     print("lami = ", lami)
-    N = 20
+    N = 48
     #N = 32
     tstart = 0.0
-    #tend = 1.0
-    tend = 1.5
+    tend = 1.0
+    #tend = 1.5
     delta_t = tend / N
     # Level-set functions specifying the geoemtry
     told = Parameter(tstart)
