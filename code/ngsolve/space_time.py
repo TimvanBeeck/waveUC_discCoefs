@@ -69,7 +69,7 @@ class SpaceTimeMat(BaseMatrix):
 
 class space_time:
     def __init__(self,q,qstar,k,kstar,N,T,delta_t,mesh,stabs,t_slice,u_exact_slice,ut_exact_slice,tstart=None,told=None,perturbations=None, bonus_intorder_error = 5, shift=None, 
-            well_posed=False, c_squared =  1.0 ):
+            well_posed=False, c_squared =  1.0, omega_str="omega-outer" ):
         self.q = q 
         self.qstar = qstar
         self.k = k 
@@ -104,8 +104,9 @@ class space_time:
         #self.dxt_omega = self.delta_t * dxtref(self.mesh, time_order=self.time_order,definedon=self.mesh.Materials("IF-outer|void|omega-outer"))
         #self.dxt_omega = self.delta_t * dxtref(self.mesh, time_order=self.time_order,definedon=self.mesh.Materials("omega-outer"))
         #self.dxt_omega = self.delta_t * dxtref(self.mesh, time_order=self.time_order,definedon=self.mesh.Materials("IF-outer"))
-        self.dxt_omega = self.delta_t * dxtref(self.mesh, time_order=self.time_order,definedon=self.mesh.Materials("IF-inner"))
+        #self.dxt_omega = self.delta_t * dxtref(self.mesh, time_order=self.time_order,definedon=self.mesh.Materials("IF-inner"))
         #self.dxt_omega = self.delta_t * dxtref(self.mesh, time_order=self.time_order,definedon=self.mesh.Materials("omega-outer"))
+        self.dxt_omega = self.delta_t * dxtref(self.mesh, time_order=self.time_order,definedon=self.mesh.Materials(omega_str))
         #self.dxt_omega = self.delta_t * dxtref(self.mesh, time_order=self.time_order)
         
         #self.dxt_omega = self.dxt # only for testing 

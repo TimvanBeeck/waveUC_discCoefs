@@ -19,6 +19,11 @@ sys.path.append("/home/janosch/projects/waveUC_discCoefs/code/ngsolve")
 from space_time import space_time, SpaceTimeMat
 
 
+if ( len(sys.argv) > 1 and int(sys.argv[1]) in [1,10]  ):
+    n_mode = int(sys.argv[1])
+else:
+    raise ValueError('Ivalid input')
+#n_mode = 1
 
 tol = 1e-7 #GMRes
 
@@ -33,8 +38,12 @@ R2 = 1.5
 R1_neg = 0.8
 R1_pos = 1.1*R1 
 Rmid = R1 + 0.5*(R2-R1) 
+
+Rb = 0.85
+Rsep = 1.3
+
 print("Rmid = ", Rmid)
-n_mode = 10 # ref
+#n_mode = 10 # ref
 
 #n_mode = 1
 #n_mode = 20 # see later if that can be resolved
@@ -44,12 +53,21 @@ order_ODE = 4
 c_minus = 1 
 #c_pos = 2.5 
 c_pos = 20.0 
+#c_pos = 1.0
 maxh =  0.25
 #maxh =  0.4
 print("maxh = ", maxh) 
 bonus_intorder = 8
+#bonus_intorder = 16
+
 order = 2 
+order_geom = order
 well_posed = True
+problem_type = "ill-posed"
+if well_posed:
+    problem_type = "well-posed"
+check_spatial_conv = False 
+
 
 def get_order(order_global):
     
@@ -80,6 +98,49 @@ def Make1DMesh_givenpts(mesh_r_pts):
     mesh_1D = NGSMesh(mesh_1D)
     return mesh_1D
 
+def MakeSepMesh(ra,rx,rb,npts):
+
+    left_pts = np.linspace(start=ra, stop=rx, num=npts, endpoint=False).tolist() 
+    right_pts = np.linspace(start=rx, stop=rb, num=npts, endpoint=True).tolist() 
+    
+    all_pts = left_pts + right_pts 
+
+    #print("left_pts = ", left_pts)
+    #print(" ")
+    #print("right_pts = ", right_pts) 
+     
+    mesh_1D = netmesh(dim=1)
+
+    pids = []
+    for r_coord in all_pts:
+        pids.append (mesh_1D.Add (MeshPoint(Pnt(r_coord, 0, 0))))
+    n_mesh = len(pids)-1
+    for i in range(n_mesh):
+        idx = 1 
+        if i >= len(left_pts):
+            idx = 2 
+            #print("pt = ",  all_pts[i])
+        mesh_1D.Add(Element1D([pids[i],pids[i+1]],index=idx))
+    mesh_1D.Add (Element0D( pids[0], index=1))
+    mesh_1D.Add (Element0D( pids[-1], index=1))
+    
+    #pids = []
+    #for r_coord in right_pts:
+    #    pids.append (mesh_1D.Add (MeshPoint(Pnt(r_coord, 0, 0))))
+    #n_mesh = len(right_pts)-1
+    #for i in range(n_mesh):
+    #    mesh_1D.Add(Element1D([pids[i],pids[i+1]],index=1))
+
+    mesh_1D.SetMaterial(1, "leftdom")
+    mesh_1D.SetMaterial(2, "rightdom")
+
+    mesh_1D.SetBCName(0,"left")
+    mesh_1D.SetBCName(1,"right")
+    mesh_1D = NGSMesh(mesh_1D)
+    return mesh_1D
+
+
+
 def CreateAnnulusMesh(maxh=0.4,order_geom=1,domain_maxh=0.03,extra_refinement=False):
     
     geo = SplineGeometry()
@@ -109,7 +170,7 @@ def CreateAnnulusMesh(maxh=0.4,order_geom=1,domain_maxh=0.03,extra_refinement=Fa
 
    
     mesh = NGSMesh(geo.GenerateMesh (maxh=maxh,quad_dominated=False))
-    mesh.Curve(order_geom)
+    #mesh.Curve(order_geom)
     return mesh
 
 
@@ -137,8 +198,8 @@ def CreateAnnulusMesh2(maxh=0.4,order_geom=1,domain_maxh=0.03,extra_refinement=F
 
 def CreateAnnulusMesh3(maxh=0.4,order_geom=1,domain_maxh=0.03,extra_refinement=False):
     
-    Rb = 0.85
-    Rsep = 1.3
+    #Rb = 0.85
+    #Rsep = 1.3
 
     geo = SplineGeometry()
     geo.AddCircle( (0,0), R0, leftdomain=0, rightdomain=1,bc="R0")
@@ -153,13 +214,14 @@ def CreateAnnulusMesh3(maxh=0.4,order_geom=1,domain_maxh=0.03,extra_refinement=F
     geo.SetMaterial(4, "omega-outer")
   
     if extra_refinement:
-        #geo.SetDomainMaxH(2, maxh/2)
-        #geo.SetDomainMaxH(3, maxh/2)
-        geo.SetDomainMaxH(1, maxh/2)
+        geo.SetDomainMaxH(2, maxh/2)
+        geo.SetDomainMaxH(3, maxh/2)
+        #geo.SetDomainMaxH(1, maxh/2)
 
    
     mesh = NGSMesh(geo.GenerateMesh (maxh=maxh,quad_dominated=False))
     mesh.Curve(order_geom)
+    #mesh.Curve(1)
     return mesh
 
 
@@ -170,34 +232,58 @@ def P_DoFs(M,test,basis):
 
 def SolveModesRadial():
     npts = 100
+    #npts = 140
     npts_red = int(npts/10)
     #mesh_r_pts = np.linspace(start=R0, stop=R1, num=npts, endpoint=False).tolist() 
     #mesh_r_pts += np.linspace(start=R1, stop=R2, num=npts, endpoint=True).tolist() 
 
-    mesh_r_pts = np.linspace(start=R0, stop=R1_neg, num=npts, endpoint=False).tolist() 
-    mesh_r_pts += np.linspace(start=R1_neg, stop=R1, num=npts, endpoint=False).tolist() 
-    mesh_r_pts += np.linspace(start=R1, stop=R1_pos, num=npts, endpoint=False).tolist() 
-    mesh_r_pts += np.linspace(start=R1_pos, stop=R2, num=npts_red, endpoint=True).tolist() 
+    #mesh_r_pts = np.linspace(start=R0, stop=R1_neg, num=npts, endpoint=False).tolist() 
+    #mesh_r_pts += np.linspace(start=R1_neg, stop=R1, num=npts, endpoint=False).tolist() 
+    #mesh_r_pts += np.linspace(start=R1, stop=R1_pos, num=npts, endpoint=False).tolist() 
+    #mesh_r_pts += np.linspace(start=R1_pos, stop=R2, num=npts_red, endpoint=True).tolist() 
+
+    #Rb = 0.85
+    #Rsep = 1.3
+
+    #mesh_r_pts = np.linspace(start=R0, stop=Rb, num=npts, endpoint=False).tolist() 
+    mesh_r_pts = np.linspace(start=R0, stop=Rb, num=npts_red, endpoint=False).tolist() 
+    mesh_r_pts += np.linspace(start=Rb, stop=R1, num=npts, endpoint=False).tolist() 
+    mesh_r_pts += np.linspace(start=R1, stop=Rsep, num=npts, endpoint=False).tolist() 
+    mesh_r_pts += np.linspace(start=Rsep, stop=R2, num=npts_red, endpoint=True).tolist() 
+
 
     #mesh_r_pts = np.linspace(start=0.0, stop=pi, num=npts, endpoint=True).tolist() 
-    print("mesh_r_pts  = ", mesh_r_pts) 
+    #print("mesh_r_pts  = ", mesh_r_pts) 
 
-    npts_eval = 1000
+    #npts_eval = 50
+    npts_eval = 5000
     npts_eval_red = int(npts_eval/50)
     npts_eval_less = int(npts_eval/10)
  
     #eval_r_pts = np.linspace(start=R0, stop=R1, num=npts_eval, endpoint=False).tolist() 
     #eval_r_pts += np.linspace(start=R1, stop=R2, num=npts_eval, endpoint=True).tolist() 
 
-    eval_r_pts = np.linspace(start=R0, stop=R1_neg,  num= npts_eval_less , endpoint=False).tolist() 
-    eval_r_pts += np.linspace(start=R1_neg, stop=R1, num= npts_eval , endpoint=False).tolist() 
-    eval_r_pts += np.linspace(start=R1, stop=R1_pos, num= npts_eval , endpoint=False).tolist() 
-    eval_r_pts += np.linspace(start=R1_pos, stop=R2, num= npts_eval_red , endpoint=True).tolist() 
+    #eval_r_pts = np.linspace(start=R0, stop=R1_neg,  num= npts_eval_less , endpoint=False).tolist() 
+    #eval_r_pts += np.linspace(start=R1_neg, stop=R1, num= npts_eval , endpoint=False).tolist() 
+    #eval_r_pts += np.linspace(start=R1, stop=R1_pos, num= npts_eval , endpoint=False).tolist() 
+    #eval_r_pts += np.linspace(start=R1_pos, stop=R2, num= npts_eval_red , endpoint=True).tolist() 
 
-    mesh_1D = Make1DMesh_givenpts(mesh_r_pts)  
+    #eval_r_pts = np.linspace(start=R0, stop=Rb,  num= npts_eval_less , endpoint=False).tolist() 
+    #eval_r_pts += np.linspace(start=Rb, stop=R1, num= npts_eval , endpoint=False).tolist() 
+    #eval_r_pts += np.linspace(start=R1, stop=Rsep, num= npts_eval , endpoint=False).tolist() 
+    #eval_r_pts += np.linspace(start=Rsep, stop=R2, num= npts_eval_red , endpoint=True).tolist() 
 
+    eval_r_pts = np.linspace(start=R0, stop=R1,  num= npts_eval , endpoint=False).tolist() 
+    eval_r_pts += np.linspace(start=R1, stop=R2, num= npts_eval , endpoint=True).tolist() 
 
-    c_disc = IfPos( R1 - x, c_minus, c_pos )
+    #mesh_1D = Make1DMesh_givenpts(mesh_r_pts)  
+     
+    mesh_1D =  MakeSepMesh(R0,R1,R2,npts)
+    print("mesh_1D.GetMaterials() = ", mesh_1D.GetMaterials())
+    #c_disc = IfPos( R1 - x, c_minus, c_pos )
+    dvals = {'leftdom': c_minus, 'rightdom' : c_pos  }
+    
+    c_disc = mesh_1D.MaterialCF(dvals)
     #eval_pts = np.array( [ c_disc( mesh_1D(xpt) )  for xpt in  mesh_r_pts ] ) 
     #plt.plot(mesh_r_pts, eval_pts) 
     #plt.show() 
@@ -245,10 +331,13 @@ def SolveModesRadial():
 
     lam_diag = np.diag(lam_disc)
     lam_vec = lam_vec @ np.diag(  1/np.sqrt(np.diag( lam_vec.conj().T @ (M_mat @ lam_vec))) )
-
+    
+    
     idx_modes = 1 
-        
-    '''       
+    #if n_mode == 1:
+    #    idx_modes = 2
+           
+    '''
     for i in range(10):
         print("mode nr = {0} ".format(i))
         gfu.vec.data.FV().NumPy()[:] = 0.0
@@ -267,19 +356,21 @@ def SolveModesRadial():
         plt.show()
     '''
 
+    #print("eval_r_pts  = ", eval_r_pts) 
     gfu.vec.data.FV().NumPy()[:] = 0.0
     gfu.vec.data.FV().NumPy()[freedofs]  = lam_vec[:,idx_modes] 
     eval_vals = np.real( np.array( [   gfu( mesh_1D(xpt) )  for xpt in  eval_r_pts  ] )  )
+    
 
     return eval_r_pts, eval_vals.tolist(), lam_disc[idx_modes]  
 
 eval_r_pts, eval_vals, lami = SolveModesRadial()
 #print(" eval_r_pts  = ", eval_r_pts)
 #print(" ") 
-print(" eval_vals  = ", eval_vals )
+#print(" eval_vals  = ", eval_vals )
 
 
-spline_order = 1 # order of Spline approx. for coefficients
+spline_order = 2 # order of Spline approx. for coefficients
 
 #rs = [ eval_r_pts[0] for i in range(spline_order)] + eval_r_pts + [ eval_r_pts[-1] for i in range(spline_order)]
 #c_clean = [ eval_vals[0] for i in range(spline_order)] + eval_vals  + [ eval_vals[-1] for i in range(spline_order)]
@@ -292,12 +383,12 @@ tck = si.splrep(eval_r_pts,  eval_vals  , k=spline_order )  # Get knots, coeffic
 # see https://forum.ngsolve.org/t/b-spline-use/3007
 knots = tck[0]  # Knot vector
 vals = tck[1]   # Control points (called "vals" in NGSolve)
-order = tck[2] + 1 # Spline order corrected by 1
+sporder = tck[2] + 1 # Spline order corrected by 1
 
+print("sporder = ", sporder)
 # Pass the extracted parameters to an NGSolve BSpline
-ngspline = BSpline(order, list(knots), list(vals))
-
-rho_cleanB = BSpline(order, list(knots), list(vals) )(r)
+ngspline = BSpline(sporder, list(knots), list(vals))
+rho_cleanB = BSpline(sporder, list(knots), list(vals) )(r)
 
 
 
@@ -310,23 +401,21 @@ rho_cleanB = BSpline(order, list(knots), list(vals) )(r)
 
 #mesh = CreateAnnulusMesh(maxh=maxh, extra_refinement=True ) 
 #mesh = CreateAnnulusMesh(maxh=maxh, order_geom = order, extra_refinement=False) 
-mesh = CreateAnnulusMesh3(maxh=maxh, order_geom = order, extra_refinement=False) 
-#mesh = CreateAnnulusMesh2(maxh=maxh, order_geom = order , extra_refinement=False ) 
-n_refs = 2
-for i in range(n_refs):
-    mesh.Refine()
 
 
-Draw(mesh)
-Draw(rho_cleanB, mesh, 'cr')  
 
-rho_B_vals = [  rho_cleanB( mesh(xr,0.0) )  for xr in  eval_r_pts ] 
+
+
+#Draw(mesh)
+#Draw(rho_cleanB, mesh, 'cr')  
+
+#rho_B_vals = [  rho_cleanB( mesh(xr,0.0) )  for xr in  eval_r_pts ] 
 
 #plt.plot( eval_r_pts, eval_vals, label='exact' ) 
 #plt.plot( eval_r_pts, rho_B_vals,label='Bspline'  ) 
 #plt.show() 
 
-diff = [ abs( eval_vals[i] -  rho_B_vals[i] )  for i in range(len(rho_B_vals))  ] 
+#diff = [ abs( eval_vals[i] -  rho_B_vals[i] )  for i in range(len(rho_B_vals))  ] 
 #plt.loglog( eval_r_pts[1:-2], diff[1:-2])
 #plt.show()
 #print("diff = ", diff)
@@ -334,31 +423,28 @@ diff = [ abs( eval_vals[i] -  rho_B_vals[i] )  for i in range(len(rho_B_vals))  
 theta = atan2(y,x)
 #angular_mode = exp(1j*theta) 
 angular_mode = cos( n_mode *  theta) 
-Draw(angular_mode, mesh, 'angular')
+#Draw(angular_mode, mesh, 'angular')
 wp_mode_space = rho_cleanB *  angular_mode 
-Draw(wp_mode_space , mesh, 'wp-mode')
-#input("")
 
+#Draw(wp_mode_space , mesh, 'wp-mode')
+#input("")
 
 #domain_values = {'B': c_minus,  'IF-inner': c_minus,  'IF-outer': c_pos, 'void' : c_pos,  'omega-outer' : c_pos  }
 #domain_values = {'B': c_minus,  'IF-inner': c_minus,  'IF-outer': c_pos, 'void' : c_pos,  'omega-outer' : c_pos  }
 domain_values = {'B': c_minus,  'IF-inner': c_minus,   'void' : c_pos,  'omega-outer' : c_pos  }
 #domain_values = {'inner': 3.7,  'outer': 1}
-
-
-c_disc = mesh.MaterialCF(domain_values)
 #help(c_disc)
 #Draw(c_disc, mesh, 'cdisk')
+#domain_values_2 = { 'B': 1.0,  'IF-inner': 1.0,  'IF-outer': 1.0, 'void' : 1.0,  'omega-outer' : 1.0 }
 
-domain_values_2 = { 'B': 1.0,  'IF-inner': 1.0,  'IF-outer': 1.0, 'void' : 1.0,  'omega-outer' : 1.0 }
-
-c_squared = mesh.MaterialCF(domain_values)
 #c_squared = mesh.MaterialCF(domain_values_2)
 
 
-def CheckSpatial(c_disc,lami, wp_mode_space,mesh): 
+def CheckSpatial(mesh,lami, wp_mode_space): 
 
-    fes = H1(mesh, order=order, dirichlet="R0|R2")
+    c_disc = mesh.MaterialCF(domain_values)
+    fes = H1(mesh, order=2, dirichlet="R0|R2")
+    #fes = H1(mesh, order=1, dirichlet="R0|R2")
 
     # define trial- and test-functions
     u = fes.TrialFunction()
@@ -370,7 +456,7 @@ def CheckSpatial(c_disc,lami, wp_mode_space,mesh):
 
     # the bilinear-form
     a = BilinearForm(fes, symmetric=True)
-    a +=  c_disc * grad(u)*grad(v)*dx
+    a +=  c_disc * grad(u)*grad(v) * dx(bonus_intorder =  bonus_intorder) 
 
     a.Assemble()
     f.Assemble()
@@ -381,35 +467,34 @@ def CheckSpatial(c_disc,lami, wp_mode_space,mesh):
     res = f.vec - a.mat * gfu.vec
     gfu.vec.data = a.mat.Inverse(fes.FreeDofs(), inverse="sparsecholesky") * res
     Draw(gfu,mesh,'gfu')
-    Draw(sqrt( (gfu- wp_mode_space)*(gfu-wp_mode_space)), mesh, 'err')
-    l2_abserr =  sqrt (Integrate ( (gfu- wp_mode_space)*(gfu-wp_mode_space), mesh, order =  2*max(order,4) +  bonus_intorder ))
+    Draw(wp_mode_space,mesh,'mode')
+    Draw(sqrt( (gfu- wp_mode_space)*(gfu-wp_mode_space)), mesh, 'err') 
+    l2_abserr =  sqrt (Integrate ( (gfu- wp_mode_space)*(gfu-wp_mode_space), mesh,  order =  2*max(order,4) +  bonus_intorder ))
     l2_norm = sqrt (Integrate (  wp_mode_space*wp_mode_space , mesh, order =  2*max(order,4) +  bonus_intorder  ))
+    
+    #l2_abserr =  sqrt (Integrate ( (gfu- wp_mode_space)*(gfu-wp_mode_space), mesh, definedon=mesh.Materials("B") ,   order =  2*max(order,4) +  bonus_intorder ))
+    #l2_norm = sqrt (Integrate (  wp_mode_space*wp_mode_space , mesh, definedon=mesh.Materials("B"),  order =  2*max(order,4) +  bonus_intorder  ))
+
+
     print ("relative L2-error:",  l2_abserr /  l2_norm   )
+    return l2_abserr /  l2_norm 
     input("weiter")
-#CheckSpatial(c_disc,lami, wp_mode_space,mesh) 
-#input("")
-
-# n_mode = 50, idx_modes = 1 
-# maxh = [0.25,0.125, 0.0625, 0.03125  ]
-# l2_errors = [1.0305410569695492, 0.8679211957652415,  0.29888068988052646, 0.08401867140778053.  ] 
-#eoc = [0.24776602126978425, 1.5379943666968958, 1.830787812517182
-
-# n_mode = 1, idx_modes = 1 
-# l2_errors = [ 0.013408593840390995,  0.0028639279199148327 , 0.0003881278513351652,  0.00012117646049045326  ]
 
 
-#stabs = {"data": 1e4,
-#         #"data": 1e-9,
-#         "dual": 1,
-#         "primal": 1e-4,
-#         "primal-jump":1e1,
-#         "primal-jump-displ-grad":1e1,
-#         "Tikh": 1e-18
-#        }
 
 
-stabs = {#"data": 1e4,
-         "data": 1e-9,
+
+def SolveProblem(mesh, N,  order_global, lami, wp_mode_space, omega_str, export_vtk=False,  vtk_str = "" ):
+    print("N = ", N)
+
+    c_squared = mesh.MaterialCF(domain_values)
+   
+    data_stab = 1e4
+    #if well_posed:
+    #    data_stab = 1e-9 
+
+
+    stabs = {"data": data_stab,
          "dual": 1,
          "primal": 1e-4,
          "primal-jump":1e1,
@@ -417,18 +502,11 @@ stabs = {#"data": 1e4,
          "Tikh": 1e-18
         }
 
-
-
-#mesh = CreateAnnulusMesh2(maxh=maxh, extra_refinement=False ) 
-print("mesh.GetBoundaries()  = " , mesh.GetBoundaries() )
-
-
-def SolveProblem( order_global, lami, wp_mode_space ):
-
     q,k,qstar,kstar = get_order(order_global)
     time_order = 2*max(q,qstar)
     print("lami = ", lami)
-    N = 48
+
+    #N = 48
     #N = 32
     tstart = 0.0
     tend = 1.0
@@ -443,6 +521,9 @@ def SolveProblem( order_global, lami, wp_mode_space ):
     t_slice = [ tstart  + n*delta_t + delta_t*tref for n in range(N)]
     u_exact_slice = [ cos(  sqrt(lami) * t_slice[n] ) * wp_mode_space  for n in range(N)]
     ut_exact_slice = [ sqrt(lami) * (-1) * sin(  sqrt(lami) * t_slice[n] ) * wp_mode_space for n in range(N)]
+    
+    u_exact_final_time = cos(  sqrt(lami) * tend ) * wp_mode_space 
+
 
     qpi = pi/2 
     m_sol = 6 
@@ -452,7 +533,7 @@ def SolveProblem( order_global, lami, wp_mode_space ):
 
     st = space_time(q=q,qstar=qstar,k=k,kstar=kstar,N=N,T=tend,delta_t=delta_t,mesh=mesh,stabs=stabs,
                     t_slice=t_slice, u_exact_slice=u_exact_slice, ut_exact_slice=ut_exact_slice, tstart=tstart, 
-                    told=told, well_posed = well_posed, c_squared = c_squared) 
+                    told=told, well_posed = well_posed, c_squared = c_squared, omega_str=omega_str) 
 
     #st = space_time(q=q,qstar=qstar,k=k,kstar=kstar,N=N,T=tend,delta_t=delta_t,mesh=mesh,stabs=stabs,
     #                t_slice=t_slice, u_exact_slice=u_exact_slice, ut_exact_slice=ut_exact_slice, tstart=tstart, 
@@ -468,7 +549,8 @@ def SolveProblem( order_global, lami, wp_mode_space ):
     st.gfuX.vec.data = GMRes(A_linop, st.f.vec, pre=PreTM, maxsteps = 10000, tol = tol,
                   callback=None, restart=None, startiteration=0, printrates=True)
 
-    l2_errors_Q = st.MeasureErrors(st.gfuX, domain_B="IF-inner|B")
+    #l2_errors_Q = st.MeasureErrors(st.gfuX, domain_B="IF-inner|B")
+    l2_errors_Q = st.MeasureErrors(st.gfuX)
     
     diff = GridFunction(st.V_space)
     u_slab_node = GridFunction(st.V_space)
@@ -482,10 +564,16 @@ def SolveProblem( order_global, lami, wp_mode_space ):
     Draw(diff, mesh, 'diff') 
     Draw( u_slab_node, mesh, 'exact') 
     Draw( u_gfu_node , mesh, 'gfu') 
-    input("")
+    #input("")
 
 
     print("Errors in Q (all) = ", l2_errors_Q)
+
+    if export_vtk:
+        VTKOutput(ma=mesh, coefs=[ u_exact_final_time,  u_gfu_node, diff   ],
+                      names=["u","gfu","diff"],
+                      filename=vtk_str, subdivision=2).Do()
+
 
     '''
     if plotting:
@@ -538,38 +626,64 @@ def SolveProblem( order_global, lami, wp_mode_space ):
     return delta_t, l2_errors_Q  
  
 
-if True:
 
+
+
+meshes = [ ] 
+
+Ns = [12,24,48]
+#Ns = [12,24]
+if n_mode == 1: 
+    Ns = [10,20,40]
+max_nref = 3
+#n_refs = 2
+for n_refs in range(max_nref+1):
+    print("order = ", order)
+    #mesh = CreateAnnulusMesh3(maxh=maxh, order_geom = order, extra_refinement=False) 
+    mesh = CreateAnnulusMesh3(maxh=maxh, order_geom = order, extra_refinement=False) 
+    for i in range(n_refs):
+        mesh.Refine()
+    #print("order_geom = ", order_geom)
+    mesh.Curve(order_geom)
+    meshes.append(mesh)
+
+
+if check_spatial_conv: 
+    l2_errors = [ ]
+    for mesh in meshes:
+        l2_errors.append( CheckSpatial(mesh,lami.real, wp_mode_space) )
+    eoc = [ log(l2_errors[i-1]/l2_errors[i])/log(2) for i in range(1,len(l2_errors))]
+    print("eoc = ", eoc ) 
+    input("")
+
+#input("Weiter")
+    
+for omega_str in ["IF-inner", "omega-outer"]: 
+#for omega_str in ["IF-inner"]: 
+#for omega_str in ["omega-outer"]: 
     for order_global in [order]:
-        
-        errors = { "delta-t": [], 
-                   "B" : [ ],
-                  "B-complement": [],
-                  "omega" : [ ],  
+
+        errors = { "delta-t": [],  
                   "Q_all" : [ ] 
                   } 
- 
-        result = SolveProblem(order_global, lami.real, wp_mode_space )
-        
 
+        for mesh,N in zip(meshes, Ns):
+            vtk_str = "" 
+            export_vtk = False
+            if N == Ns[-1]: 
+                export_vtk = True
+                vtk_str =  "whispering-gallery-mode-nr" + "{0}".format(n_mode) + "-N{0}".format(N) + "-" + omega_str + "-" + problem_type
+            result = SolveProblem(mesh, N, order_global, lami.real, wp_mode_space, omega_str, export_vtk,vtk_str)
+            
+            errors["delta-t"].append(result[0]) 
+            errors["Q_all"].append(result[1])
 
-# smooth sol as data, no jump
-# N = [8,16,32, 64 ] 
-# maxh = [0.25,0.125, 0.0625, 0.03125  ]
-# with well_posed = True 
-#  l2_errors  = [0.43226258260766476, 0.1265427463635003, 0.028338817815329518, 0.007244529603458823 ]
-# eoc = [1.772283147288164, 2.158773331159316, 1.9678156540071743]
+        print("errors = ", errors) 
 
-
-# very simple mode as data, 
-# n_mode = 1, tend = 1.5, well_posed=True
-# l2_errors = [ 1.380871525094359 , 1.119055495021096 , 0.7260492375925277,  0.33252621180461883  ]
-
-
-# n_mode = 1, tend = 1.5, well_posed=True
-# l2_errors = [ 0.5887660811893812  , 0.30755923540321245 , 0.13630787493326782  ,0.05772586604780256]
-
-# n_mode = 1, tend = 1.0, well_posed=True
-# l2_errors = [0.375392218545288,  0.1830556634001312, 0.08028046432675222, 0.037034055120565734    ]
-
-
+        name_str = "whispering-gallery-mode-nr" + "{0}".format(n_mode) + "-" + omega_str + "-" + problem_type + ".dat"
+        results = [np.array(errors["delta-t"],dtype=float), np.array( errors["Q_all"],dtype=float)  ]
+        header_str = "deltat Q-all"
+        np.savetxt(fname ="data/{0}".format(name_str),
+                   X = np.transpose(results),
+                   header = header_str,
+                   comments = '')
