@@ -23,9 +23,21 @@ if ( len(sys.argv) > 1 and int(sys.argv[1]) in [1,10]  ):
     n_mode = int(sys.argv[1])
 else:
     raise ValueError('Ivalid input')
+
+if ( len(sys.argv) > 2):
+    if int(sys.argv[2]) == 0:
+        well_posed = False
+    else:
+        well_posed = True
+
 #n_mode = 1
 
+print("n_mode = ", n_mode)
+print("well_posed = ", well_posed)
+
+
 tol = 1e-7 #GMRes
+tol = 1e-4 #GMRes
 
 #R0 = 0.25
 R0 = 0.6
@@ -62,7 +74,6 @@ bonus_intorder = 8
 
 order = 2 
 order_geom = order
-well_posed = True
 problem_type = "ill-posed"
 if well_posed:
     problem_type = "well-posed"
@@ -325,8 +336,8 @@ def SolveModesRadial():
     lam_disc = lam_disc[idx_sorted]
     lam_vec = lam_vec[:,idx_sorted]
 
-    print("lam_disc = ", lam_disc)
-    print("sqrt(lam_disc) = ", np.sqrt(lam_disc.real)) 
+    #print("lam_disc = ", lam_disc)
+    #print("sqrt(lam_disc) = ", np.sqrt(lam_disc.real)) 
     #input("")
 
     lam_diag = np.diag(lam_disc)
@@ -364,7 +375,20 @@ def SolveModesRadial():
 
     return eval_r_pts, eval_vals.tolist(), lam_disc[idx_modes]  
 
+
 eval_r_pts, eval_vals, lami = SolveModesRadial()
+
+if well_posed: 
+    name_str_r = "whispering-gallery-mode-nr" + "{0}".format(n_mode)  + "-radial.dat"
+    abs_mode = np.abs( eval_vals) 
+    results_r = [ np.array( eval_r_pts, dtype=float) , np.array( eval_vals , dtype=float) , np.array( abs_mode / np.max(abs_mode) , dtype=float) ]
+    header_str_r = "r val absval"
+    np.savetxt(fname ="data/{0}".format(name_str_r),
+                       X = np.transpose(results_r),
+                       header = header_str_r,
+                       comments = '')
+#input("")
+
 #print(" eval_r_pts  = ", eval_r_pts)
 #print(" ") 
 #print(" eval_vals  = ", eval_vals )
@@ -634,8 +658,9 @@ meshes = [ ]
 Ns = [12,24,48]
 #Ns = [12,24]
 if n_mode == 1: 
+    #Ns = [10,20,40]
     Ns = [10,20,40]
-max_nref = 3
+max_nref = 2
 #n_refs = 2
 for n_refs in range(max_nref+1):
     print("order = ", order)
@@ -659,6 +684,7 @@ if check_spatial_conv:
 #input("Weiter")
     
 for omega_str in ["IF-inner", "omega-outer"]: 
+#for omega_str in ["IF-inner"]: 
 #for omega_str in ["IF-inner"]: 
 #for omega_str in ["omega-outer"]: 
     for order_global in [order]:
