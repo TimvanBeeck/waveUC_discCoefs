@@ -1,0 +1,283 @@
+\documentclass[tikz]{standalone}
+\usetikzlibrary{spy,shapes,shadows,calc,pgfplots.groupplots}
+\usepackage{amsmath}
+\usepackage{physics} 
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.3}
+\usepgfplotslibrary{fillbetween}
+\usepackage{tcolorbox}
+\usepackage{amsmath}
+\DeclareFontFamily{OT1}{pzc}{}
+\DeclareFontShape{OT1}{pzc}{m}{it}{<-> s * [1.10] pzcmi7t}{}
+\DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it}
+\newcommand{\ddtn}{\operatorname{dtn}}
+
+\pgfplotsset{
+  legend style = {font=\small}
+}
+
+\begin{document}
+\begin{tikzpicture}[scale = 0.8, spy using outlines=
+	{rectangle, 
+	width=5cm,
+        height=1cm,
+	magnification=3.0, 
+	connect spies}]
+
+
+%\begin{axis}[
+\begin{groupplot}[
+    group style={
+        %group name=dtn,
+        group size=2 by 3,
+        %xticklabels at=edge bottom,
+         horizontal sep=45pt,
+        vertical sep=25pt,
+   },
+   %name = dtnplot,
+   height = 6.5cm,
+   width = 8.5cm,
+   every axis plot/.append style={thick},
+   %axis y line*=left,
+   legend pos = south east,
+   %label style={font=\tiny},
+   %tick label style={font=\tiny}  
+   %ymin = 2e-6,
+   %xmin = 0,
+   %xmax = 11000,
+   %ymin = -20,
+   %ymax = 20,
+   %restrict y to domain=-1e2:1e2,
+   %label style={at={(axis description cs:0.5,-0.08)},anchor=north},
+   %every x tick scale label/.style={at={(xticklabel cs:0.925)},anchor=south west},
+   %x label style={at={(axis description cs:0.975,0.085)},anchor=east},
+   %xlabel= { $\lambda$},
+   legend style = { column sep = 10pt, legend columns = 2, legend to name = grouplegend,},
+   ]
+
+
+
+
+    \nextgroupplot[  
+    height = 5.5cm,
+    xlabel= { $r $},
+    ymin = -2,
+    ymax = 2.1,
+    x label style={at={(axis description cs:0.75,+0.075)},anchor=east},
+    every axis title/.style={at={(0.5,1.125)}},
+    title = { \large $ \ell = 1  $ },
+    legend style={at={(0.8, 0.3)},anchor=north},  
+    xticklabel=\empty,
+	]
+
+    \addplot[black,very thick,forget plot,mark options={scale=1.0} ] 
+   	table[x=r,y=val] {../code/ngsolve/data/whispering-gallery-mode-nr1-radial.dat};  
+
+   \addplot +[mark=none,color=red, very thick] coordinates {(1, -2.5) (1, 2.5)};
+
+    \node (exact1) at (axis cs:1.25,0.85) {\includegraphics[scale =.08]{whispering-gallery-mode-nr1-N40-IF-inner-ill-posed-exact.png}};
+
+   \draw[] (axis cs:0.95, -0.75)  node[above]{ \large \textcolor{red}{$\Gamma$} };
+   
+    \draw[] (axis cs:0.8, 0.75)  node[above]{ \tcbox[size=fbox]{$\psi_{\ell}(r) $ }  };
+
+	\draw[] (axis cs:1.225, 1.45)  node[above]{  \tcbox[size=fbox]{  \resizebox{.1\linewidth}{!}{$u_{\ell}(x,t=T)$}}};
+
+
+    \nextgroupplot[
+    height = 5.5cm,
+    xlabel= { $r $},
+    ymin = -25,
+    ymax = 25,
+    x label style={at={(axis description cs:0.35,+0.075)},anchor=east},
+    every axis title/.style={at={(0.5,1.125)}},
+	title = {  \large  $ \ell = 10  $ },
+    legend style={at={(0.8, 0.3)},anchor=north},
+    xticklabel=\empty,
+	]
+
+    \addplot[black,very thick,forget plot,mark options={scale=1.0} ] 
+   	table[x=r,y=val] {../code/ngsolve/data/whispering-gallery-mode-nr10-radial.dat};  
+
+   \addplot +[mark=none,color=red, thick] coordinates {(1, -25) (1, 25)};
+  
+   \node (exact10) at (axis cs:1.37,13.0) {\includegraphics[scale =.08]{whispering-gallery-mode-nr10-N40-IF-inner-ill-posed-exact.png}};
+   
+   \draw[] (axis cs:1.05, -15)  node[above]{ \large \textcolor{red}{$\Gamma$} };
+   %\draw[] (2.35, 1.0)  node[above]{ \resizebox{ .07\linewidth}{!}{\itshape \textcolor{red}{$\Gamma$} }};
+
+    \draw[] (axis cs:0.825, 0.25)  node[above]{ \tcbox[size=fbox]{$\psi_{\ell}(r) $ }  };
+
+    \draw[] (axis cs:1.15, 17.25)  node[above]{  \tcbox[size=fbox]{  \resizebox{.1\linewidth}{!}{$u_{\ell}(x,t=T)$}}  };
+
+    \nextgroupplot[  
+    height = 4.0cm,
+    xlabel= { $r $},
+    ymode=log,
+    ymin = 5e-4,
+    ymax = 2e0,
+    x label style={at={(axis description cs:0.7,+0.075)},anchor=east},
+    every axis title/.style={below right,at={(0.5,1.125)}},
+    %title = {   $ n = 1  $ },
+    legend style={at={(0.8, 0.3)},anchor=north},
+	]
+
+    \filldraw [fill=magenta!50, draw=none] (axis cs:1.3,5e-4) rectangle (axis cs:1.5,2e0);
+    \filldraw [fill=cyan!50, draw=none] (axis cs:0.85,5e-4) rectangle (axis cs:1.0,2e0);
+
+
+    \addplot[black,very thick,forget plot,mark options={scale=1.0} ] 
+   	table[x=r,y=absval] {../code/ngsolve/data/whispering-gallery-mode-nr1-radial.dat};  
+
+   \addplot +[mark=none,color=red, very thick] coordinates {(1, 1e-4) (1,3e0)};
+
+    \draw[] (axis cs:1.15, 0.1)  node[above]{ \tcbox[size=fbox]{$\vert \psi_{\ell}(r) \vert $ }  };
+    
+    \draw[] (axis cs:0.925, 0.009)  node[above]{ \tcbox[size=fbox]{$\omega_i$}};
+    \draw[] (axis cs:1.4, 0.009)  node[above]{ \tcbox[size=fbox]{$\omega_o$}};
+
+
+    \nextgroupplot[  
+    height = 4.0cm,
+    xlabel= { $r $},
+    ymode=log,
+    ymin = 5e-4,
+    ymax = 2e0,
+    x label style={at={(axis description cs:0.7,+0.075)},anchor=east},
+    every axis title/.style={below right,at={(0.5,1.125)}},
+    %title = {   $ n = 1  $ },
+    legend style={at={(0.8, 0.3)},anchor=north},
+	]
+   
+    \filldraw [fill=magenta!50, draw=none] (axis cs:1.3,5e-4) rectangle (axis cs:1.5,2e0);
+    \filldraw [fill=cyan!50, draw=none] (axis cs:0.85,5e-4) rectangle (axis cs:1.0,2e0);
+    
+
+    \addplot[black,very thick,forget plot,mark options={scale=1.0} ] 
+   	table[x=r,y=absval] {../code/ngsolve/data/whispering-gallery-mode-nr10-radial.dat};  
+
+   \addplot +[mark=none,color=red, very thick] coordinates {(1, 1e-4) (1,3e0)};
+
+    \draw[] (axis cs:1.18, 0.00925)  node[above]{ \tcbox[size=fbox]{$\vert \psi_{\ell}(r) \vert $ }  };
+
+    \draw[] (axis cs:0.925, 0.009)  node[above]{ \tcbox[size=fbox]{$\omega_i$}};
+    \draw[] (axis cs:1.4, 0.009)  node[above]{ \tcbox[size=fbox]{$\omega_o$}};
+
+
+    \nextgroupplot[ 
+    ymode=log,
+    xmode=log,
+    %xmin=0,xmax=1.6e4,
+    %xtick={25, 125, 250, 500, 800, 1000},
+    %axis x line*=middle,
+    %axis y line=middle, 
+    %ymax = 1e-0,
+    %xmin = 5e-2,
+    %ymax = 3.0e-1,
+    %ymin = 3e-2,
+    %width=9cm,
+    %restrict y to domain=-4e2:4e2,
+    %xtick={0,2e3,4e3,6e3,8e3,10e3,12e3,14e3},
+    xlabel= { $\Delta t $},
+    %legend pos = south west,
+    x label style={at={(axis description cs:0.85,+0.05)},anchor=east},
+    every axis title/.style={below right,at={(0.425,1.1)}},
+    title = { \tcbox[size=fbox]{ $  \Vert u_{\ell} -\underline{u}_1 \Vert_{ L^2(Q) } $ }  },
+    %title = {   $ n = 1  $ },
+    legend style={at={(0.8, 0.3)},anchor=north},
+	]
+
+    \addplot[cyan!50,very thick,mark=x,forget plot,mark options={scale=1.5} ] 
+   	table[x=deltat,y=Q-all] {../code/ngsolve/data/whispering-gallery-mode-nr1-IF-inner-ill-posed.dat};  
+
+    \addplot[only marks, cyan!50,very thick,mark=o,forget plot,mark options={scale=1.75} ] 
+   	table[x=deltat,y=Q-all] {../code/ngsolve/data/whispering-gallery-mode-nr1-IF-inner-well-posed.dat};  
+
+
+    \addplot[magenta!50,very thick,mark=x,forget plot,mark options={scale=1.5} ] 
+   	table[x=deltat,y=Q-all] {../code/ngsolve/data/whispering-gallery-mode-nr1-omega-outer-ill-posed.dat};  
+
+    \addplot[only marks, magenta!50,very thick,mark=o,forget plot,mark options={scale=1.75} ] 
+   	table[x=deltat,y=Q-all] {../code/ngsolve/data/whispering-gallery-mode-nr1-omega-outer-well-posed.dat};  
+
+    \node (gfuouter1) at (axis cs:0.035,0.1) {\includegraphics[scale =.08]{whispering-gallery-mode-nr1-N40-omega-outer-ill-posed-gfu.png}};
+     
+     \node[] (A1) at (axis cs: 0.026, 0.03) {};
+     \node[] (A2) at (axis cs: 0.0275, 0.05) {};
+     \draw[lightgray,ultra thick,->] (A1.west) -- (A2.east);
+    
+    \draw[] (axis cs:0.0325, 0.165)  node[above]{  \tcbox[size=fbox]{  \resizebox{.1\linewidth}{!}{$\underline{u}_{1}(x,t=T)$}}};
+
+
+    \node (gfuinner1) at (axis cs:0.07,0.01) {\includegraphics[scale =.08]{whispering-gallery-mode-nr1-N40-IF-inner-ill-posed-gfu.png}};
+
+     \node[] (B1) at (axis cs: 0.027, 0.00375) {};
+     \node[] (B2) at (axis cs: 0.0525, 0.007) {};
+     \draw[lightgray,ultra thick,->] (B1.west) -- (B2.east);
+
+    \draw[] (axis cs:0.075, 0.0175)  node[above]{  \tcbox[size=fbox]{  \resizebox{.1\linewidth}{!}{$\underline{u}_{1}(x,t=T)$}}};
+ 
+    \nextgroupplot[ 
+    ymode=log,
+    xmode=log,
+    %xmin=0,xmax=1.6e4,
+    %xtick={25, 125, 250, 500, 800, 1000},
+    %axis x line*=middle,
+    %axis y line=middle, 
+    %ymin = 5e-4,
+    %ymax = 8e-2,
+    %xmin = 5e-2,
+    %width=9cm,
+    %restrict y to domain=-4e2:4e2,
+    %xtick={0,2e3,4e3,6e3,8e3,10e3,12e3,14e3},
+    xlabel= { $\Delta t $},
+    %legend pos = south west,
+    %legend style = { column sep = 10pt, legend columns = 5, legend to name = grouplegend,},
+    every axis title/.style={below,at={(0.5,1.1)}},
+    x label style={at={(axis description cs:0.85,+0.05)},anchor=east},
+    title = { \tcbox[size=fbox]{ $  \Vert u_{\ell}  - \underline{u}_1 \Vert_{ L^2(Q) } $ }  },
+    legend style={at={(0.8,0.2)},anchor=north},
+	]
+
+    \addplot[cyan!50,mark=x,very thick,mark options={scale=1.5} ] 
+   	table[x=deltat,y=Q-all] {../code/ngsolve/data/whispering-gallery-mode-nr10-IF-inner-ill-posed.dat}; \addlegendentry{ $\omega = \omega_i$  } % 
+  
+    \addplot[only marks, cyan!50,very thick,mark=o,mark options={scale=1.75} ] 
+   	table[x=deltat,y=Q-all] {../code/ngsolve/data/whispering-gallery-mode-nr10-IF-inner-well-posed.dat};  \addlegendentry{ $\omega = \omega_i \; + $  i.c. } % 
+
+
+    \addplot[magenta!50,very thick,mark=x,mark options={scale=1.5} ] 
+   	table[x=deltat,y=Q-all] {../code/ngsolve/data/whispering-gallery-mode-nr10-omega-outer-ill-posed.dat}; \addlegendentry{ $\omega = \omega_o$  } % 
+ 
+
+    \addplot[only marks, magenta!50,very thick,mark=o,mark options={scale=1.75} ] 
+   	table[x=deltat,y=Q-all] {../code/ngsolve/data/whispering-gallery-mode-nr10-omega-outer-well-posed.dat}; \addlegendentry{ $\omega = \omega_o \; + $  i.c. } % 
+ 
+
+    \node (gfuouter10) at (axis cs:0.03,0.15) {\includegraphics[scale =.08]{whispering-gallery-mode-nr10-N40-omega-outer-ill-posed-gfu.png}};
+   
+     \node[] (C1) at (axis cs: 0.025, 0.65) {};
+     \node[] (C2) at (axis cs: 0.026, 0.325) {};
+     \draw[lightgray,ultra thick,->] (C1.south) -- (C2.north);
+
+    \draw[] (axis cs:0.0325, 0.275)  node[above]{  \tcbox[size=fbox]{  \resizebox{.1\linewidth}{!}{$\underline{u}_{1}(x,t=T)$}}};
+
+    \node (gfuinner10) at (axis cs:0.075,0.05) {\includegraphics[scale =.08]{whispering-gallery-mode-nr10-N40-IF-inner-ill-posed-gfu.png}};
+
+     \node[] (D1) at (axis cs: 0.027, 0.0185) {};
+     \node[] (D2) at (axis cs: 0.055, 0.045) {};
+     \draw[lightgray,ultra thick,->] (D1.west) -- (D2.east);
+
+    \draw[] (axis cs:0.075, 0.1)  node[above]{  \tcbox[size=fbox]{  \resizebox{.1\linewidth}{!}{$\underline{u}_{1}(x,t=T)$}}};
+
+    \end{groupplot}
+    
+    \node at ($(group c1r3) + (3.35cm,-3.75cm)$) {\ref{grouplegend}};
+
+\end{tikzpicture}
+\end{document}
+
+
+
+
+

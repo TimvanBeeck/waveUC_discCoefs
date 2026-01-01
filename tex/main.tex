@@ -202,6 +202,7 @@
 
 
 \newcommand{\changed}[1]{{\color{blue!70!black} #1}}
+\newcommand{\jp}[1]{{\color{cyan} #1}}
 
 %%% TvB: Added for plots, some might be redundant ##
 
@@ -1256,8 +1257,94 @@ In particular, the ratio for $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2
   \end{figure}
 
 
+\subsection{Whispering gallery modes in an annulus}
+\jp{
+As a final example we would like to consider a two-dimensional setting in which the Lipschitz stability estimates from \cref{assum:LipschitzStability} are not valid. 
+To this end, we follow reference \cite{Filippas23} in which it has been shown that under certain assumptions on the contrast of the sound speed and in a certain geometric setting so called whispering gallery modes exist. These are solutions of the wave equation that are exponentially decaying away from the interface and which show that the logarithmic stability estimate \eqref{eq:FilippasEstimateLog} from \cite{Filippas22} is in general optimal.  \par 
+Indeed, in \cite{Filippas23} a sequence of eigenfunctions $w_{\ell}$  of $-\Delta_c$ with corresponding eigenvalues $\lambda_{\ell} \rightarrow \infty$ in a certain domain $\Omega$ has been constructed 
+such that for all $\omega \subset \Omega$ with $\dis(\bar{\omega},\Gamma) > 0$ there exists constants $C,D > 0$ such that  
+\[
+\norm{ w_{\ell} }_{ \omega } \leq C \exp(-D \sqrt{ \lambda_{\ell } }  ), \quad 
+- \Delta_c w_{\ell } = \lambda_{\ell} w_{\ell }, \quad 
+w_n|_{\partial \Omega } = 0, \quad
+\norm{ w_{\ell }  }_{ \Omega } = 1.  
+\]
+We then obtain a family of solutions of the wave equation 
+\bel{eq:whispering-gallery-mode}
+u_{\ell}(t,x) = \cos( \sqrt{ \lambda_{\ell} } t ) w_{\ell}(x)  
+\ee
+whose initial condition
+\[
+\norm{ u_{\ell}|_{t=0}}_{ L^2(\Omega) }  + \norm{ \partial_t u_{\ell}|_{t=0} }_{ H^{-1}( \Omega )}  = 1
+\]
+can obviously not be controled uniformly in a Lipschitz stable manner by the data since 
+\[
+\Vert  u_{\ell} \Vert_{L^2(\omega_T)} + \Vert u_{\ell} \Vert_{L^2(\Sigma)} + \Vert \square_c u_{\ell} \Vert_{H^{-1}(Q)}  = C_T \exp(-D \sqrt{ \lambda_{\ell } }  )
+\]
+goes to zero as $\ell \rightarrow \infty$. \par 
+As shown in \cite[Section 2]{Filippas23}, a possible geometrical setup is an annulus where $\Omega_1 = {  R_0 < r < R_1 } $ and $\Omega_1 = {  R_1 < r < R_2 } $ with 
+$R_0 < R_1 < R_2$. To ensure the existance of whispering Gallery modes the contrast has to fulfill the condition 
+\[
+\frac{c_1}{R_1} < \frac{c_2}{R_2}.
+\]
+Thanks to annulus geometry, the mode $w_{\ell}$ can be obtained by separating variables 
+\bel{eq:whispering-sep}
+w_{\ell}(r,\theta) = \exp(i \ell \theta) \psi_{\ell}(r)
+\ee
+and solving the one-dimensional eigenvalue problem
+\bel{eq:eigval-prob-r}
+- \frac{c^2}{\ell^2} \left[  \partial_r^2 \psi_{\ell}  + \frac{1}{r} \partial_r \psi_{\ell} \right] + \frac{c^2}{r^2} \psi_{\ell} = \frac{ \lambda_{\ell} }{ \ell^2 } \psi_{ \ell}.
+\ee
+with Dirichlet boundary conditions $\psi_{\ell}(r=R_0) = \psi_{\ell}(r=R_2) = 0$. 
+For fixed $\ell$ there exists many eigenpairs $( \lambda_{\ell}, \psi_{\ell} )$ solving \eqref{eq:eigval-prob-r} of which it sufficices however to pick just one for 
+our purposes. Concretely, we fix the parameters as 
+\[
+R_0 = 3/5, \; R_1 = 1, \; R_2 = 3/2, \quad c_1 = 1, \; c_2 = \sqrt{20}
+\]
+and find two eigenpairs for $\ell =1$ and $\ell=10$ whose (radial) eigenfunctions $\psi_{\ell}$ are plotted in the upper panel of \cref{fig:whispering-gallery}.
+The corresponding solutions of the wave equation $u_{\ell}(t,x)$ as defined in \cref{eq:whispering-gallery-mode} are also displayed at the final time $t=T$ for 
+$T=1$. 
+The corresponding eigenvalues are $\lambda_0 \approx 190.669$ and $\lambda_1 \approx 404.347$. Since $\lambda_1 >  \lambda_0$ the corresponding 
+eigenfunction falls off much faster towards the right of the interface at $r=1$ as can be see in the central panel of \cref{fig:whispering-gallery}.
+The eigenfunctions shown here do not fall off significantly towards the left of the interface since we consider very low $\ell$ in order 
+to keep the computational costs moderate. We remark that for higher $\ell \approx 200$ the corresponding eigenfunctions indeed fall off also very 
+rapidly towards the left of the interface. These functions oscillate however so quickly in the $\theta$-direction and in time that they are 
+numerically very challenging to resolve. The two modes we have chosen for $\ell=1$ and $\ell=10$ are fortunately sufficient for our purpose. 
+}
+
+\begin{figure}[!htbp]
+   \begin{center}
+    \includegraphics[scale=1.0]{../plots/whispering-gallery.pdf}
+   \end{center}
+\caption{ The upper panel displays the modes $\psi(r)$ for $\ell=1$ (left), respectively $\ell=10$ (right) obtained by solving the eigenvalue problem \cref{eq:eigval-prob-r}. 
+	 The inset shows the correspoding solution of the wave equation defined by \cref{eq:whispering-gallery-mode} and \cref{eq:whispering-sep}  at $t=T$. 
+         The absolute value of $\psi(r)$ is shown in the central panel. The lower panel displays the convergence of $  \Vert u_{\ell}  - \underline{u}_1 \Vert_{ L^2(Q) } $.
+	 The cases where the data is given in $\omega_i$ is shown in magenta (solid lines with crosses) whereas the case where data is given in $\omega_o$ is displayed in cyan (same linestyle).
+	 For reference, the circles (marked as '+ i.c.' in the legend) display the errors when the method is run with initial conditions $u_{\ell}(\cdot, t=0)$ and $\partial_t u_{\ell}(\cdot, t=0)$ 
+	 known everywhere. The insets in the lower panel display the nunerical reconstructions achieved at the final time corresponding to the refinement level indicated by the arrows.
+	}
+    \label{fig:whispering-gallery}
+\end{figure} 
+\jp{
+We would like to test the performance of our method to reconstruct the modes $u_{\ell}$ in the setting where the data domain $\omega$ is far away from the interface so that 
+the mode for $\ell=10$ is very small in $\omega$. To this end, we consider the data domain $\omega_o  = {  1.3 < r < R_2 } $ in which the mode is very 
+small according to the central panel of \cref{fig:whispering-gallery}.
+For comparison let us also consider a data domain close to the interface given by $\omega_i  = {  0.85 < r < R_1 } $.  \par 
+The $L^2$-errors in $Q$ for the unique continuation problem of the mode $u_{\ell}$ are displayed in the lower panel of \cref{fig:whispering-gallery}.
+Here we have chosen $T=1$ so that the condition \cref{eq:Tcondition} for unique solvability is fulfilled.
+We see that when the data is given in $\omega_i$ (i.e. close to the interface) then the method converges as good as when the initial condition is given, 
+i.e. the convergence is as good as for a well-posed problem. However, when the data is given far away from the interface in $\omega_0$ then 
+the rate of convergence drastically deteriorates as $\ell$ increases. This is in full agreement with the discussion in the beginning of this subsection: the Lipschitz 
+stability result \cref{assum:LipschitzStability} cannot hold for $\dis(\bar{\omega}_0,\Gamma) > 0$. The stability is of logarithmic type as asserted by 
+\cref{thm:filippas} (Thm. 5.19 of \cite{Filippas22}) and this is exemplified in our numerical experiments by the observation that the convergence rate drops to 
+logarithmic type as $\ell$ increases.
+}
+
+
 \section{Conclusion}
 In this article, we investigated a numerical method for solving the variational data assimilation problem for the wave equation with discontinuous wave speed. Our numerical experiments lead to two main conclusions. First, obtaining accurate numerical solutions in the presence of material interfaces involving large contrasts is computationally demanding, and the resolution required to capture the complex behavior of the solution is a limiting factor in numerical simulations. This challenge is amplified by the fact that unique continuation problems are globally coupled in space and time. Second, even in the case of a discontinuous wave speed, the geometric control condition seems to ensure Lipschitz stability, allowing the design of accurate and reliable numerical methods. 
+
+
 
 
 \bibliography{references}
