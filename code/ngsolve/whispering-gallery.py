@@ -11,7 +11,7 @@ import numpy as np
 from ngsolve import Mesh as NGSMesh
 from scipy.sparse import csr_matrix
 import scipy.sparse.linalg
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from math import pi 
 import scipy.interpolate as si
 import sys
@@ -37,7 +37,7 @@ print("well_posed = ", well_posed)
 
 
 tol = 1e-7 #GMRes
-tol = 1e-4 #GMRes
+#tol = 1e-4 #GMRes
 
 #R0 = 0.25
 R0 = 0.6
@@ -655,11 +655,11 @@ def SolveProblem(mesh, N,  order_global, lami, wp_mode_space, omega_str, export_
 
 meshes = [ ] 
 
-Ns = [12,24,48]
+Ns = [10,20,40]
 #Ns = [12,24]
-if n_mode == 1: 
-    #Ns = [10,20,40]
-    Ns = [10,20,40]
+#if n_mode == 1: 
+#    #Ns = [10,20,40]
+#    Ns = [10,20,40]
 max_nref = 2
 #n_refs = 2
 for n_refs in range(max_nref+1):
