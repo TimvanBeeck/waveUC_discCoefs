@@ -363,7 +363,7 @@ In summary, our goal is to understand whether the Lipschitz stability property i
 
 
 \section{Fully discrete discontinuous-in-time discretization}\label{sec:discretization} 
-In this section, we present a fully discrete discontinuous-in-time finite element method for discretizing the data assimilation problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch}, extending the method from \cite{BP24} to the heterogeneous case. \Cref{sec:spaceTimeDiscretization} describes the geometric partition of the space-time domain $Q$ into time slabs, followed by the full discretization in \cref{sec:method}.
+In this section, we present a fully discrete discontinuous-in-time finite element method for discretizing the data assimilation problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch}, extending the method from \cite{BP24} to the heterogeneous case. \Cref{sec:spaceTimeDiscretization} describes the geometric partition of the space-time domain $Q$ into time slabs, followed by the full discretization in \cref{sec:method}. \jp{The chosen discretization allows for an iterative solution of the linear systems which is described in detail in \cite[Section 5]{BP24}. }
 
 \subsection{Discretization of the space-time domain}\label{sec:spaceTimeDiscretization}
 Let $\hat{\mathcal{T}}_h$ be a quasi-uniform triangulation with mesh size $h$ such that $\hat{\Omega}:= \cup_{K \in \hat{\mathcal{T}}_h} K $ contains $\Omega$, i.e.\ $\Omega \subset \hat{\Omega}$. Setting $\mathcal{T}_h := \{ K \cap \Omega \mid K \in  \hat{\mathcal{T}}_h \}$ then ensures that $\Omega = \cup_{K \in \mathcal{T}_h} K$ holds true.  

@@ -151,6 +151,9 @@ First of all, thank you for considering our article "Variational data assimilati
   \reply{We compute the approximation twice, once with final time $T = 0.5$ and once with final time $T = 1.0$, but compare it for both cases at $t = 0.5$. The figure illustrates that the approximation is not reliable if the final time is not large enough to satisfy the GCC. We have slightly adjusted the text and the figure to avoid any misunderstandings.}
   \item \emph{In the two-dimensional case, only a square data domain is considered. A more interesting scenario would involve a curved interface, such as a circular interface. Could the
   authors provide related numerical results for such a case?}
+  \reply{We have now added a new Section 4.3 in which a numerical experiment involving circular interfaces is presented. The geometry is chosen such that so called whispering gallery modes exist 
+		which allow to test the performance of our method in a setting where the Lipschitz stability result is not valid. 
+		We thank the reviewer for this valuable suggestion which motivated us to investigate this interesting setting.}
 \end{enumerate}
 
 
@@ -167,7 +170,12 @@ First of all, thank you for considering our article "Variational data assimilati
   \reply{\textbf{2D not sure, think about this after modifications from Ref 1}}
   \item \emph{Could you please explain why you adopted the discontinuous-in-time FEM
   method? What are the advantages of this method for the problem under consideration?}
-  \reply{@ Janosch}
+  \reply{Since the problem under consideration is globally coupled in space and time, it cannot be solved directly using classical time-stepping methods. For this reason the unique 
+	continuation problem for the wave equation is mostly treated in the literature using rather expensive full space-time discretizations. As a step towards a more efficient 
+		resolution, we introduced in [11] a discontinuous Galerkin in time discretization which naturally allows for an approximate solution of the problem by a time-marching procedure. 
+	This approximate solver can then be used as a preconditioner for solving the original problem by means of a Krylov method. We refer to [11, Section 1.2 and Section 5] for a detailed 
+	motivation and explanation of this strategy. We added a sentence at the beginning of Section 2 to the manuscript to point the interested reader to this reference. 
+		}
   \item \emph{Please clarify the choices of $q$, $k^{\ast}$ , and $q^{\ast}$ in the numerical experiments.}
   \reply{We have added the values of $q, k^{\ast}, q^{\ast}$ for the numerical experiments.}
   \item \emph{Please clarify the conditions of Lemma 3.1. Does it require the GCC or condition
