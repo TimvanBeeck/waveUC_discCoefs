@@ -535,7 +535,6 @@ If $\mathbf{U}|_{Q^n} \in [H^1(Q^n) \cap L^2(0,T;H^2(\mathcal{T}_h))] \times H^1
 \end{lem}
 
 \begin{proof}
-    \todo[inline]{TvB: Check if notation, etc., is still up-to-date}
     \changed{
     First, note that $\tnorm{(0,\Yh)} = \Vert \Yh \Vert_{S_h^\ast}$. With the Cauchy-Schwarz inequality, we obtain
     \begin{equation*}
@@ -1259,72 +1258,66 @@ In particular, the ratio for $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2
 
 \subsection{Whispering gallery modes in an annulus}
 \jp{
-As a final example we would like to consider a two-dimensional setting in which the Lipschitz stability estimates from \cref{assum:LipschitzStability} are not valid. 
-To this end, we follow reference \cite{Filippas23} in which it has been shown that under certain assumptions on the contrast of the sound speed and in a specific geometric setting so called whispering gallery modes exist. These are solutions of the wave equation that are exponentially decaying away from the interface and which show that the logarithmic stability estimate \eqref{eq:FilippasEstimateLog} from \cite{Filippas22} is in general optimal.  \par 
-Indeed, in \cite{Filippas23} a sequence of eigenfunctions $w_{\ell}$  of $-\Delta_c : = - \div(c^2 \nabla  \cdot)$ with corresponding eigenvalues $\lambda_{\ell} \rightarrow \infty$ in a certain domain $\Omega$ has been constructed 
-such that for all $\omega \subset \Omega$ with $\dis(\bar{\omega},\Gamma) > 0$ there exists constants $C,D > 0$ such that  
+As a final example, we would like to consider a two-dimensional setting in which the Lipschitz stability estimates from \cref{assum:LipschitzStability} are not valid. 
+To this end, we follow reference \cite{Filippas23}, in which it has been shown that, under certain assumptions on the contrast of the sound speed and the geometry, so-called whispering gallery modes exist. These are solutions of the wave equation that are exponentially decaying away from the interface, showing that the logarithmic stability estimate \eqref{eq:FilippasEstimateLog} from \cite{Filippas22} is in general optimal.
+
+Indeed, in certain domains $\Omega$, we can follow \cite{Filippas23} to construct a sequence of eigenfunctions $w_{\ell}$  of $-\Delta_c : = - \div(c^2 \nabla  \cdot)$ with corresponding eigenvalues $\lambda_{\ell} \rightarrow \infty$, such that for all $\omega \subset \Omega$ with $\dis(\bar{\omega},\Gamma) > 0$, there exists constants $C,D > 0$ such that  
 \[
 \norm{ w_{\ell} }_{ L^2(\omega) } \leq C \exp(-D \sqrt{ \lambda_{\ell } }  ), \quad 
 - \Delta_c w_{\ell } = \lambda_{\ell} w_{\ell }, \quad 
 w_{\ell}|_{\partial \Omega } = 0, \quad
 \norm{ w_{\ell }  }_{ L^2( \Omega) } = 1.  
 \]
-We then obtain a family of solutions of the wave equation 
+Then, we obtain a family of solutions of the wave equation
 \bel{eq:whispering-gallery-mode}
-u_{\ell}(t,x) = \cos( \sqrt{ \lambda_{\ell} } t ) w_{\ell}(x)  
+u_{\ell}(t,x) = \cos( \sqrt{ \lambda_{\ell} } t ) w_{\ell}(x),   \quad \norm{ u_{\ell}|_{t=0}}_{ L^2(\Omega) }  + \norm{ \partial_t u_{\ell}|_{t=0} }_{ H^{-1}( \Omega )}  = 1,
 \ee
-whose initial condition
-\[
-\norm{ u_{\ell}|_{t=0}}_{ L^2(\Omega) }  + \norm{ \partial_t u_{\ell}|_{t=0} }_{ H^{-1}( \Omega )}  = 1
-\]
-can obviously not be controled uniformly in a Lipschitz stable manner by the data since 
+whose initial condition can not be controlled uniformly in a Lipschitz stable manner by the data. This follows, since 
 \[
 \Vert  u_{\ell} \Vert_{L^2(\omega_T)} + \Vert u_{\ell} \Vert_{L^2(\Sigma)} + \Vert \square_c u_{\ell} \Vert_{H^{-1}(Q)}  \leq C_T \exp(-D \sqrt{ \lambda_{\ell } }  )
 \]
-goes to zero as $\ell \rightarrow \infty$. \par 
-As shown in \cite[Section 2]{Filippas23}, a possible geometrical configuration to accomodate such modes is an annulus where $\Omega_1 = \{  R_0 < r < R_1 \} $ and $\Omega_2 = \{  R_1 < r < R_2 \} $ with 
+goes to zero as $\ell \rightarrow \infty$.
+
+As shown in \cite[Section 2]{Filippas23}, one possible geometrical configuration to accommodate such modes is an annulus, where $\Omega_1 = \{  R_0 < r < R_1 \} $ and $\Omega_2 = \{  R_1 < r < R_2 \} $ with 
 $R_0 < R_1 < R_2$. To ensure the existence of whispering Gallery modes the contrast has to fulfill the condition 
 \[
 \frac{c_1}{R_1} < \frac{c_2}{R_2}.
 \]
-Thanks to the spherical geometry, the mode $w_{\ell}$ can be obtained by separating variables 
+Due to the spherical geometry, we can obtain the mode $w_{\ell}$ by separation of variables
 \bel{eq:whispering-sep}
 w_{\ell}(r,\theta) = \exp(i \ell \theta) \psi_{\ell}(r)
 \ee
-and solving the one-dimensional eigenvalue problem
+and by solving the one-dimensional eigenvalue problem
 \bel{eq:eigval-prob-r}
-- \frac{c^2}{\ell^2} \left[  \partial_r^2 \psi_{\ell}  + \frac{1}{r} \partial_r \psi_{\ell} \right] + \frac{c^2}{r^2} \psi_{\ell} = \frac{ \lambda_{\ell} }{ \ell^2 } \psi_{ \ell}.
+- \frac{c^2}{\ell^2} \left[  \partial_r^2 \psi_{\ell}  + \frac{1}{r} \partial_r \psi_{\ell} \right] + \frac{c^2}{r^2} \psi_{\ell} = \frac{ \lambda_{\ell} }{ \ell^2 } \psi_{ \ell}
 \ee
 with Dirichlet boundary conditions $\psi_{\ell}(r=R_0) = \psi_{\ell}(r=R_2) = 0$. 
-For fixed $\ell$ there exists many eigenpairs $( \lambda_{\ell}, \psi_{\ell} )$ solving \eqref{eq:eigval-prob-r} of which it suffices however to pick just one for 
-our purposes. Concretely, we fix the parameters as 
+
+While there exists many eigenpairs $( \lambda_{\ell}, \psi_{\ell} )$ for fixed $\ell$ that solve \eqref{eq:eigval-prob-r}, for our purposes it suffices to pick just one. We fix the parameters 
 \[
 R_0 = 3/5, \; R_1 = 1, \; R_2 = 3/2, \quad c_1 = 1, \; c_2 = \sqrt{20}
 \]
 and find two eigenpairs for $\ell =1$ and $\ell=10$ whose (radial) eigenfunctions $\psi_{\ell}$ are plotted in the upper panel of \cref{fig:whispering-gallery}.
-The corresponding solutions of the wave equation}\textsuperscript{3}\footnotemark \footnotetext{\textsuperscript{3}{In the numerical experiments we work only with the real part of $w_{\ell}$ to obtain real-valued solutions.}}\jp{$u_{\ell}(t,x)$ as defined in \cref{eq:whispering-gallery-mode} are also displayed at the final time $t=T$ for 
+The corresponding solutions of the wave equation}\textsuperscript{4}\footnotemark \ \footnotetext{\textsuperscript{3}{In the numerical experiments we work only with the real part of $w_{\ell}$ to obtain real-valued solutions.}}\jp{$u_{\ell}(t,x)$ as defined in \cref{eq:whispering-gallery-mode} are also displayed at the final time $t=T$ for 
 $T=1$. 
-The corresponding eigenvalues are $\lambda_{1} \approx 190.669$ and $\lambda_{10} \approx 404.347$. Since $\lambda_{10} >  \lambda_{1}$ the corresponding 
-eigenfunction falls off much faster towards the right of the interface at $r=1$ as can be see in the central panel of \cref{fig:whispering-gallery}.
-The eigenfunctions shown here do not fall off significantly towards the left of the interface since we consider very low $\ell$ in order 
-to keep the computational costs moderate. We remark that for higher $\ell \approx 200$ the corresponding eigenfunctions indeed fall off also very 
-rapidly towards the left of the interface. These functions oscillate however so quickly in the $\theta$-direction and in time that they are 
-numerically very challenging to resolve. The two modes we have chosen for $\ell=1$ and $\ell=10$ are fortunately sufficient for our purpose. 
+The corresponding eigenvalues are $\lambda_{1} \approx 190.669$ and $\lambda_{10} \approx 404.347$. Since $\lambda_{10} >  \lambda_{1}$, the corresponding eigenfunction decays much faster towards the right of the interface at $r=1$ as can be seen in the central panel of \cref{fig:whispering-gallery}. The eigenfunctions shown here do not fall off significantly towards the left of the interface since we consider very low $\ell$ in order to keep the computational costs moderate. For higher $\ell \approx 200$, the corresponding eigenfunctions indeed decay rapidly also towards the left of the interface. However, these functions oscillate heavily $\theta$-direction and in time making
+them very challenging to resolve numerically. The two modes we have chosen for $\ell=1$ and $\ell=10$ are fortunately sufficient for our purpose. 
 }
 
 \begin{figure}[!htbp]
    \begin{center}
-    \includegraphics[scale=1.0]{../plots/whispering-gallery.pdf}
+    \includegraphics[width=0.98\textwidth]{../plots/whispering-gallery.pdf}
    \end{center}
 \caption{ The upper panel displays the modes $\psi(r)$ for $\ell=1$ (left), respectively $\ell=10$ (right) obtained by solving the eigenvalue problem \cref{eq:eigval-prob-r}. 
-	 The inset shows the correspoding solution of the wave equation defined by \cref{eq:whispering-gallery-mode} and \cref{eq:whispering-sep}  at $t=T$. 
+	 The inset shows the corresponding solution of the wave equation defined by \cref{eq:whispering-gallery-mode} and \cref{eq:whispering-sep}  at $t=T$. 
          The absolute value of $\psi(r)$ is shown in the central panel. The lower panel displays the convergence of $  \Vert u_{\ell}  - \underline{u}_1 \Vert_{ L^2(Q) } $.
 	 The case where the data is given in $\omega_i$ is shown in magenta (solid lines with crosses) whereas the case where data is given in $\omega_o$ is displayed in cyan (same linestyle).
 	 For reference, the circles (marked as '+ i.c.' in the legend) display the errors when the method is run with initial conditions $u_{\ell}(\cdot, t=0)$ and $\partial_t u_{\ell}(\cdot, t=0)$ 
-	 known everywhere. The insets in the lower panel display the nunerical reconstructions achieved at the final time corresponding to the refinement level indicated by the arrows.
+	 known everywhere. The insets in the lower panel display the numerical reconstructions achieved at the final time corresponding to the refinement level indicated by the arrows.
 	}
     \label{fig:whispering-gallery}
-\end{figure} 
+\end{figure}
+
 \jp{
 We would like to test the performance of our method to reconstruct the modes $u_{\ell}$ in the setting where the data domain $\omega$ is far away from the interface so that 
 the mode for $\ell=10$ is very small in $\omega$. To this end, we consider the data domain $\omega_o  = \{  1.3 < r < R_2 \} $ in which the mode is very 
