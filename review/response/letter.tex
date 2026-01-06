@@ -36,7 +36,7 @@
 \newcommand{\revcommentA}[1]{\textbf{\textcolor{blue}{#1}}~}
 \newcommand{\revcommentB}[1]{\textbf{\textcolor{blue}{#1}}~}
 \newcommand{\revcommentC}[1]{\textit{\textcolor{blue}{#1}}~}
-\newcommand{\reply}[1]{~\\[0.25cm] \textcolor{green!40!black}{#1}~}
+\newcommand{\reply}[1]{~\\[0.25cm] \textcolor{green!10!black}{#1}~}
 \newcommand{\todiscuss}[1]{\textcolor{red!60!orange}{\underline{To discuss:} #1}~}
 \newcommand{\tocheck}{\textcolor{red!60!black}{\underline{ToCheck}}~}
 \newcommand{\fixed}{\textcolor{green!50!black}{\underline{fixed}}~}
@@ -142,7 +142,7 @@ First of all, thank you for considering our article "Variational data assimilati
   \reply{Indeed, it does belong to $\mathcal{W}_{h, \Delta t}^{k^{\ast},q^{\ast}}$. We have added this after the definition of the Lagrangian $\mathcal{L}$.}
   \item \emph{In the numerical experiments, what values are chosen for the parameters $k, q, k^{\ast}$ and
   $q^{\ast}$? The current description appears to only specify the value of $k$.}
-  \reply{We have added the values of $q, k^{\ast}, q^{\ast}$ for the numerical experiments. \textbf{@ Janosch, why do we choose them that way?}}
+  \reply{We have added the values of $q, k^{\ast}, q^{\ast}$ for the numerical experiments.}
   \item \emph{How is the “best approximation” determined in the numerical experiments? Please explain the criteria or method used to obtain it.}
   \reply{In the numerical experiments, we compare the approximation error of our method with the $L^2$-best approximation error, i.e. we calculate the $L^2$-orthogonal projection of the exact solution onto the discrete space. We have added a footnote.}
   \item \emph{On page 18, the black line in Figure 5, does it represent the exact solution at time 0.5
@@ -167,7 +167,7 @@ First of all, thank you for considering our article "Variational data assimilati
   \item \emph{What is the relationship between the GCC and condition (1.3)? In the numerical tests in Section 4.1, you use condition (1.3) to imply the GCC. It appears that you have verified stability under a much stronger condition. I am wondering what would happen if you directly let the data satisfy the GCC, as you did in Section 4.2. Moreover, could you please explain why $T = 0.75$ was chosen in
   Section 4.2? Would a smaller $T$ work?}
   \reply{In general, the GCC is a stronger assumption than (1.3), because (1.3) only grants unique solvability, but stability can be (very) poor. The GCC ensures better stability. In the 1D case, however, both conditions are equivalent ((1.3) implies the GCC in 1D) and thus, we can focus on (1.3) for the 1D experiments. We have added a sentence in the article to point that out.}
-  \reply{\textbf{2D not sure, think about this after modifications from Ref 1}}
+  \reply{For the examples in Sec. 4.2, we have chosen $T$ to be large enough to fulfill the GCC for all contrasts. As in Sec. 4.1, we could choose $T$ smaller in dependence of the contrast. However, we do not expect different results than in the 1D case.}
   \item \emph{Could you please explain why you adopted the discontinuous-in-time FEM
   method? What are the advantages of this method for the problem under consideration?}
   \reply{Since the problem under consideration is globally coupled in space and time, it cannot be solved directly using classical time-stepping methods. For this reason the unique 
@@ -193,7 +193,7 @@ First of all, thank you for considering our article "Variational data assimilati
 
 
 
-% \vspace{1cm}
+\vspace{1cm}
 Yours sincerely,\\
 Erik Burman, Janosch Preuss, and Tim van Beeck
 
