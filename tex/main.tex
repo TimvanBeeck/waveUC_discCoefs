@@ -643,9 +643,11 @@ If the problem is Lipschitz stable, for instance in the homogeneous case (see \c
 
 
 \section{Numerical experiments}
-In this section, we present numerical experiments carried out with the proposed method. The examples are implemented using the \texttt{FEniCSx} library \cite{BarattaEtal2023,BasixJoss,ScroggsEtal2022,AlnaesEtal2014}. Reproduction material is available at \url{https://github.com/TimvanBeeck/waveUC_discCoefs}.
+In this section, we present numerical experiments carried out with the proposed method. The examples in \Cref{ssection:1d-numexp}-\Cref{ssection:2d-numexp} are implemented using the \texttt{FEniCSx} library \cite{BarattaEtal2023,BasixJoss,ScroggsEtal2022,AlnaesEtal2014}.
+\jp{The example in \Cref{ssection:whispering-gallery} uses the finite element software \texttt{Netgen/NGSolve} \cite{JS97, JS14} and in addition the space-time functionality provided by the add-on \texttt{ngsxfem} \cite{ngsxfem2021}.}  
+Reproduction material is available at \url{https://github.com/TimvanBeeck/waveUC_discCoefs}.
 
-\subsection{Examples in one space dimension}
+\subsection{Examples in one space dimension}\label{ssection:1d-numexp}
  We consider the unit interval $\Omega \coloneqq (0,1) \subset \mathbb{R}$ partitioned into $2^{L+1}$, $L \in \mathbb{N}$, uniform elements of size $h = 1/2^{L+1}$. Unless specified otherwise, we choose the time step as $\Delta t = h$. \changed{Further, we set $q = k$ and choose $k^{\ast} = 1$, $q^{\ast} = 1$ if $k = 1$ and $q^{\ast} = 0$ if $k > 1$.}
 
 \subsubsection{A first example}\label{sec:numex:1D:simple}
@@ -1170,7 +1172,7 @@ In \cref{fig:1D:complicatedSol} we consider the approximation of this function b
   \end{figure}
 
 \end{comment}
-\subsection{Example in two space dimensions}
+\subsection{Example in two space dimensions}\label{ssection:2d-numexp}
 To conclude the numerical examples, we consider another example in two space dimensions. We partition the unit-square $\Omega \coloneqq [0,1]^2 \subset \mathbb{R}^2$ into subdomains $\Omega_1 = \{ (x,y) \in \Omega: x < 0.5 \}$ and $\Omega_2 = \{ (x,y) \in \Omega: x > 0.5 \}$, and 
 extend the exact solution defined in \eqref{eq:1D:exact:simple} to the two-dimensional case by setting $u(x,y;t) \coloneqq u(x;t)$. 
 
@@ -1255,7 +1257,7 @@ In particular, the ratio for $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2
   \end{figure}
 
 
-\subsection{Whispering gallery modes in an annulus}
+\subsection{Whispering gallery modes in an annulus}\label{ssection:whispering-gallery}
 \jp{
 As a final example, we would like to consider a two-dimensional setting in which the Lipschitz stability estimates from \cref{assum:LipschitzStability} are not valid. 
 To this end, we follow reference \cite{Filippas23}, in which it has been shown that, under certain assumptions on the contrast of the sound speed and the geometry, so-called whispering gallery modes exist. These are solutions of the wave equation that are exponentially decaying away from the interface, showing that the logarithmic stability estimate \eqref{eq:FilippasEstimateLog} from \cite{Filippas22} is in general optimal.
@@ -1297,9 +1299,9 @@ While there exists many eigenpairs $( \lambda_{\ell}, \psi_{\ell} )$ for fixed $
 R_0 = 3/5, \; R_1 = 1, \; R_2 = 3/2, \quad c_1 = 1, \; c_2 = \sqrt{20}
 \]
 and find two eigenpairs for $\ell =1$ and $\ell=10$ whose (radial) eigenfunctions $\psi_{\ell}$ are plotted in the upper panel of \cref{fig:whispering-gallery}.
-The corresponding solutions of the wave equation}\textsuperscript{4}\footnotemark \ \footnotetext{\textsuperscript{3}{In the numerical experiments we work only with the real part of $w_{\ell}$ to obtain real-valued solutions.}}\jp{$u_{\ell}(t,x)$ as defined in \cref{eq:whispering-gallery-mode} are also displayed at the final time $t=T$ for 
+The corresponding solutions of the wave equation}\textsuperscript{4}\footnotemark \ \footnotetext{\textsuperscript{3}{\jp{In the numerical experiments we work only with the real part of $w_{\ell}$ to obtain real-valued solutions}}}\jp{$u_{\ell}(t,x)$ as defined in \cref{eq:whispering-gallery-mode} are also displayed at the final time $t=T$ for 
 $T=1$. 
-The corresponding eigenvalues are $\lambda_{1} \approx 190.669$ and $\lambda_{10} \approx 404.347$. Since $\lambda_{10} >  \lambda_{1}$, the corresponding eigenfunction decays much faster towards the right of the interface at $r=1$ as can be seen in the central panel of \cref{fig:whispering-gallery}. The eigenfunctions shown here do not fall off significantly towards the left of the interface since we consider very low $\ell$ in order to keep the computational costs moderate. For higher $\ell \approx 200$, the corresponding eigenfunctions indeed decay rapidly also towards the left of the interface. However, these functions oscillate heavily $\theta$-direction and in time making
+The corresponding eigenvalues are $\lambda_{1} \approx 190.669$ and $\lambda_{10} \approx 404.347$. Since $\lambda_{10} >  \lambda_{1}$, the corresponding eigenfunction decays much faster towards the right of the interface at $r=1$ as can be seen in the central panel of \cref{fig:whispering-gallery}. The eigenfunctions shown here do not fall off significantly towards the left of the interface since we consider very low $\ell$ in order to keep the computational costs moderate. For higher $\ell \approx 200$, the corresponding eigenfunctions indeed decay rapidly also towards the left of the interface. However, these functions oscillate heavily in $\theta$-direction and in time making
 them very challenging to resolve numerically. The two modes we have chosen for $\ell=1$ and $\ell=10$ are fortunately sufficient for our purpose. 
 }
 
@@ -1307,12 +1309,12 @@ them very challenging to resolve numerically. The two modes we have chosen for $
    \begin{center}
     \includegraphics[width=0.98\textwidth]{../plots/whispering-gallery.pdf}
    \end{center}
-\caption{ The upper panel displays the modes $\psi(r)$ for $\ell=1$ (left), respectively $\ell=10$ (right) obtained by solving the eigenvalue problem \cref{eq:eigval-prob-r}. 
-	 The inset shows the corresponding solution of the wave equation defined by \cref{eq:whispering-gallery-mode} and \cref{eq:whispering-sep}  at $t=T$. 
+	\caption{ \jp{ The upper panel displays the modes $\psi(r)$ for $\ell=1$ (left), respectively $\ell=10$ (right) obtained by solving the eigenvalue problem \cref{eq:eigval-prob-r}. 
+	 The insets show the corresponding solutions of the wave equation defined by \cref{eq:whispering-gallery-mode} and \cref{eq:whispering-sep}  at $t=T$. 
          The absolute value of $\psi(r)$ is shown in the central panel. The lower panel displays the convergence of $  \Vert u_{\ell}  - \underline{u}_1 \Vert_{ L^2(Q) } $.
 	 The case where the data is given in $\omega_i$ is shown in magenta (solid lines with crosses) whereas the case where data is given in $\omega_o$ is displayed in cyan (same linestyle).
 	 For reference, the circles (marked as '+ i.c.' in the legend) display the errors when the method is run with initial conditions $u_{\ell}(\cdot, t=0)$ and $\partial_t u_{\ell}(\cdot, t=0)$ 
-	 known everywhere. The insets in the lower panel display the numerical reconstructions achieved at the final time corresponding to the refinement level indicated by the arrows.
+	 known everywhere. The insets in the lower panel display the numerical reconstructions achieved at the final time corresponding to the refinement level indicated by the arrows. }
 	}
     \label{fig:whispering-gallery}
 \end{figure}
