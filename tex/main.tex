@@ -332,7 +332,7 @@ In the heterogeneous case, where $c_1 \not =  c_2$, the problem is less studied.
 \begin{equation}\label{eq:Tcondition}
     T > 2 \sup_{x \in \Omega} \operatorname{dist}_{c}(x,\omega_T),
 \end{equation}
-where $\operatorname{dist}_c(x,\omega_T) := \inf_{y \in \omega_T} d_c(x,y)$. Here, $d_c$ is the distance function defined as the length of the shortest continuous path in $\Omega$ connecting $x$ and $y$ with respect to the metric adapted to the discontinuous wave speed $c$. While the condition \eqref{eq:Tcondition} guarantees unique solvability, the stability of problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} can be poor. However, as shown in \cite[Thm. 5.19]{Filippas22}, assumption \eqref{eq:Tcondition} grants the following stability result holds. 
+where $\operatorname{dist}_c(x,\omega_T) := \inf_{y \in \omega_T} d_c(x,y)$. Here, $d_c$ is the distance function defined as the length of the shortest continuous path in $\Omega$ connecting $x$ and $y$ with respect to the metric adapted to the discontinuous wave speed $c$. While the condition \eqref{eq:Tcondition} guarantees unique solvability, the stability of problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} can be poor. However, as shown in \cite[Thm. 5.19]{Filippas22}, Assumption \eqref{eq:Tcondition} grants the following stability result holds. 
 
 \begin{thm}[Thm. 5.19 of \cite{Filippas22}]\label{thm:filippas}
     Let $\omega_T \subset \Omega$ be nonempty and let $T > 0$ be s.t. \eqref{eq:Tcondition} holds. Then, there exists $C,\kappa$ such that for any initial data $(u_0,u_1) \in H^1_0(\Omega) \times L^2(\Omega)$ and $u$ solving \eqref{eq:IF-conditions}+\eqref{eq:initialData} and  
@@ -1325,7 +1325,7 @@ The $L^2$-errors in $Q = (0,T) \times \Omega$ for the unique continuation proble
 Here, we have chosen $T=1$ such that the condition \cref{eq:Tcondition} for unique solvability is fulfilled.
 When the data is given in $\omega_i$ (i.e. close to the interface), then the method converges with the same order as when the initial condition is given, i.e. the convergence is as good as for a well-posed problem irrespective of the considered mode $\ell$. However, when the data is given far away from the interface in $\omega_0$, then 
 the rate of convergence drastically deteriorates as $\ell$ increases. 
-This is in full agreement with the discussion in the beginning of this subsection: the Lipschitz stability result of \cref{assum:LipschitzStability} cannot hold for $\dis(\bar{\omega}_0,\Gamma) > 0$. The stability is of logarithmic type as asserted by  \cref{thm:filippas} (Thm. 5.19 of \cite{Filippas22}) and this is exemplified in our numerical experiments by the observation that the convergence rate drops to logarithmic type as $\ell$ increases.
+This is in full agreement with the discussion in the beginning of this subsection: the Lipschitz stability result of \cref{assum:LipschitzStability} cannot hold for $\dis(\bar{\omega}_0,\Gamma) > 0$. The stability is of logarithmic type as asserted by  \cref{thm:filippas} (Thm. 5.19 of \cite{Filippas22}) and this is exemplified in our numerical experiments by the observation that the convergence rate appears to drops to logarithmic type as $\ell$ increases.
 }
 
 
