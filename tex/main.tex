@@ -328,14 +328,18 @@ Roughly speaking, a set $\omega \subset \Omega$ and a final time $T$ fulfill the
     See \cite[Thm. A.4]{BFMO21control} and \cite[Rem. A.5]{BFMO21control}.
 \end{proof}
 
-In the heterogeneous case, where $c_1 \not =  c_2$, the problem is less studied. In the absence of the GCC, we have to assume that the final time $T$ is large enough to ensure that problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} is well-posed. To be precise, Holmgren's unique continuation theorem guarantees that \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} is uniquely solvable if
+In the heterogeneous case, where $c_1 \not =  c_2$, the problem is less studied. In the absence of the GCC, we have to assume that the final time $T$ is large enough to ensure that problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} is well-posed.
+To be precise, 
+\jp{Thm. 5.19 of \cite{Filippas22} (restated below as \Cref{thm:filippas}) guarantees that solutions of \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} 
+are unique if} 
 \begin{equation}\label{eq:Tcondition}
-    T > 2 \sup_{x \in \Omega} \operatorname{dist}_{c}(x,\omega_T),
+	T > 2 \sup_{x \in \Omega} \operatorname{dist}_{c}(x, \jp{\omega}),
 \end{equation}
-where $\operatorname{dist}_c(x,\omega_T) := \inf_{y \in \omega_T} d_c(x,y)$. Here, $d_c$ is the distance function defined as the length of the shortest continuous path in $\Omega$ connecting $x$ and $y$ with respect to the metric adapted to the discontinuous wave speed $c$. While the condition \eqref{eq:Tcondition} guarantees unique solvability, the stability of problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} can be poor. However, as shown in \cite[Thm. 5.19]{Filippas22}, Assumption \eqref{eq:Tcondition} grants the following stability result holds. 
-
+where $\operatorname{dist}_c(x, \jp{\omega}) := \inf_{y \in \jp{\omega} } d_c(x,y)$. Here, $d_c$ is the distance function defined as the length of the shortest continuous path in $\Omega$ connecting $x$ and $y$ with respect to the metric adapted to the discontinuous wave speed $c$.
+\jp{We remark that the condition on the time in \cref{eq:Tcondition} is the same as the one in the classical unique continuation result of Tataru for a smooth coefficient $c$.}
+While the condition \eqref{eq:Tcondition} guarantees unique solvability, the stability of problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} can be poor. However, as shown in \cite[Thm. 5.19]{Filippas22}, Assumption \eqref{eq:Tcondition} grants the following stability result holds. 
 \begin{thm}[Thm. 5.19 of \cite{Filippas22}]\label{thm:filippas}
-    Let $\omega_T \subset \Omega$ be nonempty and let $T > 0$ be s.t. \eqref{eq:Tcondition} holds. Then, there exists $C,\kappa$ such that for any initial data $(u_0,u_1) \in H^1_0(\Omega) \times L^2(\Omega)$ and $u$ solving \eqref{eq:IF-conditions}+\eqref{eq:initialData} and  
+Let $\jp{\omega} \subset \Omega$ be nonempty and let $T > 0$ be s.t. \eqref{eq:Tcondition} holds. Then, there exists $C,\kappa$ such that for any initial data $(u_0,u_1) \in H^1_0(\Omega) \times L^2(\Omega)$ and $u$ solving \eqref{eq:IF-conditions}+\eqref{eq:initialData} and  
 \[
 \wop u \in L^2(Q), \quad u = 0 \text{ on } \Sigma,
 \]
@@ -352,7 +356,7 @@ one has for any $\mu > 0$ that
 In this article, we consider a discontinuous-in-time finite element method to solve the data assimilation problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch} in the heterogeneous case. This method was originally introduced for the homogeneous case in \cite{BP24}. The focus of this article is not on the numerical analysis of the proposed discretization, but rather on investigating the numerically observed stability under the assumption of the GCC. Specifically, we want to investigate numerically whether the following assumption -- motivated by \cref{thm:Lipschitz} for the homogeneous case -- is justified. 
 
 \begin{assum}\label{assum:LipschitzStability}
-    If $\omega_T \subset Q$ fulfills the GCC, then there exists a constant $C > 0$ such that for any $\phi \in H^1(Q)$ we have the following estimates
+   If $ \omega_T \subset Q$ fulfills the GCC, then there exists a constant $C > 0$ such that for any $\phi \in H^1(Q)$ we have the following estimates
     \begin{align*}
         \Vert \phi \Vert_{L^\infty(0,T;L^2(\Omega))} + \Vert \dt \phi \Vert_{L^2(0,T;H^{-1}(\Omega))} &\le C \left(  \Vert \phi \Vert_{L^2(\omega_T)} + \Vert \phi \Vert_{L^2(\Sigma)} + \Vert \square_c \phi \Vert_{H^{-1}(Q)} \right), \\
         \Vert \phi \vert_{t = 0} \Vert_{L^2(\Omega)} + \Vert \dt \phi \vert_{t = 0} \Vert_{H^{-1}(\Omega)} &\le C \left(\Vert \phi \Vert_{L^2(\omega_T)} + \Vert \phi \Vert_{L^2(\Sigma)} + \Vert \square_c \phi \Vert_{H^{-1}(Q)} \right). 
@@ -360,7 +364,11 @@ In this article, we consider a discontinuous-in-time finite element method to so
 \end{assum}
 
 In summary, our goal is to understand whether the Lipschitz stability property is preserved in the presence of strong heterogeneity in the medium, provided that the GCC holds. This question is of high practical importance, as discontinuous media appear in many applications, for example, in seismology. If the corresponding data assimilation problems were indeed subject to the poor logarithmic stability property ensured by \eqref{eq:FilippasEstimateLog}, this would pose an enormous challenge for the design of accurate and reliable numerical methods. 
-
+\begin{rmk}
+\jp{While \Cref{assum:LipschitzStability} appears natural, it is possible that in certain configurations some additional conditions on the geometry and minimal time $T$ have to be imposed to prove Lipschitz stability. This is due to the complex interactions of rays with the interface $\Gamma$. For further discussion we refer to the reference \cite{LG23} in which sufficient conditions for boundary controllability of wave equations with a jumping coefficient have been derived  
+and in particular to Remark 1.6 therein.} 
+\end{rmk}
+%\jp{We remark that even though \Cref{assum:LipschitzStability}}
 
 \section{Fully discrete discontinuous-in-time discretization}\label{sec:discretization} 
 In this section, we present a fully discrete discontinuous-in-time finite element method for discretizing the data assimilation problem \eqref{eq:waveEquation}-\eqref{eq:IF-conditions}+\eqref{eq:dataMatch}, extending the method from \cite{BP24} to the heterogeneous case. \Cref{sec:spaceTimeDiscretization} describes the geometric partition of the space-time domain $Q$ into time slabs, followed by the full discretization in \cref{sec:method}. \jp{The chosen discretization allows for an iterative solution of the linear systems which is described in detail in \cite[Section 5]{BP24}. }
@@ -645,7 +653,7 @@ If the problem is Lipschitz stable, for instance in the homogeneous case (see \c
 \section{Numerical experiments}
 In this section, we present numerical experiments carried out with the proposed method. The examples in \Cref{ssection:1d-numexp}-\Cref{ssection:2d-numexp} are implemented using the \texttt{FEniCSx} library \cite{BarattaEtal2023,BasixJoss,ScroggsEtal2022,AlnaesEtal2014}.
 \jp{The example in \Cref{ssection:whispering-gallery} uses the finite element software \texttt{Netgen/NGSolve} \cite{JS97, JS14} and in addition the space-time functionality provided by the add-on \texttt{ngsxfem} \cite{ngsxfem2021}.}  
-Reproduction material is available at \url{https://github.com/TimvanBeeck/waveUC_discCoefs}.
+\jp{A reference to reproduction material can be found in the section on \textbf{Code availability}.}
 
 \subsection{Examples in one space dimension}\label{ssection:1d-numexp}
  We consider the unit interval $\Omega \coloneqq (0,1) \subset \mathbb{R}$ partitioned into $2^{L+1}$, $L \in \mathbb{N}$, uniform elements of size $h = 1/2^{L+1}$. Unless specified otherwise, we choose the time step as $\Delta t = h$. \changed{Further, we set $q = k$ and choose $k^{\ast} = 1$, $q^{\ast} = 1$ if $k = 1$ and $q^{\ast} = 0$ if $k > 1$.}
@@ -1334,6 +1342,24 @@ This is in full agreement with the discussion in the beginning of this subsectio
 \section{Conclusion}
 In this article, we investigated a numerical method for solving the variational data assimilation problem for the wave equation with discontinuous wave speed. Our numerical experiments lead to two main conclusions. First, obtaining accurate numerical solutions in the presence of material interfaces involving large contrasts is computationally demanding, and the resolution required to capture the complex behavior of the solution is a limiting factor in numerical simulations. This challenge is amplified by the fact that unique continuation problems are globally coupled in space and time. Second, even in the case of a discontinuous wave speed, the geometric control condition seems to ensure Lipschitz stability, allowing the design of accurate and reliable numerical methods. 
 
+\bmhead{Acknowledgments}
+\jp{The authors would like to thank Spyridon Filippas and Lauri Oksanen for interesting discussions.}
+
+\section*{Declarations}
+%
+%Some journals require declarations to be submitted in a standardised format. Please check the Instructions for Authors of the journal to which you are submitting to see if you need to complete this section. If yes, your manuscript must contain the following sections under the heading `Declarations':
+
+\begin{itemize}
+\item \textbf{Funding} \jp{Funding by EPSRC grant EP/V050400/1 is gratefully acknowledged.}
+%\item \textbf{Competing interests} The authors have no relevant financial or non-financial interests to disclose.
+%\item Conflict of interest/Competing interests (check journal-specific guidelines for which heading to use)
+%\item Ethics approval 
+%\item Consent to participate
+%\item Consent for publication
+%\item Availability of data and materials
+\item \textbf{Code availability} \jp{Reproduction material is available at \url{https://github.com/TimvanBeeck/waveUC_discCoefs}}.
+%\item Authors' contributions
+\end{itemize}
 
 
 
