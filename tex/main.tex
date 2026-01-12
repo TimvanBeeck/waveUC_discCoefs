@@ -1181,7 +1181,7 @@ In \cref{fig:1D:complicatedSol} we consider the approximation of this function b
 
 \end{comment}
 \subsection{Example in two space dimensions}\label{ssection:2d-numexp}
-To conclude the numerical examples, we consider another example in two space dimensions. We partition the unit-square $\Omega \coloneqq [0,1]^2 \subset \mathbb{R}^2$ into subdomains $\Omega_1 = \{ (x,y) \in \Omega: x < 0.5 \}$ and $\Omega_2 = \{ (x,y) \in \Omega: x > 0.5 \}$, and 
+We consider another example in two space dimensions. We partition the unit-square $\Omega \coloneqq [0,1]^2 \subset \mathbb{R}^2$ into subdomains $\Omega_1 = \{ (x,y) \in \Omega: x < 0.5 \}$ and $\Omega_2 = \{ (x,y) \in \Omega: x > 0.5 \}$, and 
 extend the exact solution defined in \eqref{eq:1D:exact:simple} to the two-dimensional case by setting $u(x,y;t) \coloneqq u(x;t)$. 
 
 We define the data domain $\omega \coloneqq \Omega \setminus [0.25,0.75]^2$ and note that $\omega$ fulfills the GCC. To ensure that the data domain and the interface $\Gamma$ are meshed exactly, we consider a quadrilateral mesh with $2^{L+1}$, $L \in \{1,2,3,4\}$, elements in each direction. We consider the final time $T = 0.75$  and set the time step size to $\Delta t = (1/2)^{L+1}$. As before, we fix the wave speed $c_2 = 1$ and consider different values for $c_1$ to control the contrast. \changed{Further, we choose the parameters $q = k^{\ast} = q^{\ast} = k$.}
