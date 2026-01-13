@@ -202,7 +202,7 @@
 
 
 \newcommand{\changed}[1]{{\color{blue!70!black} #1}}
-\newcommand{\jp}[1]{{\color{cyan} #1}}
+\newcommand{\jp}[1]{{\color{blue!70!black} #1}}
 
 %%% TvB: Added for plots, some might be redundant ##
 
@@ -687,109 +687,8 @@ However, this also entails that a strong refinement of the discretization is req
 
 
 \begin{figure}[!htbp]
-    \begin{center}
-        \begin{tikzpicture}[scale=0.8]
-            \begin{groupplot}[%
-                group style={%
-                group size=2 by 2,
-                horizontal sep=1.25cm,
-                vertical sep=2cm,
-                },
-            ymajorgrids=true,
-            grid style=dashed,
-            %ymin = 1e-3, ymax = 0.5e1,
-            ]    
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={refinement level $L$}, title={$T=0.5$, $\Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega_R))}$}, %cycle list name=,
-            xtick={1,2,3,4}, 
-            legend style={legend columns=4, draw=none,nodes={scale=.8}},legend to name=named,
-            ]
-           
-            
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,color=orange,mark=square*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/simplexExact_singleContrast_T0.5.csv};
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange,mark=square*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/simplexExact_singleContrast_T0.5.csv};
-        
-
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,color=cyan!60!black,mark=diamond*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/simplexExact_singleContrast_T0.5.csv};
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=cyan!60!black,mark=diamond*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/simplexExact_singleContrast_T0.5.csv};
-        
-            \addplot[gray, dotted, domain=1:4] {0.1*(1/2^(3))^(x-0.9)};
-            \addplot[gray, dashed, domain=1:4] {1.45*(1/2^(2))^(x-0.9)};
-        
-            
-            \legend{$k=2 $,, $k = 3$,,$\mathcal{O}(h^{2})$,$\mathcal{O}(h^{3})$}
-
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={refinement level $L$}, title={$T = 0.5$, $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$}, %cycle list name=, 
-            xtick={1,2,3,4},
-            legend pos=south west, %yticklabels={,,},
-            ]
-
-            %L2-L2-u_t (k = 2)
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,color=orange,mark=square*] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../data/simplexExact_singleContrast_T0.5.csv};
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange,mark=square*] table [x=L, y=bestapprox-L2-L2-error-u_t, col sep=comma] {../data/simplexExact_singleContrast_T0.5.csv};
-
-
-            %L2-L2-u_t (k = 3)
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,color=cyan!60!black,mark=diamond*] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../data/simplexExact_singleContrast_T0.5.csv};
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=cyan!60!black,mark=diamond*] table [x=L, y=bestapprox-L2-L2-error-u_t, col sep=comma] {../data/simplexExact_singleContrast_T0.5.csv};
-            
-            \addplot[gray, dashed, domain=1:4] {4.5*(1/2^(2))^(x-0.9)};
-            \addplot[gray, dotted, domain=1:4] {1.0*(1/2^(3))^(x-0.9)};
-           
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={refinement level $L$}, title={$T = 0.1$, $\Vert (u-L_{\Delta t} \ul_1) \Vert_{L^\infty(0,T;L^2(\Omega_R))}$}, %cycle list name=, 
-            xtick={1,2,3,4},
-            legend pos=south west, %yticklabels={,,},
-            ]
-           
-            %L-infty-L2-u (k = 2)
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,color=orange,mark=square*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/simplexExact_singleContrast_T0.1.csv};
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange,mark=square*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/simplexExact_singleContrast_T0.1.csv};
-
-           
-            %L-infty-L2-u (k = 3)
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,color=cyan!60!black,mark=diamond*] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/simplexExact_singleContrast_T0.1.csv};
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=cyan!60!black,mark=diamond*] table [x=L, y=bestapprox-L-infty-L2-error-u, col sep=comma] {../data/simplexExact_singleContrast_T0.1.csv};
-        
-            \addplot[gray, dashed, domain=1:4] {0.09*(1/2^(2))^(x-0.9)};
-            \addplot[gray, dotted, domain=1:4] {0.05*(1/2^(3))^(x-0.9)};
-            \addplot[gray,dashdotted] table {
-                1 1.609999968541169805
-                2 1.606666645694113204
-                3 1.604999984270584902
-                4 1.603999987416467922
-            };
-
-            \node [draw=none] at (axis description cs:0.7,0.94) {\color{gray}\footnotesize $\!\!\mathcal{O}(\vert \log(h) \vert^{-1})$};
-            
-
-
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:4,xmode=linear,ymode=log, ylabel={}, xlabel={refinement level $L$}, title={$T = 0.1$, $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$}, %cycle list name=, 
-            xtick={1,2,3,4},
-            legend pos=south west, %yticklabels={,,},
-            ]
-            %L2-L2-u_t (k = 2)
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,color=orange,mark=square*] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../data/simplexExact_singleContrast_T0.1.csv};
-            \addplot+[discard if not={order}{2}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange,mark=square*] table [x=L, y=bestapprox-L2-L2-error-u_t, col sep=comma] {../data/simplexExact_singleContrast_T0.1.csv};
-            
-
-            %L2-L2-u_t (k = 3)
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,color=cyan!60!black,mark=diamond*] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../data/simplexExact_singleContrast_T0.1.csv};
-            \addplot+[discard if not={order}{3}, discard if not={contrast}{2.5},line width=1.1pt,dashed,color=cyan!60!black,mark=diamond*] table [x=L, y=bestapprox-L2-L2-error-u_t, col sep=comma] {../data/simplexExact_singleContrast_T0.1.csv};
-            
-            \addplot[gray, dashed, domain=1:4] {0.5*(1/2^(2))^(x-0.9)};
-            \addplot[gray, dotted, domain=1:4] {0.2*(1/2^(3))^(x-0.9)};
-            \addplot[gray,dashdotted] table {
-                1 7.59999968541169805
-                2 7.56666645694113204
-                3 7.54999984270584902
-                4 7.53999987416467922
-
-            };
-            \node [draw=none] at (axis description cs:0.7,0.94) {\color{gray}\footnotesize $\!\!\mathcal{O}(\vert \log(h) \vert^{-1})$};
-
-            \end{groupplot}
-        \end{tikzpicture}
-        \pgfplotslegendfromname{named}
-    \end{center}
+    \centering 
+    \includegraphics[width=0.97\textwidth]{../figs/1Dcontrast2.5.pdf}
     \caption{For the approximation of \eqref{eq:1D:exact:simple} with polynomial degree $k \in \{2,3\}$ and contrast $c_1 = 2.5$ we measure the errors $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ (left) and $\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$ (right) and compare to the respective error of the $L^2$-best approximation (dashed). For final time $T = 0.5 > 0.35$ (top), we observe optimal convergence rates, while for $T = 0.1 < 0.35$ (bottom) the order of convergence degrades.}
     \label{fig:jumpCoefs:contrast:2.5}
   \end{figure}
@@ -797,59 +696,8 @@ However, this also entails that a strong refinement of the discretization is req
 
 
   \begin{figure}[!htbp]
-    \begin{center}
-        \begin{tikzpicture}[scale=0.85]
-            \begin{groupplot}[%
-                group style={%
-                group size=2 by 1,
-                horizontal sep=1.0cm,
-                vertical sep=2cm,
-                },
-            ymajorgrids=true,
-            grid style=dashed,
-            %ymin = 1e-3, ymax = 0.5e1,
-            ]    
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:5,xmode=linear,ymode=log, ylabel={}, xlabel={$c_1$}, title={$\Vert \partial_t (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$}, %cycle list name=, 
-            legend style={legend columns=4, draw=none,nodes={scale=.8}},legend to name=named, %yticklabels={,,},
-            xtick={1,1.5,2,2.5,3,3.5,4,4.5},
-            %ymin=1e-7,ymax=1e1,
-            ]
-  
-            \addplot+[line width=1.1pt,color=teal,mark=*] table [x=contrast, y=L2-L2-error-u_t, col sep=comma]{../data/simplexExact_MultContrast_T0.5.csv};
-            \addplot+[line width=1.1pt,color=teal,mark=*,dashed] table [x=contrast, y=bestapprox-L2-L2-error-u_t, col sep=comma]{../data/simplexExact_MultContrast_T0.5.csv};
-            \addplot+[line width=1.1pt,color=orange,mark=diamond*] table [x=contrast, y=L2-L2-error-u_t, col sep=comma]{../data/simplexExact_MultContrast_TAdap.csv};
-            \addplot+[line width=1.1pt,color=orange,mark=diamond*,dashed] table [x=contrast, y=bestapprox-L2-L2-error-u_t, col sep=comma]{../data/simplexExact_MultContrast_TAdap.csv};
-
-
-            \addplot[gray, dashed, domain=1:4.5] {0.001*(1/2^(-2))^(x-0.9)};
-            \addplot[gray, dashed, domain=1:4.5] {0.001*(1/2^(-3))^(x-0.9)};
-
-            \node [draw=none] at (axis description cs:0.70,0.37) {\color{gray}\footnotesize $\!\!\mathcal{O}(c_1^{2})$};
-            \node [draw=none] at (axis description cs:0.50,0.75) {\color{gray}\footnotesize $\!\!\mathcal{O}(c_1^{3})$};
-
-            \legend{$T = 0.5$, $L^2$-best approx. ($T = 0.5$), $T$ variable, $L^2$-best approx. ($T$ variable)}
-            \nextgroupplot[width=8cm,height=6.2cm,domain=1:5,xmode=linear,ymode=log, ylabel={}, xlabel={$c_1$}, title={$\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega_R))}$}, %cycle list name=, 
-            legend pos=south east, %yticklabels={,,},
-            %ymin=1e-7,ymax=1e1,
-            xtick={1,1.5,2,2.5,3,3.5,4,4.5},
-            ]
-            \addplot+[line width=1.1pt,color=teal,mark=*] table [x=contrast, y=L-infty-L2-error-u, col sep=comma]{../data/simplexExact_MultContrast_T0.5.csv};
-            \addplot+[line width=1.1pt,color=teal,mark=*,dashed] table [x=contrast, y=bestapprox-L-infty-L2-error-u, col sep=comma]{../data/simplexExact_MultContrast_T0.5.csv};
-
-        
-            \addplot+[line width=1.1pt,color=orange,mark=diamond*] table [x=contrast, y=L-infty-L2-error-u, col sep=comma]{../data/simplexExact_MultContrast_TAdap.csv};
-            \addplot+[line width=1.1pt,color=orange,mark=diamond*,dashed] table [x=contrast, y=bestapprox-L-infty-L2-error-u, col sep=comma]{../data/simplexExact_MultContrast_TAdap.csv};
-
-            
-            \addplot[gray, dashed, domain=1:4.5] {0.00005*(1/2^(-2))^(x-0.9)};
-            \addplot[gray, dashed, domain=1:4.5] {0.0003*(1/2^(-3))^(x-0.9)};
-            \node [draw=none] at (axis description cs:0.70,0.27) {\color{gray}\footnotesize $\!\!\mathcal{O}(c_1^{2})$};
-            \node [draw=none] at (axis description cs:0.50,0.75) {\color{gray}\footnotesize $\!\!\mathcal{O}(c_1^{3})$};
-
-            \end{groupplot}
-        \end{tikzpicture}
-        \pgfplotslegendfromname{named}
-    \end{center}
+    \centering
+    \includegraphics[width=0.97\textwidth]{../figs/1DcontrastIncreasing.pdf}
     \caption{For $k = 3$ and $L = 3$, we consider the errors $\Vert \dt (u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega_R))}$ (left) and $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega_R))}$ (right) and the respective $L^2$-best approximation errors (dashed) for increasing contrast $c_1 \in \{1.0,1.5,...,4.5\}$. We compare the case where $T = 0.5$ is fixed for all choices of $c_1$ and the case where $T$ adapted such that it barely fulfills $T > 0.25(1+c_1^{-1})$.}
     \label{fig:jumpCoefs:increasingcontrast}
   \end{figure}
@@ -1191,78 +1039,12 @@ With contrast $c_1 = 2.5$, we observe quasi-optimal convergence with order  $\ma
 Similar as already observed in the one-dimensional case in \cref{fig:jumpCoefs:increasingcontrast}, we observe that these errors are more sensitive to increasing contrast $c_1$ than the corresponding $L^2$-best approximation errors. 
 In particular, the ratio for $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$ with $k=2$ appears to grow as $\mathcal{O}(c_1^{3/2})$, which renders it very demanding to maintain a reasonable accuracy as the contrast increases. 
 
-  \begin{figure}[!htbp]
-    \begin{center}
-        \begin{tikzpicture}[scale=0.76]
-            \begin{groupplot}[%
-                group style={%
-                group size=2 by 1,
-                horizontal sep=1.25cm,
-                vertical sep=2cm,
-                },
-            ymajorgrids=true,
-            grid style=dashed,
-            %ymin = 1e-3, ymax = 0.5e1,
-            ]    
-                \nextgroupplot[width=9cm,height=7cm,domain=0:4,xmode=linear,ymode=log, xlabel={refinement level $L$}, ylabel={}, title={Contrast $c_1 = 2.5$}, %cycle list name=paulcolors, 
-                %legend pos=north east, %yticklabels={,,},
-                xtick={1,2,3,4},
-                legend style={legend columns=3, draw=none,nodes={scale=.8}},
-                legend to name=named,
-                ]
-                %
-                \addplot+[discard if not={order}{2},discard if not={contrast}{2.5},line width=1.1pt,color=orange] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../data/2D_errors_simpleRefsolFull.csv};
-                %
-                \addplot+[discard if not={order}{3},discard if not={contrast}{2.5},line width=1.1pt,color=teal] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../data/2D_errors_simpleRefsolFull.csv};
-                %
-                \addplot+[discard if not={order}{2},discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/2D_errors_simpleRefsolFull.csv};
-                %
-                \addplot+[discard if not={order}{3},discard if not={contrast}{2.5},line width=1.1pt,dashed,color=teal] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/2D_errors_simpleRefsolFull.csv};
-
-                \addplot[gray, dashed, domain=1:4] {9*(1/2^(2))^(x-0.9)};
-                \addplot[gray, dashed, domain=1:4] {0.65*(1/2^(2))^(x-0.9)};
-                \addplot[gray, dashed, domain=1:4] {0.15*(1/2^(3))^(x-0.9)};
-                \addplot[gray, dashed, domain=1:4] {4.5*(1/2^(3))^(x-0.9)};
-                \node [draw=none] at (axis description cs:0.50,0.52) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-                \node [draw=none] at (axis description cs:0.45,0.35) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
-                \node [draw=none] at (axis description cs:0.60,0.82) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
-                \node [draw=none] at (axis description cs:0.6,0.65) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
-    
-
-                \legend{$k=2$,$k=3$}
-                \nextgroupplot[width=9cm,height=7cm,domain=0:4,xmode=linear,ymode=log, xlabel={contrast $c_1$}, ylabel={}, title={}, %cycle list name=paulcolors, 
-                legend pos=north west, %yticklabels={,,},
-                xtick={1.0,1.5,2.0,2.5},
-                ]
-                
-
-               
-
-                \addplot+[discard if not={order}{2},discard if not={L}{4},line width=1.1pt,color=orange] table [x=contrast, y expr= abs(\thisrow{L2-L2-error-u_t}/\thisrow{bestapprox-L2-L2-error-u_t}), col sep=comma]  {../data/2D_errors_simpleRefsolFull.csv};
-                %
-                \addplot+[discard if not={order}{3},discard if not={L}{4},line width=1.1pt,color=teal] table [x=contrast, y expr= abs(\thisrow{L2-L2-error-u_t}/\thisrow{bestapprox-L2-L2-error-u_t}), col sep=comma] {../data/2D_errors_simpleRefsolFull.csv};
-
-               
-                %L-infty-L2-u error
-                \addplot+[discard if not={order}{2},discard if not={L}{4},line width=1.1pt,dashed,color=orange] table [x=contrast, y expr= abs(\thisrow{L-infty-L2-error-u}/\thisrow{bestapprox-L-infty-L2-error-u}), col sep=comma] {../data/2D_errors_simpleRefsolFull.csv};
-                \addplot+[discard if not={order}{3},discard if not={L}{4},line width=1.1pt,dashed,color=teal] table [x=contrast, y expr= abs(\thisrow{L-infty-L2-error-u}/\thisrow{bestapprox-L-infty-L2-error-u}), col sep=comma] {../data/2D_errors_simpleRefsolFull.csv};
-               
-    
-                \addplot[gray, dashed, domain=1:2.5] {2*(1/2^(-3/2))^(x-0.9)};
-                \addplot[gray, dashed, domain=1:2.5] {1.35*(1/2^(-1/2))^(x-0.9)};
-            
-                \node [draw=none] at (axis description cs:0.70,0.7) {\color{gray}\footnotesize $\!\!\mathcal{O}(c_1^{3/2})$};
-                \node [draw=none] at (axis description cs:0.7,0.45) {\color{gray}\footnotesize $\!\!\mathcal{O}(c_1^{1/2})$};
-    
-                %\legend{$k=2$,$k=3$}
-               
-            \end{groupplot}
-        \end{tikzpicture}
-        \pgfplotslegendfromname{named}
-    \end{center}
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.97\textwidth]{../figs/2DcontrastSimple.pdf}
     \caption{On the left: We observe quasi-optimal convergence of $\Vert \dt(u-L_{\Delta t} \ul_1) \Vert_{L^2(0,T;L^2(\Omega))}$ (solid) and $\Vert u-L_{\Delta t} \ul_1 \Vert_{L^\infty(0,T;L^2(\Omega))}$ (dashed) with contrast $c_1 = 2.5$ and polynomial degrees $k \in \{2,3\}$. On the right: We consider the ratio between these errors and the $L^2$-best approximation error for increasing contrast $c_1$.}
     \label{fig:2DjumpCoefs}
-  \end{figure}
+\end{figure}
 
 
 \subsection{Whispering gallery modes in an annulus}\label{ssection:whispering-gallery}
@@ -1343,21 +1125,21 @@ This is in full agreement with the discussion in the beginning of this subsectio
 In this article, we investigated a numerical method for solving the variational data assimilation problem for the wave equation with discontinuous wave speed. Our numerical experiments lead to two main conclusions. First, obtaining accurate numerical solutions in the presence of material interfaces involving large contrasts is computationally demanding, and the resolution required to capture the complex behavior of the solution is a limiting factor in numerical simulations. This challenge is amplified by the fact that unique continuation problems are globally coupled in space and time. Second, even in the case of a discontinuous wave speed, the geometric control condition seems to ensure Lipschitz stability, allowing the design of accurate and reliable numerical methods. 
 
 \bmhead{Acknowledgments}
-\jp{The authors would like to thank Spyridon Filippas and Lauri Oksanen for interesting discussions.}
+The authors would like to thank Spyridon Filippas and Lauri Oksanen for interesting discussions.
 
 \section*{Declarations}
 %
 %Some journals require declarations to be submitted in a standardised format. Please check the Instructions for Authors of the journal to which you are submitting to see if you need to complete this section. If yes, your manuscript must contain the following sections under the heading `Declarations':
 
 \begin{itemize}
-\item \textbf{Funding} \jp{Funding by EPSRC grant EP/V050400/1 is gratefully acknowledged.}
+\item \textbf{Funding} Funding by EPSRC grant EP/V050400/1 is gratefully acknowledged.
 %\item \textbf{Competing interests} The authors have no relevant financial or non-financial interests to disclose.
 %\item Conflict of interest/Competing interests (check journal-specific guidelines for which heading to use)
 %\item Ethics approval 
 %\item Consent to participate
 %\item Consent for publication
 %\item Availability of data and materials
-\item \textbf{Code availability} \jp{Reproduction material is available at \url{https://github.com/TimvanBeeck/waveUC_discCoefs}}.
+\item \textbf{Code availability} Reproduction material is available at \url{https://github.com/TimvanBeeck/waveUC_discCoefs}.
 %\item Authors' contributions
 \end{itemize}
 

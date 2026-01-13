@@ -1,0 +1,310 @@
+%\documentclass[10pt,reqno]{amsart}
+\documentclass[tikz,border=2mm]{standalone}
+
+%\setlength{\topmargin}{0cm}
+%\setlength{\textheight}{21cm}
+%\setlength{\oddsidemargin}{0in}
+%\setlength{\evensidemargin}{0in}
+%\setlength{\textwidth}{6.5in}
+%\setlength{\parindent}{.25in}
+
+%\pagestyle{plain}
+\usepackage{stmaryrd}
+\usepackage{amssymb, amsmath, amsthm}
+\usepackage{mathtools}
+\usepackage{xcolor}
+\usepackage{hyperref}
+%\usepackage{showkeys}
+\usepackage{enumerate}
+\usepackage{subfig}
+\usepackage{enumitem} 
+\usepackage{todonotes}
+\usepackage{booktabs}
+\usepackage[]{algorithm2e}
+\usepackage[capitalize]{cleveref}
+\usepackage{placeins}
+\crefname{equation}{}{}
+\usepackage{verbatim}
+\usepackage{bbm}
+
+%\usepackage{graphicx}
+%% expansion of width
+%\textwidth=15.7cm
+%\textheight=22.5cm
+%\parskip=3pt
+%\parindent=8mm
+%\oddsidemargin=2mm
+%\evensidemargin=0mm
+%\topmargin=-0.5cm
+%\marginparwidth=1cm
+
+
+%% definition of theorem-type environments
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{rmk}{Remark}
+\newtheorem{exa}{Example}
+\newtheorem{assum}{Assumption}
+\numberwithin{equation}{section}
+\newcommand{\bel}{\begin{equation} \label}
+\newcommand{\ee}{\end{equation}}
+\def\beq{\begin{equation}}
+\def\eeq{\end{equation}}
+\newcommand{\jump}[1]{\llbracket#1\rrbracket}
+\newcommand{\bea}{\begin{eqnarray}}
+\newcommand{\eea}{\end{eqnarray}}
+\newcommand{\beas}{\begin{eqnarray*}}
+\newcommand{\eeas}{\end{eqnarray*}}
+\newcommand{\pd}{\partial}
+\newcommand{\mdiv}[1]{\ensuremath{\mathrm{div} \left( #1 \right)}}
+\newcommand{\dd}{\mbox{d}}
+
+\newcommand{\ep}{\varepsilon}
+\newcommand{\la}{\lambda}
+\newcommand{\va}{\varphi}
+\newcommand{\ppp}{\partial}
+\newcommand{\chch}{\chi_{\eta}}
+\newcommand{\walpha}{\widetilde{\alpha}}
+\newcommand{\wbeta}{\widetilde{\beta}}
+
+\newcommand{\re}{\mathfrak R}
+
+\newcommand{\im}{\mathfrak I}
+\newcommand{\pdif}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\ppdif}[2]{\frac{\partial^2 #1}{{\partial #2}^2}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}} 
+\newcommand{\N}{\mathbb{N}} 
+\newcommand{\ooo}{\overline}
+\newcommand{\uu}{\mathbf{u}}
+\renewcommand{\v}{\mathbf{v}}
+\newcommand{\y}{\mathbf{y}}
+\newcommand{\RR}{\mathbf{R}}
+\newcommand{\Y}{\mathbf{Y}}
+\newcommand{\w}{\mathbf{w}}
+\newcommand{\z}{\mathbf{z}}
+\newcommand{\G}{\mathbf{G}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\cD}{\mathcal{D}}
+\newcommand{\cL}{\mathcal{L}}
+\newcommand{\cO}{\mathcal{O}}
+\newcommand{\Hin}{\mathcal{H}_{\mathrm{in},T_0}}
+\newcommand{\Gi}{S_{\mathrm{in}}}
+\newcommand{\Go}{S_{\mathrm{out}}}
+\newcommand{\dom}{\mathrm{Dom}}
+
+\newcommand{\sdd}{\mathcal{E}}
+
+
+\renewcommand{\baselinestretch}{1.5}
+%
+\renewcommand{\div}{\mathrm{div}\,}  %div
+\newcommand{\grad}{\mathrm{grad}\,}  %grad
+\newcommand{\rot}{\mathrm{rot}\,}  %rot
+
+\newcommand{\supp}{\mathrm{supp}\,}  %supp
+%\newcommand{\span}{\mathrm{span}\,} %span
+
+\allowdisplaybreaks
+%%  item
+\renewcommand{\theenumi}{\arabic{enumi}}
+\renewcommand{\labelenumi}{(\theenumi)}
+\renewcommand{\theenumii}{\alph{enumii}}
+\renewcommand{\labelenumii}{(\theenumii)}
+\def\epsilon{\varepsilon}
+%\def\phi {\varphi}
+\def \la {{\lambda}}
+\def \a {{\alpha}}
+\def\t{\theta}
+\def\fh{\frac{1}{h}}
+
+
+\DeclareMathOperator{\dis}{dist}
+
+
+\newcommand{\wop}{\square_c}
+
+\newcommand{\tnorm}[1]{\vert\hspace{-0.3mm}\Vert#1\Vert\hspace{-0.3mm}\vert}
+
+\providecommand{\abs}[1]{\left\lvert#1\right\rvert}
+% pour les normes
+\providecommand{\norm}[1]{\left\lVert#1\right\rVert}
+
+\renewcommand{\leq}{\leqslant}
+\renewcommand{\geq}{\geqslant}
+\providecommand{\abs}[1]{\left\lvert#1\right\rvert}
+% pour les normes
+\providecommand{\norm}[1]{\left\lVert#1\right\rVert}
+\def\thefootnote{{}}
+
+
+
+\newcommand{\HOX}[1]{\marginpar{\footnotesize #1}}
+
+\newcommand{\gammaGLS}{\gamma_{\text{GLS}}}
+\newcommand{\gammaCIP}{\gamma}
+
+\newcommand{\dT}{\mathrm{d}t}
+\newcommand{\dX}{\mathrm{d}x}
+\newcommand{\dS}{\mathrm{d}S}
+
+\newcommand{\STdom}{Q}
+
+\newcommand{\STdata}{\omega_T}
+\newcommand{\STdataDisc}{\underline{\omega}_T}
+\newcommand{\SemiDiscSpace}{\mathcal{W}_h}
+\newcommand{\FullyDiscSpace}{W}
+
+%\newcommand{\FullyDiscrSpaceDisc}[2]{ W_{ {#1},{#2}}^{ \text{dc} } }
+%\newcommand{\FullyDiscrSpaceCont}[2]{ W_{ {#1},{#2}}^{ \text{c}  } }
+%\newcommand{\ProdFullyDiscrSpaceDisc}[2]{  \mathcal{W}_{ {#1},{#2} }^{ \text{dc} } }
+%\newcommand{\ProdFullyDiscrSpaceCont}[1]{  \mathcal{W}_{ {#1} }^{ \text{c} } }
+
+\newcommand{\SemiDiscrSpace}[1]{ W^{ {#1}}_{h} }
+\newcommand{\ProdSemiDiscrSpace}[1]{ \mathcal{W}^{ {#1} }_{h} }
+\newcommand{\FullyDiscrSpace}[2]{ W^{ {#1},{#2}}_{h, \Delta t  } }
+\newcommand{\FullyDiscrSpaceHat}[2]{ \hat{W}^{ {#1},{#2}}_{h, \Delta t  } }
+\newcommand{\ProdFullyDiscrSpace}[2]{ \mathcal{W}^{ {#1},{#2}}_{h, \Delta t  } }
+
+\DeclarePairedDelimiterX{\inp}[2]{(}{)}{#1, #2}
+\newcommand{\tangular}[1]{ \llbracket\kern-0.5ex|#1|\kern-0.5ex\rrbracket} 
+%\newcommand{\jump}[1]{\llbracket#1\rrbracket}
+\newcommand{\avg}[1]{ \{\!\!\{#1\}\!\!\}}
+
+\newboolean{includeextras}
+\ifdefined\withextras
+\setboolean{includeextras}{true}
+\else
+\setboolean{includeextras}{false}
+\fi
+
+\newcommand{\putextra}[1]{\ifthenelse{\boolean{includeextras}}{#1}{}}
+
+\newcommand{\Uh}{\underline{\mathbf{U}}_h}
+\newcommand{\Vh}{\underline{\mathbf{V}}_h}
+\newcommand{\Yh}{\underline{\mathbf{Y}}_h}
+\newcommand{\Zh}{\underline{\mathbf{Z}}_h}
+\newcommand{\Wh}{\underline{\mathbf{W}}_h}
+
+\newcommand{\ul}{\underline{u}}
+\newcommand{\yl}{\underline{y}}
+\newcommand{\zl}{\underline{z}}
+\newcommand{\wl}{\underline{w}}
+
+\newcommand{\Sud}{S^{\uparrow \downarrow}_{\Delta t}}
+
+
+\newcommand{\dt}{\partial_t}
+\newcommand{\dtt}{\partial_t^2}
+
+
+
+%%% TvB: Added for plots, some might be redundant ##
+
+%------------------------- Added for Plots ----
+% Tikz package
+\usepackage{tikz}
+\usepackage{pgfplots,pgfplotstable}
+\usepgfplotslibrary{colorbrewer,groupplots}
+\usepackage{caption}
+\pgfplotsset{compat=1.18}
+
+%\usetikzlibrary{external}
+%\tikzexternalize[prefix=figures/]
+
+%find colors at https://colorbrewer2.org/#type=qualitative&scheme=Set1&n=5
+\pgfplotsset{
+% initialize Set1-5:
+cycle list/Set1-5,
+% combine it with ’mark list*’:
+cycle multiindex* list={
+mark list*\nextlist
+Set1-5\nextlist
+},
+}
+
+\pgfplotsset{
+    discard if not/.style 2 args={
+        x filter/.append code={
+            \edef\tempa{\thisrow{#1}}
+            \edef\tempb{#2}
+            \ifx\tempa\tempb
+            \else
+                \def\pgfmathresult{inf}
+            \fi
+        }
+    }
+}
+
+
+\begin{document}
+\begin{tikzpicture}[scale=0.76]
+    \begin{groupplot}[%
+        group style={%
+        group size=2 by 1,
+        horizontal sep=1.25cm,
+        vertical sep=2cm,
+        },
+    ymajorgrids=true,
+    grid style=dashed,
+    %ymin = 1e-3, ymax = 0.5e1,
+    ]    
+        \nextgroupplot[width=9cm,height=7cm,domain=0:4,xmode=linear,ymode=log, xlabel={refinement level $L$}, ylabel={}, title={Contrast $c_1 = 2.5$}, %cycle list name=paulcolors, 
+        %legend pos=north east, %yticklabels={,,},
+        xtick={1,2,3,4},
+        legend style={legend columns=3, draw=none,nodes={scale=.8}},
+        legend to name=named,
+        ]
+        %
+        \addplot+[discard if not={order}{2},discard if not={contrast}{2.5},line width=1.1pt,color=orange] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../data/2D_errors_simpleRefsolFull.csv};
+        %
+        \addplot+[discard if not={order}{3},discard if not={contrast}{2.5},line width=1.1pt,color=teal] table [x=L, y=L2-L2-error-u_t, col sep=comma] {../data/2D_errors_simpleRefsolFull.csv};
+        %
+        \addplot+[discard if not={order}{2},discard if not={contrast}{2.5},line width=1.1pt,dashed,color=orange] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/2D_errors_simpleRefsolFull.csv};
+        %
+        \addplot+[discard if not={order}{3},discard if not={contrast}{2.5},line width=1.1pt,dashed,color=teal] table [x=L, y=L-infty-L2-error-u, col sep=comma] {../data/2D_errors_simpleRefsolFull.csv};
+
+        \addplot[gray, dashed, domain=1:4] {9*(1/2^(2))^(x-0.9)};
+        \addplot[gray, dashed, domain=1:4] {0.65*(1/2^(2))^(x-0.9)};
+        \addplot[gray, dashed, domain=1:4] {0.15*(1/2^(3))^(x-0.9)};
+        \addplot[gray, dashed, domain=1:4] {4.5*(1/2^(3))^(x-0.9)};
+        \node [draw=none] at (axis description cs:0.50,0.52) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
+        \node [draw=none] at (axis description cs:0.45,0.35) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
+        \node [draw=none] at (axis description cs:0.60,0.82) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{2})$};
+        \node [draw=none] at (axis description cs:0.6,0.65) {\color{gray}\footnotesize $\!\!\mathcal{O}(h^{3})$};
+
+
+        \legend{$k=2$,$k=3$}
+        \nextgroupplot[width=9cm,height=7cm,domain=0:4,xmode=linear,ymode=log, xlabel={contrast $c_1$}, ylabel={}, title={}, %cycle list name=paulcolors, 
+        legend pos=north west, %yticklabels={,,},
+        xtick={1.0,1.5,2.0,2.5},
+        ]
+        
+
+       
+
+        \addplot+[discard if not={order}{2},discard if not={L}{4},line width=1.1pt,color=orange] table [x=contrast, y expr= abs(\thisrow{L2-L2-error-u_t}/\thisrow{bestapprox-L2-L2-error-u_t}), col sep=comma]  {../data/2D_errors_simpleRefsolFull.csv};
+        %
+        \addplot+[discard if not={order}{3},discard if not={L}{4},line width=1.1pt,color=teal] table [x=contrast, y expr= abs(\thisrow{L2-L2-error-u_t}/\thisrow{bestapprox-L2-L2-error-u_t}), col sep=comma] {../data/2D_errors_simpleRefsolFull.csv};
+
+       
+        %L-infty-L2-u error
+        \addplot+[discard if not={order}{2},discard if not={L}{4},line width=1.1pt,dashed,color=orange] table [x=contrast, y expr= abs(\thisrow{L-infty-L2-error-u}/\thisrow{bestapprox-L-infty-L2-error-u}), col sep=comma] {../data/2D_errors_simpleRefsolFull.csv};
+        \addplot+[discard if not={order}{3},discard if not={L}{4},line width=1.1pt,dashed,color=teal] table [x=contrast, y expr= abs(\thisrow{L-infty-L2-error-u}/\thisrow{bestapprox-L-infty-L2-error-u}), col sep=comma] {../data/2D_errors_simpleRefsolFull.csv};
+       
+
+        \addplot[gray, dashed, domain=1:2.5] {2*(1/2^(-3/2))^(x-0.9)};
+        \addplot[gray, dashed, domain=1:2.5] {1.35*(1/2^(-1/2))^(x-0.9)};
+    
+        \node [draw=none] at (axis description cs:0.70,0.7) {\color{gray}\footnotesize $\!\!\mathcal{O}(c_1^{3/2})$};
+        \node [draw=none] at (axis description cs:0.7,0.45) {\color{gray}\footnotesize $\!\!\mathcal{O}(c_1^{1/2})$};
+
+        %\legend{$k=2$,$k=3$}
+       
+    \end{groupplot}
+    \node at ($(current bounding box.south)+(0,-0.5cm)$) {\pgfplotslegendfromname{named}};
+\end{tikzpicture}
+\end{document}
