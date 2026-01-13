@@ -241,96 +241,68 @@ Set1-5\nextlist
 
 
 \begin{document}
-        \begin{tikzpicture}[scale=0.72]
-            \begin{groupplot}[%
-                group style={%
-                group size=2 by 1,
-                horizontal sep=1.5cm,
-                vertical sep=2cm,
-                },
-            ymajorgrids=true,
-            grid style=dashed,
-            %ymin = 1e-3, ymax = 0.5e1,
-            ]    
-                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=linear, xlabel={$x$}, ylabel={}, title={$u$ vs. $u_h$ ($c_1 = 2.5$)}, %cycle list name=paulcolors, 
-                legend style={legend columns=5, draw=none,nodes={scale=.8}},legend to name=named, %yticklabels={,,},
-                ]
-  
+\begin{tikzpicture}[scale=0.72]
+    \begin{groupplot}[%
+        group style={%
+        group size=2 by 1,
+        horizontal sep=1.5cm,
+        vertical sep=2cm,
+        },
+    ymajorgrids=true,
+    grid style=dashed,
+    ymin = -0.6e0, ymax = 0.6e0,
+    ]    
+        \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=linear, xlabel={}, ylabel={}, title={$u$ vs. $u_h$ ($c_1= 7.5$)}, %cycle list name=paulcolors, 
+        legend style={legend columns=3, draw=none,nodes={scale=.8}},legend to name=named, %yticklabels={,,},
+        ]
+        \draw[fill=gray!40,draw=none,opacity=0.5] (0.3,-2) -- (0.3,2) -- (0,2) -- (0,-2) -- cycle;
+        \draw[fill=gray!40,draw=none,opacity=0.5] (0.7,-2) -- (0.7,2) -- (1.0,2) -- (1.0,-2) -- cycle;
 
-                \addplot[black,line width=3pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/exact_plotSJ_contrast2.5_time0.25.csv};
 
-                \addplot+[discard if not={L}{1},discard if not={contrast}{2.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/simpleExact_ApproxPlot_T0.5_L1.csv};
-                %
-                \addplot+[discard if not={L}{2},discard if not={contrast}{2.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/simpleExact_ApproxPlot_T0.5_L2.csv};
-                %
-                \addplot+[discard if not={L}{3},discard if not={contrast}{2.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/simpleExact_ApproxPlot_T0.5_L3.csv};
-                %
-                \addplot+[discard if not={L}{4},discard if not={contrast}{2.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/simpleExact_ApproxPlot_T0.5_L4.csv};
-                
+        \addplot[black,line width=3pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/exact_plotMJ_contrast7.5_time0.25.csv};
+        %
+        \addplot+[discard if not={L}{3},discard if not={contrast}{7.5},line width=1.0pt,mark=None,color=orange] table [x=x, y=y, col sep=comma] {../data/plots/MultipleJumpsExact_ApproxPlot_T0.5_L3_contrast7.5.csv};
+        %
+        \addplot+[discard if not={L}{4},discard if not={contrast}{7.5},line width=1.0pt,mark=None,color=blue!75!white] table [x=x, y=y, col sep=comma] {../data/plots/MultipleJumpsExact_ApproxPlot_T0.5_L4_contrast7.5.csv};
 
-                \draw[dashed,gray,very thick] (0.5,-2) -- (0.5,2);
-                \node [draw=none] at (axis description cs:0.45,0.23) {\color{gray} $\Gamma$};
+        
+        \draw[dashed,gray,very thick] (0.4,-2) -- (0.4,2);
+        \draw[dashed,gray,very thick] (0.6666,-2) -- (0.6666,2);
 
-                \legend{exact,$L=1$, $L=2$, $L=3$, $L=4$}
-                \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=linear, xlabel={$x$}, ylabel={}, title={$u$ vs. $u_h$ ($c_1 = 5.5$)}, %cycle list name=paulcolors, 
-                legend pos=north west, %yticklabels={,,},
-                ymin = -2.25, ymax = 2.25,
-                ]
-               
-                \addplot[black,line width=3pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/exact_plotSJ_contrast5.5_time0.25.csv};
 
-                \addplot+[discard if not={L}{1},discard if not={contrast}{5.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/simpleExact_ApproxPlot_T0.5.csv};
-                %
-                \addplot+[discard if not={L}{2},discard if not={contrast}{5.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/simpleExact_ApproxPlot_T0.5.csv};
-                %
-                \addplot+[discard if not={L}{3},discard if not={contrast}{5.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/simpleExact_ApproxPlot_T0.5.csv};
-                %
-                \addplot+[discard if not={L}{4},discard if not={contrast}{5.5},line width=1.1pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/simpleExact_ApproxPlot_T0.5.csv};
-            
+        \node [draw=none] at (axis description cs:0.38,0.125) {\color{gray} $\Gamma_1$};
+        \node [draw=none] at (axis description cs:0.7,0.125) {\color{gray} $\Gamma_2$};
+        \node [draw=none] at (axis description cs:0.2,0.125) {\color{gray} $\omega$};
+        \node [draw=none] at (axis description cs:0.8,0.125) {\color{gray} $\omega$};
 
-                \draw[dashed,gray,very thick] (0.5,-3) -- (0.5,3);
-                \node [draw=none] at (axis description cs:0.45,0.23) {\color{gray} $\Gamma$};
+        
+        \legend{exact, $L = 3$, $L = 4$}
+        \nextgroupplot[width=9cm,height=7cm,domain=0:1,xmode=linear,ymode=linear, xlabel={}, ylabel={}, title={$u$ vs. $u_h$ ($c_1 = 11.5$)}, %cycle list name=paulcolors, 
+        legend pos=north west, %yticklabels={,,},
+        ]
+        \draw[fill=gray!40,draw=none,opacity=0.5] (0.3,-2) -- (0.3,2) -- (0,2) -- (0,-2) -- cycle;
+        \draw[fill=gray!40,draw=none,opacity=0.5] (0.7,-2) -- (0.7,2) -- (1.0,2) -- (1.0,-2) -- cycle;
 
-                %Colors
-                \definecolor{L1Color}{RGB}{55,126,184}
-                \definecolor{L2Color}{RGB}{77,175,74}
-                \definecolor{L3Color}{RGB}{152,78,163}
-                \definecolor{L4Color}{RGB}{255,127,0}
+        \addplot[black,line width=3pt,mark=None] table [x=x, y=y, col sep=comma] {../data/plots/exact_plotMJ_contrast11.5_time0.25.csv};
+        %
+        \addplot+[discard if not={L}{3},discard if not={contrast}{11.5},line width=1.0pt,mark=None,color=orange] table [x=x, y=y, col sep=comma] {../data/plots/MultipleJumpsExact_ApproxPlot_T0.5_L3_contrast11.5.csv};
+        %
+        \addplot+[discard if not={L}{4},discard if not={contrast}{11.5},line width=1.0pt,mark=None,color=blue!75!white] table [x=x, y=y, col sep=comma] {../data/plots/MultipleJumpsExact_ApproxPlot_T0.5_L4_contrast11.5.csv};
+       
 
-                %L = 1
-                \draw[color=L1Color,thick] (0.75,-2) -- (1,-2);
-                \draw[color=L1Color,thick] (0.75,-2.05) -- (0.75,-1.95);
-                \draw[color=L1Color,thick] (1.0,-2.05) -- (1.0,-1.95);
+        
 
-                %L = 2
-                \draw[color=L2Color,thick] (0.75,-1.75) -- (1,-1.75);
-                \draw[color=L2Color,thick] (0.75,-1.70) -- (0.75,-1.8);
-                \draw[color=L2Color,thick] (0.875,-1.70) -- (0.875,-1.8);
-                \draw[color=L2Color,thick] (1.0,-1.70) -- (1.0,-1.8);
-                
-                %L = 3
-                \draw[color=L3Color,thick] (0.75,-1.5) -- (1,-1.5);
-                \draw[color=L3Color,thick] (0.75,-1.45) -- (0.75,-1.55);
-                \draw[color=L3Color,thick] (0.8125,-1.45) -- (0.8125,-1.55);
-                \draw[color=L3Color,thick] (0.875,-1.45) -- (0.875,-1.55);
-                \draw[color=L3Color,thick] (0.9375,-1.45) -- (0.9375,-1.55);
-                \draw[color=L3Color,thick] (1.0,-1.45) -- (1.0,-1.55);
-            
-                %L = 4
-                \draw[color=L4Color,thick] (0.75,-1.25) -- (1,-1.25);
-                \draw[color=L4Color,thick] (0.75,-1.20) -- (0.75,-1.30);
-                \draw[color=L4Color,thick] (0.78125,-1.20) -- (0.78125,-1.30);
-                \draw[color=L4Color,thick] (0.8125,-1.20) -- (0.8125,-1.30);
-                \draw[color=L4Color,thick] (0.84375,-1.20) -- (0.84375,-1.30);
-                \draw[color=L4Color,thick] (0.875,-1.20) -- (0.875,-1.30);
-                \draw[color=L4Color,thick] (0.90625,-1.20) -- (0.90625,-1.30);
-                \draw[color=L4Color,thick] (0.9375,-1.20) -- (0.9375,-1.30);
-                \draw[color=L4Color,thick] (0.96875,-1.20) -- (0.96875,-1.30);
-                \draw[color=L4Color,thick] (1.0,-1.20) -- (1.0,-1.30);
+        \draw[dashed,gray,very thick] (0.4,-2) -- (0.4,2);
+        \draw[dashed,gray,very thick] (0.63188,-2) -- (0.63188,2);
+        \node [draw=none] at (axis description cs:0.38,0.125) {\color{gray} $\Gamma_1$};
+        \node [draw=none] at (axis description cs:0.71,0.125) {\color{gray} $\Gamma_2$};
+        \node [draw=none] at (axis description cs:0.2,0.125) {\color{gray} $\omega$};
+        \node [draw=none] at (axis description cs:0.8,0.125) {\color{gray} $\omega$};
 
-                %\legend{exact, $L=1$, $L=2$, $L=3$, $L=4$}
-                
-            \end{groupplot}
+    
+        
+
+    \end{groupplot}
     \node at ($(current bounding box.south)+(0,-0.5cm)$) {\pgfplotslegendfromname{named}};
 \end{tikzpicture}
 \end{document}
